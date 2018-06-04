@@ -1,0 +1,123 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+  <link href="{{ url_for('static',filename='css/materialize.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
+  <link href="{{ url_for('static',filename='css/util.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title> bitTex mmc </title>
+</head>
+
+<body>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="/" class="brand-logo m-l-10">bitTex Mining Monitoring & Controlling</a>
+      <div class="input-field float-right flex m-r-10">
+        <select class="font-white">
+          <option value="" disabled selected>Choose a container</option>
+          <option value="1">Container 1</option>
+          <option value="2">Container 2</option>
+          <option value="3">Container 3</option>
+        </select>
+      </div>
+    </div>
+  </nav>
+
+  <div class="row m-t-10">
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Temp</span>
+          <p>76°C</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Press</span>
+          <p>1024 mBar</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">RPM</span>
+          <p>5000 / 7000</p>
+          <p class="detail-info">min. 3000</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Filter</span>
+          <i class="material-icons">check</i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Sensor ID</span>
+          <p> #3 </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Op. mode</span>
+          <p>GPU mode</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    {% for miner in miners %}
+      <div class="col col-custom">
+        <div class="card">
+          <a class="modal-trigger color-grey" href="#cancel">
+            <i class="material-icons float-right m-2">settings</i>
+          </a>
+          <div class="card-content">
+            <p>#{{ miner }} </p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div id="cancel" class="modal">
+    <div class="modal-content">
+      <h4> Miner # </h4>
+      <a href="#!" class="modal-close btn-flat">ON</a>
+      <a href="#!" class="modal-close btn-flat">OFF</a>
+      <a href="#!" class="modal-close btn-flat">RESET</a>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="static/js/materialize.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('ul.tabs').tabs();
+    });
+    $(document).ready(function(){
+      $('select').formSelect();
+    });
+    $(document).ready(function(){
+      $('.modal').modal();
+    });
+  </script>
+</body>
+
+</html>

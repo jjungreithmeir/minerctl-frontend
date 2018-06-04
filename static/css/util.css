@@ -1,0 +1,38 @@
+.padder { padding: 10px; }
+.m-l-10 { margin-left: 10px; }
+.m-r-10 { margin-right: 10px !important; }
+.m-t-10 { margin-top: 10px; }
+.m-b-10 { margin-bottom: 10px; }
+.m-l-20 { margin-left: 20px; }
+.m-r-20 { margin-right: 20px; }
+.m-t-20 { margin-top: 20px; }
+.m-b-20 { margin-bottom: 20px; }
+.m-10 { margin: 10px; }
+.m-2 { margin: 2px; }
+
+.font-large { font-size: 20px; }
+.font-medium { font-size: 15px; }
+.font-black { color: #000; }
+.font-white { color: #fff; }
+.font-bold { font-weight: 700; }
+
+.color-grey { color: #bdbdbd !important; }
+
+.float-right { float: right; }
+.float-left { float: left; }
+
+.flex {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.detail-info { @extend .color-grey; font-size: 9px; }
+
+# Classes needed for materialize dropdown styling
+.select-dropdown { font-weight: 700; }
+.select-wrapper { background-color: white; }
+
+.border { border-style: solid; border-width: 1px; }
+
+.col-custom { width: 5%; }

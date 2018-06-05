@@ -3,13 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore, \
     UserMixin, RoleMixin, login_required
 import os
+from src.json_parser import parse_json
 # TODO Remove random
 from random import randint
 
 # Create app
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = 'super-secret'
+app.config['SECRET_KEY'] = 'n0b0dy-c0u1d-guess-th15'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
 # TODO the salt is a workaround for a bug, as flask-security salts the passwords automatically
 # but somehow it doesn't notice it.
@@ -52,7 +53,10 @@ def create_user():
 @app.route('/')
 @login_required
 def index():
-    # TODO remove this is just necessary for mocking content
+    return render_template('index.html', container=get_mock_container(), data=parse_json())
+
+# TODO remove this is just necessary for mocking content
+def get_mock_container():
     container = {}
 
     for cont in range(16):
@@ -60,4 +64,4 @@ def index():
         for miner in range(randint(20,120)):
             container[cont].append(miner + 1)
 
-    return render_template('index.html', container=container)
+    return container

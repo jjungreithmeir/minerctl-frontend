@@ -35,61 +35,16 @@
   </nav>
 
   <div class="row m-t-10">
-    <div class="col 1">
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">Temp</span>
-          <p>76°C</p>
+    {% for key, value in data.items() %}
+      <div class="col 1">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title"> {{key}} </span>
+            <p> {{value}} </p>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="col 1">
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">Press</span>
-          <p>1024 mBar</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="col 1">
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">RPM</span>
-          <p>5000 / 7000</p>
-          <p class="detail-info">min. 3000</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="col 1">
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">Filter</span>
-          <i class="material-icons">check</i>
-        </div>
-      </div>
-    </div>
-
-    <div class="col 1">
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">Sensor ID</span>
-          <p> #3 </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="col 1">
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title">Op. mode</span>
-          <p>GPU mode</p>
-        </div>
-      </div>
-    </div>
-
+    {% endfor %}
   </div>
 
   <div class="row">

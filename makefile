@@ -1,17 +1,13 @@
-all: clean setup run
+all: clean run
 
 install:
 	pip install -r requirements.txt --user
 
 clean:
-	rm -r __pycache__/
-
-setup:
-	export FLASK_APP=controller.py
-	export FLASK_ENV=development
+	rm -rf __pycache__/
 
 freeze:
 	pip freeze > requirements.txt
 
 run:
-	python -m flask run
+	export FLASK_APP=controller.py; export FLASK_ENV=development; python -m flask run

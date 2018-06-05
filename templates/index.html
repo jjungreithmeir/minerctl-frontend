@@ -12,13 +12,24 @@
   <nav>
     <div class="nav-wrapper">
       <a href="/" class="brand-logo m-l-10">bitTex Mining Monitoring & Controlling</a>
-      <div class="input-field float-right flex m-r-10">
-        <select class="font-white">
-          <option value="" disabled selected>Choose a container</option>
-          <option value="1">Container 1</option>
-          <option value="2">Container 2</option>
-          <option value="3">Container 3</option>
-        </select>
+      <div class="float-right">
+
+        <div class="input-field float-left m-r-20">
+          <select class="font-white">
+            <option value="" disabled selected> Choose a container</option>
+            {% for cont in container %}
+              <option value="{{ cont }}"> Container {{ cont }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="m-r-10 flex">
+          <a class="m-r-20" href="/settings">
+            <i class="material-icons">build</i>
+          </a>
+          <a href="/logout">
+            <i class="material-icons">exit_to_app</i>
+          </a>
       </div>
     </div>
   </nav>
@@ -82,7 +93,7 @@
   </div>
 
   <div class="row">
-    {% for miner in miners %}
+    {% for miner in container[0] %}
       <div class="col col-custom">
         <div class="card">
           <a class="modal-trigger color-grey" href="#cancel">

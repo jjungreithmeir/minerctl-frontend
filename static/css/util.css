@@ -1,14 +1,14 @@
-.padder { padding: 10px; }
-.m-l-10 { margin-left: 10px; }
+.padder { padding: 10px !important; }
+.m-l-10 { margin-left: 10px !important; }
 .m-r-10 { margin-right: 10px !important; }
-.m-t-10 { margin-top: 10px; }
-.m-b-10 { margin-bottom: 10px; }
-.m-l-20 { margin-left: 20px; }
-.m-r-20 { margin-right: 20px; }
-.m-t-20 { margin-top: 20px; }
-.m-b-20 { margin-bottom: 20px; }
-.m-10 { margin: 10px; }
-.m-2 { margin: 2px; }
+.m-t-10 { margin-top: 10px !important; }
+.m-b-10 { margin-bottom: 10px !important; }
+.m-r-20 { margin-right: 20px !important; }
+.m-l-20 { margin-left: 20px !important; }
+.m-t-20 { margin-top: 20px !important; }
+.m-b-20 { margin-bottom: 20px !important; }
+.m-10 { margin: 10px !important; }
+.m-2 { margin: 2px !important; }
 
 .font-large { font-size: 20px; }
 .font-medium { font-size: 15px; }
@@ -21,6 +21,21 @@
 .float-right { float: right; }
 .float-left { float: left; }
 
+.pos-rel { position: relative; }
+.pos-abs { position: absolute; }
+.trans-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.trans-vert-center {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.fill-parent { width: 100%; height: 100%; }
+
 .flex {
   display: flex;
   justify-content: flex-end;
@@ -28,11 +43,26 @@
 }
 
 .detail-info { @extend .color-grey; font-size: 9px; }
+.login-field {
+  width: 20%;
+  border-style: solid;
+  border-width: 1px;
+  padding: 20px;
+  border-color: grey;
+  margin: auto;
+}
 
-# Classes needed for materialize dropdown styling
+/* Classes needed for materialize dropdown styling */
 .select-dropdown { font-weight: 700; }
 .select-wrapper { background-color: white; }
 
-.border { border-style: solid; border-width: 1px; }
-
+/* Custom column width to fit all 120 miners */
 .col-custom { width: 5%; }
+
+/* Custom placement of flask-security login (submit) button */
+#submit { float: right; }
+
+/* Custom vertical alignment to fix placement of select bar in dropdown menu */
+.select-wrapper {
+  margin-top: 10px;
+}

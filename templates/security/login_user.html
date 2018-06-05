@@ -1,0 +1,34 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+  <link href="{{ url_for('static',filename='css/materialize.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
+  <link href="{{ url_for('static',filename='css/util.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title> bitTex mmc </title>
+</head>
+
+<body>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="/" class="brand-logo m-l-10">bitTex Mining Monitoring & Controlling</a>
+    </div>
+  </nav>
+
+  <div class="fill-parent pos-rel">
+    <div class="login-field pos-abs trans-center">
+      <form action="{{ url_for_security('login') }}" method="POST">
+        {{ login_user_form.hidden_tag() }}
+        {{ login_user_form.email(placeholder='Email') }}
+        {{ login_user_form.password(placeholder='Password') }}
+        {{ login_user_form.remember.label }} {{ login_user_form.remember }}
+        {{ login_user_form.submit }}
+      </form>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="static/js/materialize.min.js"></script>
+</body>
+
+</html>

@@ -25,6 +25,7 @@
 .font-bold { font-weight: 700; }
 
 .color-grey { color: #bdbdbd !important; }
+.bg-color-main { background-color: #ee6e73 !important; }
 
 .float-right { float: right; }
 .float-left { float: left; }
@@ -40,7 +41,10 @@
   top: 50%;
   transform: translateY(-50%);
 }
-
+.trans-hor-center {
+  left: 50%;
+  transform: translateX(-50%);
+}
 .fill-parent { width: 100%; height: 100%; }
 
 .flex {
@@ -79,5 +83,41 @@
 .select-wrapper { margin-top: 10px; }
 
 .input-number { width: 80px !important; }
+input[type="number"] {
+  margin-left: 5px !important;
+}
 
-.disabled-miner { background-color: #bdbdbd !important;}
+.disabled-miner { background-color: #bdbdbd !important; }
+
+.rotate {
+-webkit-animation: spin1 3s infinite linear;
+-moz-animation: spin1 3s infinite linear;
+-o-animation: spin1 3s infinite linear;
+-ms-animation: spin1 3s infinite linear;
+animation: spin1 3s infinite linear;
+}
+
+@-webkit-keyframes spin1 {
+0% { -webkit-transform: rotate(0deg);}
+100% { -webkit-transform: rotate(360deg);}
+}
+@-moz-keyframes spin1 {
+0% { -moz-transform: rotate(0deg);}
+100% { -moz-transform: rotate(360deg);}
+}
+@-o-keyframes spin1 {
+0% { -o-transform: rotate(0deg);}
+100% { -o-transform: rotate(360deg);}
+}
+@-ms-keyframes spin1 {
+0% { -ms-transform: rotate(0deg);}
+100% { -ms-transform: rotate(360deg);}
+}
+@-keyframes spin1 {
+0% { transform: rotate(0deg);}
+100% { transform: rotate(360deg);}
+}
+
+.image-below { position: relative; }
+.image-above { position: absolute; }
+.fan-logo {width: 50px; height: 50px; }

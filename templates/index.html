@@ -50,10 +50,19 @@
   <div class="row">
     {% for miner in container[0] %}
       <div class="col col-custom">
-        <div class="card">
-          <a class="modal-trigger color-grey" href="#cancel">
+        <div class="card" id="miner{{miner}}">
+          <a class='dropdown-trigger color-grey' href='#' data-target='minerConfig{{miner}}'>
             <i class="material-icons float-right m-2">settings</i>
           </a>
+
+          <ul id='minerConfig{{miner}}' class='dropdown-content'>
+            <li class="dropdown-title font-bold">Miner #{{ miner }}</li>
+            <li><a href="#!">ON</a></li>
+            <li><a href="#!" onclick="disable('#miner{{miner}}')">OFF</a></li>
+            <li class="divider" tabindex="-1"></li>
+            <li><a href="#!">RESET</a></li>
+          </ul>
+
           <div class="card-content">
             <p>#{{ miner }} </p>
           </div>
@@ -74,15 +83,23 @@
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script type="text/javascript" src="static/js/materialize.min.js"></script>
   <script type="text/javascript">
+    /*
     $(document).ready(function() {
       $('ul.tabs').tabs();
     });
+    */
     $(document).ready(function(){
       $('select').formSelect();
     });
+    /*
     $(document).ready(function(){
       $('.modal').modal();
     });
+    */
+    $('.dropdown-trigger').dropdown();
+    function disable(id) {
+      $(id).addClass('disabled-miner')
+    }
   </script>
 </body>
 

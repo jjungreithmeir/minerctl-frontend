@@ -55,6 +55,11 @@ def create_user():
 def index():
     return render_template('index.html', container=get_mock_container(), data=parse_json())
 
+@app.route('/settings')
+@login_required
+def settings():
+    return render_template('settings.html', container=get_mock_container(), data=parse_json())
+
 # TODO remove this is just necessary for mocking content
 def get_mock_container():
     container = {}

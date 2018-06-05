@@ -1,4 +1,6 @@
 .padder { padding: 10px !important; }
+.padder-30 { padding: 30px !important; }
+
 .m-l-10 { margin-left: 10px !important; }
 .m-r-10 { margin-right: 10px !important; }
 .m-t-10 { margin-top: 10px !important; }
@@ -11,9 +13,13 @@
 .m-2 { margin: 2px !important; }
 
 .h-80 { height: 80% !important; }
+.w-30 { width: 30% !important; }
+.w-50 { width: 50% !important; }
 
 .font-large { font-size: 20px; }
 .font-medium { font-size: 15px; }
+.font-small { font-size: 10px; }
+
 .font-black { color: #000; }
 .font-white { color: #fff; }
 .font-bold { font-weight: 700; }
@@ -30,7 +36,6 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
 .trans-vert-center {
   top: 50%;
   transform: translateY(-50%);
@@ -54,6 +59,12 @@
   margin: auto;
 }
 
+.dropdown-title, .dropdown-title:hover {
+  padding: 14px 16px;
+  cursor: default;
+  background-color: white !important;
+}
+
 /* Classes needed for materialize dropdown styling */
 .select-dropdown { font-weight: 700; }
 .select-wrapper { background-color: white; }
@@ -65,6 +76,8 @@
 #submit { float: right; }
 
 /* Custom vertical alignment to fix placement of select bar in dropdown menu */
-.select-wrapper {
-  margin-top: 10px;
-}
+.select-wrapper { margin-top: 10px; }
+
+.input-number { width: 80px !important; }
+
+.disabled-miner { background-color: #bdbdbd !important;}

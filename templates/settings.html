@@ -40,7 +40,7 @@
 
         <h6> Various </h6>
         <div class="w-50 m-10 padder-30">
-          <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data['filter_thresholds']}}"/>
+          <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data['filter_threshold']}}"/>
         </div>
 
         <button class="btn waves-effect waves-light float-right bg-color-main" onclick="save()" type="submit" name="action">Save
@@ -48,6 +48,7 @@
         </button>
       </div>
     </div>
+    <!-- TODO add mode switcher -->
 
   {% endblock %}
 

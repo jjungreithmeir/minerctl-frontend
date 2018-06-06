@@ -15,6 +15,7 @@
           <th>roles</th>
           <th>account active</th>
           <th>password (hashed) (shown for hash testing)</th>
+          <th></th>
       </tr>
     </thead>
 
@@ -32,6 +33,7 @@
           <input type="checkbox" checked="{{user.active}}"/>
         </td>
         <td>{{user.password}}</td>
+        <td><a href="#!"><i class="material-icons color-main">delete</i></a> </td>
       </tr>
       {% endfor %}
     </tbody>

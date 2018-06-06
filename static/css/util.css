@@ -89,6 +89,20 @@ input[type="number"] {
 
 .disabled-miner { background-color: #bdbdbd !important; }
 
+[type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+  opacity: 1;
+	pointer-events: auto;
+  margin-left: 5px;
+}
+
+.image-below { position: relative; }
+.image-above { position: absolute; }
+.fan-logo {width: 50px; height: 50px; }
+
+.nav-buttons a{
+  margin-left: 20px;
+}
+
 .rotate {
 -webkit-animation: spin1 3s infinite linear;
 -moz-animation: spin1 3s infinite linear;
@@ -116,12 +130,4 @@ animation: spin1 3s infinite linear;
 @-keyframes spin1 {
 0% { transform: rotate(0deg);}
 100% { transform: rotate(360deg);}
-}
-
-.image-below { position: relative; }
-.image-above { position: absolute; }
-.fan-logo {width: 50px; height: 50px; }
-
-.nav-buttons a{
-  margin-left: 20px;
 }

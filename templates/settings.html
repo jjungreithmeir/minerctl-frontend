@@ -54,9 +54,17 @@
 
         </div>
 
-        <button class="btn waves-effect waves-light float-right bg-color-main" onclick="save()" type="submit" name="action">Save
+        <button class="m-10 btn waves-effect waves-light float-right bg-color-main" onclick="save()" type="submit" name="action">Save
           <i class="material-icons right">save</i>
         </button>
+
+        <button class="m-10 btn waves-effect waves-light float-right bg-color-main" type="submit" name="action">Upload config
+          <i class="material-icons right">cloud_upload</i>
+        </button>
+
+        <a href="/getconfig" class="m-10 btn waves-effect waves-light float-right bg-color-main" type="submit" name="action">Download config
+          <i class="material-icons right">cloud_download</i>
+        </a>
       </div>
     </div>
 
@@ -69,7 +77,9 @@
         $('select').formSelect();
       });
       function save() {
-        M.toast({html: 'Settings saved successfully (TODO)', classes: 'rounded'});
+        $value = $('#input-mode').val()
+        M.toast({html: 'Configuration saved successfully.', classes: 'rounded'});
+
       }
 
       // Setup basic slider

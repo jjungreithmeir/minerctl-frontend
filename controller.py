@@ -1,9 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore, \
     UserMixin, RoleMixin, login_required
-import os
-from src.json_parser import parse_json
+import os, time
+from src.json_parser import parse_json, post
 # TODO Remove random
 from random import randint
 
@@ -16,6 +16,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
 # but somehow it doesn't notice it.
 app.config['SECURITY_PASSWORD_SALT'] = os.urandom(1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECURITY_TRACKABLE'] = True
 # Create database connection object
 db = SQLAlchemy(app)
 
@@ -35,6 +36,11 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
+    last_login_at = db.Column(db.DateTime())
+    current_login_at = db.Column(db.DateTime())
+    last_login_ip = db.Column(db.String(100))
+    current_login_ip = db.Column(db.String(100))
+    login_count = db.Column(db.Integer())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
@@ -63,6 +69,20 @@ def index():
 @login_required
 def settings():
     return render_template('settings.html', container=get_mock_container(), data=parse_json())
+
+@app.route('/getconfig')
+@login_required
+def get_config():
+    tmstmp = time.strftime("%Y%m%d-%H%M%S")
+    return send_file('output/test.txt',
+                     mimetype='text/plain',
+                     attachment_filename='minerctl_'+tmstmp+'.cfg',
+                     as_attachment=True)
+
+@app.route('/user')
+@login_required
+def user_mgmt():
+    return render_template('user.html', logs=User.query.all())
 
 # TODO remove this is just necessary for mocking content
 def get_mock_container():

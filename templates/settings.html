@@ -13,9 +13,18 @@
       <div class="divider"></div>
       <div class="section">
 
-        <h6>Miner</h6>
+        <h6>General</h6>
         <div class="w-50 m-10 padder-30">
           <label for="input-miner">number of miners: </label><input class="input-number" id="input-miner" type="number" min="1" max="120"/>
+          <div class="select-small">
+            <label for="input-mode">mode of operation: </label>
+            <select id="input-mode" class="browser-default">
+              <option value="0">GPU</option>
+              <option value="1">ASIC/FPGA</option>
+              <option value="2">other</option>
+            </select>
+          </div>
+
         </div>
 
         <h6>Ventilation</h6>
@@ -35,12 +44,14 @@
           <label class="m-l-10" for="input-pidd">deriative: </label><input class="input-number" id="input-pidd" type="number" value="{{data['pidd']}}"/>
           <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data['pidb']}}"/>
           <br/>
-          <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data['sensor_id']}}"/>
+          <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data['sensor_id']}}" min="0"/>
         </div>
 
         <h6> Various </h6>
         <div class="w-50 m-10 padder-30">
           <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data['filter_threshold']}}"/>
+          <label class="m-l-10" for="input-exttemp">external temperature: </label><input class="input-number" id="input-exttemp" type="number" value="{{data['exttemp']}}"/>
+
         </div>
 
         <button class="btn waves-effect waves-light float-right bg-color-main" onclick="save()" type="submit" name="action">Save
@@ -48,17 +59,20 @@
         </button>
       </div>
     </div>
-    <!-- TODO add mode switcher -->
 
   {% endblock %}
 
   {% block scripts %}
     <script type="text/javascript" src="static/js/nouislider.min.js"></script>
     <script type="text/javascript">
+      $(document).ready(function(){
+        $('select').formSelect();
+      });
       function save() {
         M.toast({html: 'Settings saved successfully (TODO)', classes: 'rounded'});
       }
 
+      // Setup basic slider
       var slider = document.getElementById('rpm-slider');
       noUiSlider.create(slider, {
        start: [{{data['min_rpm']}}, {{data['max_rpm']}}],
@@ -67,13 +81,14 @@
        animate: true,
        range: {
          'min': 0,
-         'max': 9999 <!-- TODO change to realistic setting
+         'max': 9999 // TODO change to realistic setting
        },
        format: wNumb({
          decimals: 0
        })
       });
 
+      // Connect the <input> fields to the slider
       var inputMin = document.getElementById('input-min');
       var inputMax = document.getElementById('input-max');
 
@@ -92,5 +107,7 @@
       	slider.noUiSlider.set([null, this.value]);
       });
 
+      // Select default mode
+      $("#input-mode").val({{data['mode']}});
     </script>
   {% endblock %}

@@ -87,8 +87,13 @@ input[type="number"] {
   margin-left: 5px !important;
 }
 
+.select-small{
+  width: 250px !important;
+}
+
 .disabled-miner { background-color: #bdbdbd !important; }
 
+/* Needed to fix the remember me button */
 [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
   opacity: 1;
 	pointer-events: auto;

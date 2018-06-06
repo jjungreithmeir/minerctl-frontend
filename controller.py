@@ -38,6 +38,10 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
+class Config(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    miner_number = db.Column(db.Integer(), primary_key=True)
+
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)

@@ -14,20 +14,11 @@
   <nav>
     <div class="nav-wrapper">
       <a href="/" class="brand-logo m-l-10">bitTex minerctl</a>
-
-      <div class="float-right">
-
-        <div class="m-r-10 flex nav-buttons">
-
-          <a class href="#!" title="user management"> <!-- TODO add new container modal-->
-            <i class="material-icons">account_circle</i>
-          </a>
-          <a href="/settings" title="settings">
-            <i class="material-icons">build</i>
-          </a>
-          <a href="/logout" title="logout">
-            <i class="material-icons">exit_to_app</i>
-          </a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="#!"><i class="material-icons">account_circle</i></a></li>
+          <li><a href="/settings"><i class="material-icons">build</i></a></li>
+          <li><a href="/logout"><i class="material-icons">exit_to_app</i></a></li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -37,11 +28,6 @@
 
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script type="text/javascript" src="static/js/materialize.min.js"></script>
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $('select').formSelect();
-    });
-  </script>
 
   {% block scripts %}
   {% endblock %}

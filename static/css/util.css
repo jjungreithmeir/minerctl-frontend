@@ -121,3 +121,7 @@ animation: spin1 3s infinite linear;
 .image-below { position: relative; }
 .image-above { position: absolute; }
 .fan-logo {width: 50px; height: 50px; }
+
+.nav-buttons a{
+  margin-left: 20px;
+}

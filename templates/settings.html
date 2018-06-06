@@ -1,128 +1,95 @@
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
-  <link href="{{ url_for('static',filename='css/materialize.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
-  <link href="{{ url_for('static',filename='css/util.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
-  <link href="{{ url_for('static',filename='css/nouislider.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <title> bitTex mmc </title>
-</head>
+  {% extends "base.html" %}
 
-<body>
-  <nav>
-    <div class="nav-wrapper">
-      <a href="/" class="brand-logo m-l-10">bitTex Mining Monitoring & Controlling</a>
-      <div class="float-right">
+  {% block css %}
+    <link href="{{ url_for('static',filename='css/nouislider.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  {% endblock %}
 
-        <div class="input-field float-left m-r-20">
-          <select class="font-white" id="cont-select">
-            <option value="" disabled selected> Choose a container</option>
-            {% for cont in container %}
-              <option value="{{ cont }}"> Container {{ cont }}</option>
-            {% endfor %}
-          </select>
+  {% block content %}
+
+    <div class="container">
+
+      <h3> Settings </h3>
+      <div class="divider"></div>
+      <div class="section">
+
+        <h6>Miner</h6>
+        <div class="w-50 m-10 padder-30">
+          <label for="input-miner">number of miners: </label><input class="input-number" id="input-miner" type="number" min="1" max="120"/>
         </div>
 
-        <div class="m-r-10 flex">
-          <a class="m-r-20" href="/settings">
-            <i class="material-icons">build</i>
-          </a>
-          <a href="/logout">
-            <i class="material-icons">exit_to_app</i>
-          </a>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container">
-
-    <h3> Settings </h3>
-    <div class="divider"></div>
-    <div class="section">
-
-      <h6>Miner</h6>
-      <div class="w-50 m-10 padder-30">
-        <label for="input-miner">number of miners: </label><input class="input-number" id="input-miner" type="number" min="1" max="120"/>
-      </div>
-
-      <h6>Ventilation</h6>
-      <div class="w-50 m-10 padder-30">
-        <div id="rpm-slider"></div>
-        <div class="m-t-10">
-          <label for="input-min">min. RPM: </label><input class="input-number" id="input-min" type="number" min="0" max="9999" step="1"/>
-          <label class="m-l-10" for="input-max">max. RPM: </label><input class="input-number" id="input-max" type="number" min="0" max="9999" step="1"/>
+        <h6>Ventilation</h6>
+        <div class="w-50 m-10 padder-30">
+          <div id="rpm-slider"></div>
+          <div class="m-t-10">
+            <label for="input-min">min. RPM: </label><input class="input-number" id="input-min" type="number" min="0" max="9999" step="1"/>
+            <label class="m-l-10" for="input-max">max. RPM: </label><input class="input-number" id="input-max" type="number" min="0" max="9999" step="1"/>
+          </div>
+          <label for="input-temp">target temperature: </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data['target_temp']}}"/>
         </div>
-        <label for="input-temp">target temperature: </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data['target_temp']}}"/>
+
+        <h6> PID </h6>
+        <div class="w-50 m-10 padder-30">
+          <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data['pidp']}}"/>
+          <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data['pidi']}}"/>
+          <label class="m-l-10" for="input-pidd">deriative: </label><input class="input-number" id="input-pidd" type="number" value="{{data['pidd']}}"/>
+          <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data['pidb']}}"/>
+          <br/>
+          <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data['sensor_id']}}"/>
+        </div>
+
+        <h6> Various </h6>
+        <div class="w-50 m-10 padder-30">
+          <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data['filter_thresholds']}}"/>
+        </div>
+
+        <button class="btn waves-effect waves-light float-right bg-color-main" onclick="save()" type="submit" name="action">Save
+          <i class="material-icons right">save</i>
+        </button>
       </div>
-
-      <h6> PID </h6>
-      <div class="w-50 m-10 padder-30">
-        <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data['pidp']}}"/>
-        <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data['pidi']}}"/>
-        <label class="m-l-10" for="input-pidd">deriative: </label><input class="input-number" id="input-pidd" type="number" value="{{data['pidd']}}"/>
-        <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data['pidb']}}"/>
-        <br/>
-        <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data['sensor_id']}}"/>
-      </div>
-
-      <h6> Various </h6>
-      <div class="w-50 m-10 padder-30">
-        <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data['filter_thresholds']}}"/>
-      </div>
-
-      <button class="btn waves-effect waves-light float-right bg-color-main" onclick="save()" type="submit" name="action">Save
-        <i class="material-icons right">save</i>
-      </button>
-
     </div>
 
-  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script type="text/javascript" src="static/js/materialize.min.js"></script>
-  <script type="text/javascript" src="static/js/nouislider.min.js"></script>
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $('select').formSelect();
-    });
+  {% endblock %}
 
-    function save() {
-      M.toast({html: 'Settings saved successfully (TODO)', classes: 'rounded'});
-    }
+  {% block scripts %}
+    <script type="text/javascript" src="static/js/nouislider.min.js"></script>
+    <script type="text/javascript">
+      function save() {
+        M.toast({html: 'Settings saved successfully (TODO)', classes: 'rounded'});
+      }
 
-    var slider = document.getElementById('rpm-slider');
-    noUiSlider.create(slider, {
-     start: [{{data['min_rpm']}}, {{data['max_rpm']}}],
-     step: 1,
-     connect: true,
-     animate: true,
-     range: {
-       'min': 0,
-       'max': 9999 <!-- TODO change to realistic setting
-     },
-     format: wNumb({
-       decimals: 0
-     })
-    });
+      var slider = document.getElementById('rpm-slider');
+      noUiSlider.create(slider, {
+       start: [{{data['min_rpm']}}, {{data['max_rpm']}}],
+       step: 1,
+       connect: true,
+       animate: true,
+       range: {
+         'min': 0,
+         'max': 9999 <!-- TODO change to realistic setting
+       },
+       format: wNumb({
+         decimals: 0
+       })
+      });
 
-    var inputMin = document.getElementById('input-min');
-    var inputMax = document.getElementById('input-max');
+      var inputMin = document.getElementById('input-min');
+      var inputMax = document.getElementById('input-max');
 
-    slider.noUiSlider.on('update', function( values, handle ) {
-    	var value = values[handle];
-    	if (handle) {
-    		inputMax.value = value;
-    	} else {
-    		inputMin.value = Math.round(value);
-    	}
-    });
-    inputMin.addEventListener('change', function(){
-    	slider.noUiSlider.set([this.value, null]);
-    });
-    inputMax.addEventListener('change', function(){
-    	slider.noUiSlider.set([null, this.value]);
-    });
+      slider.noUiSlider.on('update', function( values, handle ) {
+      	var value = values[handle];
+      	if (handle) {
+      		inputMax.value = value;
+      	} else {
+      		inputMin.value = Math.round(value);
+      	}
+      });
+      inputMin.addEventListener('change', function(){
+      	slider.noUiSlider.set([this.value, null]);
+      });
+      inputMax.addEventListener('change', function(){
+      	slider.noUiSlider.set([null, this.value]);
+      });
 
-  </script>
-</body>
-
-</html>
+    </script>
+  {% endblock %}

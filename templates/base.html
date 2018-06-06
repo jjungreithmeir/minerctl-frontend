@@ -1,0 +1,57 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+  <link href="{{ url_for('static',filename='css/materialize.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
+  <link href="{{ url_for('static',filename='css/util.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  {% block css %}
+  {% endblock %}
+  <title> bitTex mmc </title>
+</head>
+
+<body>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="/" class="brand-logo m-l-10">bitTex Mining Monitoring & Controlling</a>
+
+      <div class="float-right">
+
+        <div class="input-field float-left m-r-20">
+          <select class="font-white" id="cont-select">
+            <option value="" disabled selected> Choose a container</option>
+            {% for cont in container %}
+              <option value="{{ cont }}"> Container {{ cont }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="m-r-10 flex nav-buttons">
+          <a class href="#!"> <!-- TODO add new container modal-->
+            <i class="material-icons">library_add</i>
+          </a>
+          <a href="/settings">
+            <i class="material-icons">build</i>
+          </a>
+          <a href="/logout">
+            <i class="material-icons">exit_to_app</i>
+          </a>
+      </div>
+    </div>
+  </nav>
+
+  {% block content %}
+  {% endblock %}
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="static/js/materialize.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('select').formSelect();
+    });
+  </script>
+
+  {% block scripts %}
+  {% endblock %}
+</body>
+</html>

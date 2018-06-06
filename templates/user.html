@@ -1,6 +1,40 @@
-  {% extends "base.html" %}
+{% extends "base.html" %}
 
-  {% block content %}
+{% block content %}
 
+<div class="container m-t-20">
+  <table class="highlight">
+    <thead>
+      <tr>
+          <th>email</th>
+          <th>last login at</th>
+          <th>last login IP</th>
+          <th>current login at</th>
+          <th>current login IP</th>
+          <th>login count</th>
+          <th>roles</th>
+          <th>account active</th>
+          <th>password (hashed) (shown for hash testing)</th>
+      </tr>
+    </thead>
 
-  {% endblock %}
+    <tbody>
+      {% for user in userbase %}
+      <tr>
+        <td>{{user.email}}</td>
+        <td>{{user.last_login_at}}</td>
+        <td>{{user.last_login_ip}}</td>
+        <td>{{user.current_login_at}}</td>
+        <td>{{user.current_login_ip}}</td>
+        <td>{{user.login_count}}</td>
+        <td>{{user.roles}}</td>
+        <td class="center-checkbox">
+          <input type="checkbox" checked="{{user.active}}"/>
+        </td>
+        <td>{{user.password}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

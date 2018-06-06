@@ -1,0 +1,19 @@
+{
+  "info": {
+  "firmware": "1.2.3",
+  "temps": [50, 55, 52],
+  "target_temp": 45,
+  "press": 1025,
+  "filter_threshold": 1234,
+  "filter_status": true,
+  "sensor_id": 3,
+  "min_rpm": 2000,
+  "max_rpm": 7000,
+  "rpm": 5000,
+  "mode": 0,
+  "pidp": 1,
+  "pidi": 2,
+  "pidd": 3,
+  "pidb": 4
+  }
+}

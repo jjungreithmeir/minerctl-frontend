@@ -7,13 +7,13 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   {% block css %}
   {% endblock %}
-  <title> bitTex mmc </title>
+  <title> minerctl </title>
 </head>
 
 <body>
   <nav>
     <div class="nav-wrapper">
-      <a href="/" class="brand-logo m-l-10">bitTex Mining Monitoring & Controlling</a>
+      <a href="/" class="brand-logo m-l-10">bitTex minerctl</a>
 
       <div class="float-right">
 
@@ -27,13 +27,17 @@
         </div>
 
         <div class="m-r-10 flex nav-buttons">
-          <a class href="#!"> <!-- TODO add new container modal-->
+
+          <a class href="#!" title="user management"> <!-- TODO add new container modal-->
+            <i class="material-icons">account_circle</i>
+          </a>
+          <a class href="#!" title="add new container"> <!-- TODO add new container modal-->
             <i class="material-icons">library_add</i>
           </a>
-          <a href="/settings">
+          <a href="/settings" title="settings">
             <i class="material-icons">build</i>
           </a>
-          <a href="/logout">
+          <a href="/logout" title="logout">
             <i class="material-icons">exit_to_app</i>
           </a>
       </div>

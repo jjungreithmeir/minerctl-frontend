@@ -16,7 +16,7 @@
   </div>
 
   <div class="row">
-    {% for miner in container[0] %}
+    {% for miner in range(config[0].miner_number) %}
       <div class="col col-custom">
         <div class="card" id="miner{{miner}}">
           <a class='dropdown-trigger color-grey' href='#' data-target='minerConfig{{miner}}'>

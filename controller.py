@@ -67,8 +67,8 @@ class User(db.Model, UserMixin):
                             backref=db.backref('users', lazy='dynamic'))
 
 class Config(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    miner_number = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    miner_number = db.Column(db.Integer())
 
 # Add custom register form to app context as it is embedded into another page
 @app.context_processor
@@ -157,19 +157,20 @@ def create_user():
         user_datastore.create_user(email='fake@email.com', password=encrypt_password('password1'))
     if not user_datastore.get_user('pseudo@email.com'):
         user_datastore.create_user(email='pseudo@email.com', password=encrypt_password('password2'))
+    db.session.add(Config(miner_number=99))
     db.session.commit()
 
 # Views
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html', container=get_mock_container(), data=parse_json(), user=get_curr_user())
+    return render_template('index.html', container=get_mock_container(), data=parse_json(), user=get_curr_user(), config=Config.query.all())
 
 @app.route('/settings')
 @login_required
 @roles_required('admin')
 def settings():
-    return render_template('settings.html', container=get_mock_container(), data=parse_json(), user=get_curr_user())
+    return render_template('settings.html', container=get_mock_container(), data=parse_json(), user=get_curr_user(), config=Config.query.all())
 
 @app.route('/getconfig')
 @login_required
@@ -185,7 +186,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/upload', methods=['GET', 'POST'])
+@app.route('/upload', methods=['POST'])
 @login_required
 @roles_required('admin')
 def upload_file():

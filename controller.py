@@ -8,7 +8,7 @@ from flask_admin.contrib import sqla
 from wtforms.fields import PasswordField
 import os, time
 from src.json_parser import parse_json, post
-from src.db_init import db, User, Role, Config, create_user
+from src.db_init import db, User, Role, Config, setup_db
 
 # Create app
 app = Flask(__name__)
@@ -91,10 +91,9 @@ admin = Admin(
 admin.add_view(UserAdmin(User, db.session))
 admin.add_view(RoleAdmin(Role, db.session))
 
-# Create a user to test withflask_security.utils
 @app.before_first_request
-def setup_db():
-    create_user(user_datastore)
+def setup():
+    setup_db(user_datastore)
 
 # Views
 @app.route('/')

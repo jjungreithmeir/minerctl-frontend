@@ -41,9 +41,10 @@ class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     miner_number = db.Column(db.Integer())
 
-def create_user(user_datastore):
+# not needed anymore
+def setup_db(user_datastore):
     db.create_all()
-    user_datastore.create_role(name='admin')
+    user_datastore.find_or_create_role(name='admin')
     if not user_datastore.get_user('user@email.com'):
         user_datastore.create_user(email='user@email.com', password=encrypt_password('password'), roles=['admin'])
     if not user_datastore.get_user('fake@email.com'):

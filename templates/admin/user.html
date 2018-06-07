@@ -33,10 +33,33 @@
           <input type="checkbox" checked="{{user.active}}"/>
         </td>
         <td>{{user.password}}</td>
-        <td><a href="#!"><i class="material-icons color-main">delete</i></a> </td>
+        <td><a href="#!"><i title="delete user" class="material-icons color-main">delete</i></a> </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  <a class="btn-floating modal-trigger bg-color-main right m-t-10" data-target="modal-add-user"><i title="add new user" class="material-icons right" >add</i></a>
+  <div id="modal-add-user" class="modal">
+    <div class="modal-content">
+      <h4>add new user</h4>
+      <form action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
+        {{ register_user_form.hidden_tag() }}
+        {{ register_user_form.email(placeholder='Email') }}
+        {{ register_user_form.password(placeholder='Password') }}
+        {% if register_user_form.password_confirm %}
+          {{ register_user_form.password_confirm(placeholder='Confirm Password') }}
+        {% endif %}
+        {{ register_user_form.submit }}
+      </form>
+    </div>
+  </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.modal').modal();
+  });
+</script>
 {% endblock %}

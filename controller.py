@@ -2,7 +2,11 @@ from flask import Flask, render_template, send_file, session, request, redirect
 from werkzeug import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore, \
-    UserMixin, RoleMixin, login_required, roles_required
+    UserMixin, RoleMixin, login_required, roles_required, url_for_security, \
+    RegisterForm, current_user, utils
+from flask_admin import Admin
+from flask_admin.contrib import sqla
+from wtforms.fields import PasswordField
 from flask_security.utils import encrypt_password
 import os, time
 from src.json_parser import parse_json, post
@@ -21,6 +25,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # but somehow it doesn't notice it.
 app.config['SECURITY_PASSWORD_SALT'] = os.urandom(1)
 app.config['SECURITY_TRACKABLE'] = True
+app.config['SECURITY_REGISTERABLE'] = True
 
 app.config['UPLOAD_FOLDER'] = 'config'
 # max upload size is 50 KB
@@ -39,13 +44,20 @@ class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
+    # __str__ is required by Flask-Admin, so we can have human-readable values for the Role when editing a User.
+    # If we were using Python 2.7, this would be __unicode__ instead.
+    def __str__(self):
+        return self.name
+
+    # __hash__ is required to avoid the exception TypeError: unhashable type: 'Role' when saving a User
+    def __hash__(self):
+        return hash(self.name)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
-    confirmed_at = db.Column(db.DateTime())
     last_login_at = db.Column(db.DateTime())
     current_login_at = db.Column(db.DateTime())
     last_login_ip = db.Column(db.String(100))
@@ -58,9 +70,78 @@ class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     miner_number = db.Column(db.Integer(), primary_key=True)
 
+# Add custom register form to app context as it is embedded into another page
+@app.context_processor
+def register_context():
+    return {
+        'url_for_security': url_for_security,
+        'register_user_form': RegisterForm(),
+    }
+
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
+
+# Customized User model for SQL-Admin
+class UserAdmin(sqla.ModelView):
+
+    # Don't display the password on the list of Users
+    column_exclude_list = ('password',)
+
+    column_searchable_list = ['email']
+    create_modal = True
+    edit_modal = True
+
+    # Don't include the standard password field when creating or editing a User (but see below)
+    form_excluded_columns = ('password', 'last_login_at', 'last_login_ip', 'current_login_at', 'current_login_ip', 'login_count')
+
+    # Automatically display human-readable names for the current and available Roles when creating or editing a User
+    column_auto_select_related = True
+
+    # Prevent administration of Users unless the currently logged-in user has the "admin" role
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
+    # On the form for creating or editing a User, don't display a field corresponding to the model's password field.
+    # There are two reasons for this. First, we want to encrypt the password before storing in the database. Second,
+    # we want to use a password field (with the input masked) rather than a regular text field.
+    def scaffold_form(self):
+
+        # Start with the standard form as provided by Flask-Admin. We've already told Flask-Admin to exclude the
+        # password field from this form.
+        form_class = super(UserAdmin, self).scaffold_form()
+
+        # Add a password field, naming it "password2" and labeling it "New Password".
+        form_class.password2 = PasswordField('New Password')
+        return form_class
+
+    # This callback executes when the user saves changes to a newly-created or edited User -- before the changes are
+    # committed to the database.
+    def on_model_change(self, form, model, is_created):
+
+        # If the password field isn't blank...
+        if len(model.password2):
+
+            # ... then encrypt the new password prior to storing it in the database. If the password field is blank,
+            # the existing password in the database will be retained.
+            model.password = utils.encrypt_password(model.password2)
+
+
+# Customized Role model for SQL-Admin
+class RoleAdmin(sqla.ModelView):
+    # Prevent administration of Roles unless the currently logged-in user has the "admin" role
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
+# Initialize Flask-Admin
+admin = Admin(
+    app,
+    url='/mgmt'
+)
+
+# Add Flask-Admin views for Users and Roles
+admin.add_view(UserAdmin(User, db.session))
+admin.add_view(RoleAdmin(Role, db.session))
 
 def get_curr_user():
     return User.query.filter_by(id=session["user_id"]).first().email
@@ -70,9 +151,12 @@ def get_curr_user():
 def create_user():
     db.create_all()
     user_datastore.create_role(name='admin')
-    user_datastore.create_user(email='user@email.com', password=encrypt_password('password'), roles=['admin'])
-    user_datastore.create_user(email='fake@email.com', password=encrypt_password('password1'))
-    user_datastore.create_user(email='pseudo@email.com', password=encrypt_password('password2'))
+    if not user_datastore.get_user('user@email.com'):
+        user_datastore.create_user(email='user@email.com', password=encrypt_password('password'), roles=['admin'])
+    if not user_datastore.get_user('fake@email.com'):
+        user_datastore.create_user(email='fake@email.com', password=encrypt_password('password1'))
+    if not user_datastore.get_user('pseudo@email.com'):
+        user_datastore.create_user(email='pseudo@email.com', password=encrypt_password('password2'))
     db.session.commit()
 
 # Views
@@ -121,11 +205,11 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect('/')
 
-@app.route('/user')
-@login_required
-@roles_required('admin')
-def user_mgmt():
-    return render_template('user.html', userbase=User.query.all(), user=get_curr_user())
+# @app.route('/user')
+# @login_required
+# @roles_required('admin')
+# def user_mgmt():
+#     return render_template('user.html', userbase=User.query.all(), user=get_curr_user())
 
 # TODO remove this is just necessary for mocking content
 def get_mock_container():

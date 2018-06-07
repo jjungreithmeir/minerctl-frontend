@@ -105,6 +105,8 @@ input[type="number"] {
 
 .select-small{
   width: 250px !important;
+  display: flex;
+  align-items: center;
 }
 
 .disabled-miner { background-color: #bdbdbd !important; }

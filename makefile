@@ -4,7 +4,7 @@ install:
 	pip install -r requirements.txt --user
 
 clean:
-	rm -rf __pycache__/
+	rm -rf __pycache__/ src/__pycache__/
 
 freeze:
 	pip freeze > requirements.txt

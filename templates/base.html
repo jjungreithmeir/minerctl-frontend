@@ -13,13 +13,21 @@
 <body>
   <nav>
     <div class="nav-wrapper">
-      <a href="/" class="brand-logo m-l-10">bitTex minerctl</a>
-        <ul class="right hide-on-med-and-down">
-          <li><a title="user management" href="/mgmt"><i class="material-icons right">account_circle</i>{{user}}</a></li>
-          <li><a title="settings" href="/settings"><i class="material-icons">build</i></a></li>
-          <li><a title="logout" href="/logout"><i class="material-icons">exit_to_app</i></a></li>
-        </ul>
-      </div>
+      <a href="/" class="brand-logo m-l-10">
+        <div class="left m-t-20 m-r-10">
+          <img class="fan-logo rotate image-above" src="static/images/fans.png"/>
+          <img class="fan-logo image-below" src="static/images/casing.png"/>
+        </div>
+         bitTex minerctl
+      </a>
+
+      {% block navbuttons %}
+      <ul class="right hide-on-med-and-down">
+        <li><a title="user management" href="/mgmt"><i class="material-icons right">account_circle</i>{{current_user}}</a></li>
+        <li><a title="settings" href="/settings"><i class="material-icons">build</i></a></li>
+        <li><a title="logout" href="/logout"><i class="material-icons">exit_to_app</i></a></li>
+      </ul>
+      {% endblock %}
     </div>
   </nav>
 

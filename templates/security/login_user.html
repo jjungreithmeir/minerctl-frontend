@@ -1,20 +1,10 @@
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
-  <link href="{{ url_for('static',filename='css/materialize.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
-  <link href="{{ url_for('static',filename='css/util.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <title> bitTex minerctl </title>
-</head>
+{% extends "base.html" %}
 
-<body>
-  <nav>
-    <div class="nav-wrapper">
-      <a href="/" class="brand-logo m-l-10">bitTex minerctl</a>
-    </div>
-  </nav>
+{% block navbuttons %}
 
+{% endblock %}
+
+{% block content %}
   <div class="fill-parent pos-rel h-80">
     <div class="login-field pos-abs trans-center">
       <form action="{{ url_for_security('login') }}" method="POST">
@@ -31,9 +21,4 @@
       </form>
     </div>
   </div>
-
-  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script type="text/javascript" src="static/js/materialize.min.js"></script>
-</body>
-
-</html>
+{% endblock %}

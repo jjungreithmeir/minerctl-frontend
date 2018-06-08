@@ -11,10 +11,13 @@
   "min_rpm": 2000,
   "max_rpm": 7000,
   "rpm": 5000,
-  "mode": 1,
+  "mode": 0,
   "pidp": 1,
   "pidi": 2,
   "pidd": 3,
-  "pidb": 4
+  "pidb": 4,
+  "restime": 5678,
+  "ontime": 15,
+  "offtime": 120
   }
 }

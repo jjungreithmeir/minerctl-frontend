@@ -31,6 +31,28 @@
 
         </div>
 
+        {% if data.mode == 0 %}
+        <h6>GPU mode</h6>
+        <div class="w-50 m-10 padder-30">
+          <div class="m-t-10">
+            <label for="input-ontime">time to turn on miner in ms: </label><input class="input-number" id="input-ontime" type="number" min="0" max="100000" step="1" value="{{data.ontime}}"/>
+            <label class="m-l-10" for="input-offtime">time to turn on miner in ms: </label><input class="input-number" id="input-offtime" type="number" min="0" max="100000" step="1" value="{{data.offtime}}"/>
+          </div>
+        </div>
+
+        {% elif data.mode == 1 %}
+        <h6>ASIC/FPGA mode</h6>
+        <div class="w-50 m-10 padder-30">
+          <div class="m-t-10">
+            <label for="input-restime">reset time in ms: </label><input class="input-number" id="input-restime" type="number" min="0" max="100000" step="1" value="{{data.restime}}"/>
+          </div>
+        </div>
+
+        {% else %}
+        <h6>Other mode</h6>
+
+        {% endif %}
+
         <h6>Ventilation</h6>
         <div class="w-50 m-10 padder-30">
           <div id="rpm-slider"></div>
@@ -38,23 +60,23 @@
             <label for="input-min">min. RPM: </label><input class="input-number" id="input-min" type="number" min="0" max="9999" step="1"/>
             <label class="m-l-10" for="input-max">max. RPM: </label><input class="input-number" id="input-max" type="number" min="0" max="9999" step="1"/>
           </div>
-          <label for="input-temp">target temperature: </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data['target_temp']}}"/>
+          <label for="input-temp">target temperature: </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data.target_temp}}"/>
         </div>
 
         <h6> PID </h6>
         <div class="w-50 m-10 padder-30">
-          <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data['pidp']}}"/>
-          <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data['pidi']}}"/>
-          <label class="m-l-10" for="input-pidd">deriative: </label><input class="input-number" id="input-pidd" type="number" value="{{data['pidd']}}"/>
-          <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data['pidb']}}"/>
+          <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data.pidp}}"/>
+          <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data.pidi}}"/>
+          <label class="m-l-10" for="input-pidd">deriative: </label><input class="input-number" id="input-pidd" type="number" value="{{data.pidd}}"/>
+          <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data.pidb}}"/>
           <br/>
-          <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data['sensor_id']}}" min="0"/>
+          <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data.sensor_id}}" min="0"/>
         </div>
 
         <h6> Various </h6>
         <div class="w-50 m-10 padder-30">
-          <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data['filter_threshold']}}"/>
-          <label class="m-l-10" for="input-exttemp">external temperature: </label><input class="input-number" id="input-exttemp" type="number" value="{{data['exttemp']}}"/>
+          <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data.filter_threshold}}"/>
+          <label class="m-l-10" for="input-exttemp">external temperature: </label><input class="input-number" id="input-exttemp" type="number" value="{{data.exttemp}}"/>
 
         </div>
 
@@ -104,7 +126,7 @@
       // Setup basic slider
       var slider = document.getElementById('rpm-slider');
       noUiSlider.create(slider, {
-       start: [{{data['min_rpm']}}, {{data['max_rpm']}}],
+       start: [{{data.min_rpm}}, {{data.max_rpm}}],
        step: 1,
        connect: true,
        animate: true,
@@ -134,6 +156,6 @@
       });
 
       // Select default mode
-      $("#input-mode").val({{data['mode']}});
+      $("#input-mode").val({{data.mode}});
     </script>
   {% endblock %}

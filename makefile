@@ -6,6 +6,9 @@ install:
 clean:
 	rm -rf __pycache__/ src/__pycache__/
 
+clean_db:
+	rm -f config/database.sqlite3
+
 freeze:
 	pip freeze > requirements.txt
 

@@ -8,7 +8,8 @@ from flask_admin.contrib import sqla
 from wtforms.fields import PasswordField
 import os, time
 from src.json_parser import parse_json, post
-from src.db_init import db, User, Role, Config, setup_db
+from src.db_init import db, User, Role, Config, setup
+import crypt
 
 # Create app
 app = Flask(__name__)
@@ -16,23 +17,26 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 
 app.config['SECRET_KEY'] = 'n0b0dy-c0u1d-gue55-th15'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///config/database.sqlite3'
 # needed because this functionality is already depricated
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# the salt is a workaround for a bug, as flask-security salts tfrom flask_security.utils import encrypt_password, verify_password, get_hmache passwords automatically
-# but somehow it doesn't notice it.
-app.config['SECURITY_PASSWORD_SALT'] = os.urandom(256)
+# the salt is a workaround for a bug, as flask-security salts  passwords automatically but somehow it requires and uses this config value which breaks the login if the salt is individually unique (as a salt should be)
+app.config['SECURITY_PASSWORD_SALT'] = 'fake_salt'
 app.config['SECURITY_TRACKABLE'] = True
 app.config['SECURITY_REGISTERABLE'] = True
+app.config['SECURITY_FLASH_MESSAGES'] = True
 
 app.config['UPLOAD_FOLDER'] = 'config'
 # max upload size is 50 KB
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024
 ALLOWED_EXTENSIONS = set(['cfg'])
 
-# initialize empty database object
-db.init_app(app)
+with app.app_context():
+    db.init_app(app)
+    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+    security = Security(app, user_datastore)
+    setup(db, user_datastore)
 
 @app.context_processor
 def register_context():
@@ -42,9 +46,6 @@ def register_context():
         'current_user': current_user
     }
 
-# Setup Flask-Security
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
 
 # Customized User model for SQL-Admin
 class UserAdmin(sqla.ModelView):
@@ -71,7 +72,6 @@ class UserAdmin(sqla.ModelView):
 
         # If the password field isn't blank...
         if len(model.password2):
-            # ... then encrypt the new pasuser_datastoresword prior to storing it in the database. If the password field is blank,
             # the existing password in the database will be retained.
             model.password = utils.encrypt_password(model.password2)
 
@@ -90,10 +90,6 @@ admin = Admin(
 # Add Flask-Admin views for Users and Roles
 admin.add_view(UserAdmin(User, db.session))
 admin.add_view(RoleAdmin(Role, db.session))
-
-@app.before_first_request
-def setup():
-    setup_db(user_datastore)
 
 # Views
 @app.route('/')

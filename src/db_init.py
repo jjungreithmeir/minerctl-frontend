@@ -2,7 +2,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_security import UserMixin, RoleMixin, SQLAlchemyUserDatastore, Security
 from flask_security.utils import encrypt_password
 
-# Create database connection object
 db = SQLAlchemy()
 
 # Define models
@@ -41,15 +40,23 @@ class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     miner_number = db.Column(db.Integer())
 
+def check_db_populated():
+    try:
+        return len(User.query.all())
+    except:
+        return False
+
 # not needed anymore
-def setup_db(user_datastore):
+def populate_db(user_datastore):
     db.create_all()
-    user_datastore.find_or_create_role(name='admin')
-    if not user_datastore.get_user('user@email.com'):
-        user_datastore.create_user(email='user@email.com', password=encrypt_password('password'), roles=['admin'])
-    if not user_datastore.get_user('fake@email.com'):
-        user_datastore.create_user(email='fake@email.com', password=encrypt_password('password1'))
-    if not user_datastore.get_user('pseudo@email.com'):
-        user_datastore.create_user(email='pseudo@email.com', password=encrypt_password('password2'))
+    user_datastore.create_role(name='admin')
+    user_datastore.create_user(email='user@email.com', password=encrypt_password('password'), roles=['admin'])
+    user_datastore.create_user(email='fake@email.com', password=encrypt_password('password'))
+    user_datastore.create_user(email='person@email.com', password=encrypt_password('password'))
     db.session.add(Config(miner_number=99))
     db.session.commit()
+
+def setup(db, user_datastore):
+
+    if not check_db_populated():
+        populate_db(user_datastore)

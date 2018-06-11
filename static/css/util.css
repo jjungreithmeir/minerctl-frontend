@@ -1,3 +1,4 @@
+.no-padder { padding: 0px !important; }
 .padder { padding: 10px !important; }
 .padder-30 { padding: 30px !important; }
 .p-b-10 { padding-bottom: 10px !important; }
@@ -5,6 +6,8 @@
 .p-l-10 { padding-left: 10px !important; }
 .p-r-10 { padding-right: 10px !important; }
 
+.no-margin { margin: 0px !important; }
+.m-lr-2 { margin-left: 2px !important; margin-right: 2px !important; }
 .m-l-5 { margin-left: 5px !important; }
 .m-r-5 { margin-right: 5px !important; }
 .m-t-5 { margin-top: 5px !important; }
@@ -27,6 +30,9 @@
 .h-80 { height: 80% !important; }
 .w-30 { width: 30% !important; }
 .w-50 { width: 50% !important; }
+.w-45 { width: 45% !important; }
+
+.h-rig { height: 45px !important; }
 
 .font-large { font-size: 20px; }
 .font-medium { font-size: 15px; }
@@ -39,6 +45,8 @@
 .color-grey { color: #bdbdbd !important; }
 .color-main { color: #ee6e73 !important; }
 .bg-color-main { background-color: #ee6e73 !important; }
+.bg-color-grey { background-color: #bdbdbd; }
+.bg-color-white { background-color: white; }
 
 .float-right { float: right; }
 .float-left { float: left; }
@@ -71,6 +79,11 @@
   align-items: center;
 }
 
+.flex-v-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .detail-info { @extend .color-grey; font-size: 9px; }
 .login-field {
   width: 20%;

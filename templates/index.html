@@ -15,25 +15,27 @@
     {% endfor %}
   </div>
 
-  <div class="row">
-    {% for miner in range(config[0].number_of_miners) %}
-      <div class="col col-custom">
-        <div class="card" id="miner{{miner}}">
-          <a class='dropdown-trigger color-grey' href='#' data-target='minerConfig{{miner}}'>
-            <i class="material-icons float-right m-2">settings</i>
-          </a>
+  <div class="row flex">
+    {% set cnt = [1] %}
+    {% for row in range(config[0].number_of_miners // 10) %}
+      <div class="col 6 w-45">
+        <div class="bg-color-grey m-lr-2 padder">
+          <p class="font-bold font-white font-large center-align no-margin"> rack {{ row + 1}} </p>
 
-          <ul id='minerConfig{{miner}}' class='dropdown-content'>
-            <li class="dropdown-title font-bold">Miner #{{ miner }}</li>
-            <li><a href="#!">ON</a></li>
-            <li><a href="#!" onclick="disable('#miner{{miner}}')">OFF</a></li>
-            <li class="divider" tabindex="-1"></li>
-            <li><a href="#!">RESET</a></li>
-          </ul>
+          {% for miner in range(10) %}
+            <div class="h-rig">
+              <div class="bg-color-white z-depth-2 h-rig" id="miner{{ cnt[0] }}">
 
-          <div class="card-content">
-            <p>#{{ miner }} </p>
-          </div>
+                  <p class="">
+                    #{{ cnt[0] }}
+                      <a href="#!" class="right"><i title="reset" class="material-icons color-main">settings_backup_restore</i></a>
+                  </p>
+
+              </div>
+            </div>
+            {% if cnt.append(cnt.pop() + 1) %}{% endif %}
+          {% endfor %}
+
         </div>
       </div>
     {% endfor %}
@@ -51,10 +53,4 @@
 {% endblock %}
 
 {% block scripts %}
-  <script type="text/javascript">
-    $('.dropdown-trigger').dropdown();
-    function disable(id) {
-      $(id).addClass('disabled-miner')
-    }
-  </script>
 {% endblock %}

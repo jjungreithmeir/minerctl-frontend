@@ -1,44 +1,49 @@
-from flask import Flask, render_template, send_file, session, request, redirect
-from werkzeug import secure_filename
+"""
+This flask app acts as a frontend for flask-based JSON API which runs on a
+microcontroller. The mc is connected to multiple mining rigs and is responsible
+for controlling various variables regarding ventilation, resetting miners, etc.
+"""
+import os
+import time
+from flask import Flask, render_template, send_file, request, \
+    redirect, flash
+from werkzeug.utils import secure_filename
 from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
     RegisterForm, current_user, utils
 from flask_admin import Admin
 from flask_admin.contrib import sqla
 from wtforms.fields import PasswordField
-import os, time
-from src.json_parser import parse_json, post
+from src.json_parser import parse_json
 from src.db_init import db, User, Role, Config, setup
-import crypt
 
-# Create app
-app = Flask(__name__)
-# TODO PRODUCTION - remove
-app.config['DEBUG'] = True
+# Create APP
+APP = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'n0b0dy-c0u1d-gue55-th15'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///config/database.sqlite3'
+APP.config['SECRET_KEY'] = 'n0b0dy-c0u1d-gue55-th15'
+APP.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///config/database.sqlite3'
 # needed because this functionality is already depricated
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# the salt is a workaround for a bug, as flask-security salts  passwords automatically but somehow it requires and uses this config value which breaks the login if the salt is individually unique (as a salt should be)
-app.config['SECURITY_PASSWORD_SALT'] = 'fake_salt'
-app.config['SECURITY_TRACKABLE'] = True
-app.config['SECURITY_REGISTERABLE'] = True
-app.config['SECURITY_FLASH_MESSAGES'] = True
+# the salt is a workaround for a bug, as flask-security salts  passwords
+# automatically but somehow it requires and uses this config value which breaks
+# the login if the salt is individually unique (as a salt should be)
+APP.config['SECURITY_PASSWORD_SALT'] = 'fake_salt'
+APP.config['SECURITY_TRACKABLE'] = True
+APP.config['SECURITY_REGISTERABLE'] = True
 
-app.config['UPLOAD_FOLDER'] = 'config'
+APP.config['UPLOAD_FOLDER'] = 'config'
 # max upload size is 50 KB
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024
+APP.config['MAX_CONTENT_LENGTH'] = 50 * 1024
 ALLOWED_EXTENSIONS = set(['cfg'])
 
-with app.app_context():
-    db.init_app(app)
-    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-    security = Security(app, user_datastore)
-    setup(db, user_datastore)
+with APP.app_context():
+    db.init_app(APP)
+    USER_DATASTORE = SQLAlchemyUserDatastore(db, User, Role)
+    SECURITY = Security(APP, USER_DATASTORE)
+    setup(db, USER_DATASTORE)
 
-@app.context_processor
+@APP.context_processor
 def register_context():
     return {
         'url_for_security': url_for_security,
@@ -46,9 +51,10 @@ def register_context():
         'current_user': current_user
     }
 
-
-# Customized User model for SQL-Admin
 class UserAdmin(sqla.ModelView):
+    """
+    Customized User model for SQL-Admin
+    """
 
     # Don't display the password on the list of Users
     column_exclude_list = ('password',)
@@ -56,7 +62,9 @@ class UserAdmin(sqla.ModelView):
 
     create_modal = True
     edit_modal = True
-    form_excluded_columns = ('password', 'last_login_at', 'last_login_ip', 'current_login_at', 'current_login_ip', 'login_count')
+    form_excluded_columns = ('password', 'last_login_at', 'last_login_ip',
+                             'current_login_at', 'current_login_ip',
+                             'login_count')
 
     column_auto_select_related = True
 
@@ -71,39 +79,32 @@ class UserAdmin(sqla.ModelView):
     def on_model_change(self, form, model, is_created):
 
         # If the password field isn't blank...
-        if len(model.password2):
+        if model.password2:
             # the existing password in the database will be retained.
             model.password = utils.encrypt_password(model.password2)
 
-
-# Customized Role model for SQL-Admin
-class RoleAdmin(sqla.ModelView):
-    def is_accessible(self):
-        return current_user.has_role('admin')
-
 # Initialize Flask-Admin
-admin = Admin(
-    app,
+ADMIN = Admin(
+    APP,
     url='/mgmt'
 )
 
 # Add Flask-Admin views for Users and Roles
-admin.add_view(UserAdmin(User, db.session))
-admin.add_view(RoleAdmin(Role, db.session))
+ADMIN.add_view(UserAdmin(User, db.session))
 
 # Views
-@app.route('/')
+@APP.route('/')
 @login_required
 def index():
     return render_template('index.html', data=parse_json(), config=Config.query.all())
 
-@app.route('/settings')
+@APP.route('/settings')
 @login_required
 @roles_required('admin')
 def settings():
     return render_template('settings.html', data=parse_json(), config=Config.query.all())
 
-@app.route('/getconfig')
+@APP.route('/getconfig')
 @login_required
 @roles_required('admin')
 def get_config():
@@ -117,7 +118,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/upload', methods=['POST'])
+@APP.route('/upload', methods=['POST'])
 @login_required
 @roles_required('admin')
 def upload_file():
@@ -134,11 +135,12 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect('/')
+            file.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
+            return redirect('/settings')
+    return redirect('/')
 
-@app.route('/user')
+@APP.route('/user')
 @login_required
 @roles_required('admin')
-def user_mgmt():
-    return render_template('admin/user.html', userbase=User.query.all())
+def user():
+    return render_template('user.html', userbase=User.query.all())

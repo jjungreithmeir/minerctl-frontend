@@ -9,6 +9,9 @@ clean:
 clean_db:
 	rm -f config/database.sqlite3
 
+lint:
+	~/.local/bin/pylint controller.py
+
 freeze:
 	pip freeze > requirements.txt
 

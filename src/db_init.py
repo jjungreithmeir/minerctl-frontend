@@ -49,11 +49,17 @@ def check_db_populated():
 # not needed anymore
 def populate_db(user_datastore):
     db.create_all()
-    user_datastore.create_role(name='admin')
-    user_datastore.create_user(email='user@email.com', password=encrypt_password('password'), roles=['admin'])
-    user_datastore.create_user(email='fake@email.com', password=encrypt_password('password'))
-    user_datastore.create_user(email='person@email.com', password=encrypt_password('password'))
-    db.session.add(Config(miner_number=99))
+
+    with open('config/initial.config') as file:
+        content = file.read().splitlines()
+
+    cfg_username = content[0].split('=')[1]
+    cfg_password = content[1].split('=')[1]
+    cfg_miner_number = content[2].split('=')[1]
+
+    user_datastore.create_role(name='admin', description='Admins are able to manage users and configure the controller.')
+    user_datastore.create_user(email=cfg_username, password=encrypt_password(cfg_password), roles=['admin'])
+    db.session.add(Config(miner_number=cfg_miner_number))
     db.session.commit()
 
 def setup(db, user_datastore):

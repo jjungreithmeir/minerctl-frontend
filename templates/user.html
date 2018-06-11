@@ -14,7 +14,6 @@
           <th>login count</th>
           <th>roles</th>
           <th>account active</th>
-          <th>password (hashed) (shown for hash testing)</th>
           <th></th>
       </tr>
     </thead>
@@ -28,11 +27,10 @@
         <td>{{user.current_login_at}}</td>
         <td>{{user.current_login_ip}}</td>
         <td>{{user.login_count}}</td>
-        <td>{{user.roles}}</td>
+        <td>{{user.roles[0]}}</td>
         <td class="center-checkbox">
           <input type="checkbox" checked="{{user.active}}"/>
         </td>
-        <td>{{user.password}}</td>
         <td><a href="#!"><i title="delete user" class="material-icons color-main">delete</i></a> </td>
       </tr>
       {% endfor %}

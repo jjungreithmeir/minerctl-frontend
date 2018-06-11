@@ -81,7 +81,7 @@ def config():
 @APP.route('/getconfig')
 @login_required
 @roles_required('admin')
-def get_config():
+def getconfig():
     tmstmp = time.strftime("%Y%m%d-%H%M%S")
     return send_file('config/test.txt',
                      mimetype='text/plain',

@@ -6,13 +6,13 @@ for controlling various variables regarding ventilation, resetting miners, etc.
 import os
 import time
 from flask import Flask, render_template, send_file, request, \
-    redirect, flash
+    redirect, flash, url_for
 from werkzeug.utils import secure_filename
 from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
     RegisterForm, current_user, utils
 from wtforms.fields import PasswordField
-from src.json_parser import parse_json
+from src.json_parser import parse_json, post_json
 from src.db_init import db, User, Role, Config, setup
 
 # Create APP
@@ -58,8 +58,25 @@ def index():
 @APP.route('/settings')
 @login_required
 @roles_required('admin')
-def settings():
-    return render_template('settings.html', data=parse_json(), config=Config.query.all())
+def settings(saved=''):
+    """
+    saved is of type str because there are three valid states
+    '' ... show no toast
+    'success' or 'failure' ... show appropriate message
+    """
+    return render_template('settings.html', data=parse_json(), config=Config.query.all(), saved=saved)
+
+@APP.route('/config', methods=['POST'])
+@login_required
+@roles_required('admin')
+def config():
+    if request.method == 'POST':
+        error = post_json(request.form)
+    # TODO base response on return code
+    if error is None:
+        return settings(saved='success')
+    else:
+        return settings(saved='failure')
 
 @APP.route('/getconfig')
 @login_required

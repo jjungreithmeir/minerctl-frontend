@@ -60,6 +60,11 @@
 }
 .fill-parent { width: 100%; height: 100%; }
 
+.center-margin {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .flex {
   display: flex;
   justify-content: flex-end;

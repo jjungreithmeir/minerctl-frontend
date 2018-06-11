@@ -38,7 +38,7 @@ class User(db.Model, UserMixin):
 
 class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    miner_number = db.Column(db.Integer())
+    number_of_miners = db.Column(db.Integer())
 
 def check_db_populated():
     try:
@@ -59,7 +59,11 @@ def populate_db(user_datastore):
 
     user_datastore.create_role(name='admin', description='Admins are able to manage users and configure the controller.')
     user_datastore.create_user(email=cfg_username, password=encrypt_password(cfg_password), roles=['admin'])
-    db.session.add(Config(miner_number=cfg_miner_number))
+    db.session.add(Config(number_of_miners=cfg_miner_number))
+    db.session.commit()
+
+def update_config(dictionary):
+    db.session.query(Config).filter_by(id=1).update(dictionary)
     db.session.commit()
 
 def setup(db, user_datastore):

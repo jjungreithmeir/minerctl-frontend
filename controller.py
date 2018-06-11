@@ -5,8 +5,9 @@ for controlling various variables regarding ventilation, resetting miners, etc.
 """
 import os
 import time
+import json
 from flask import Flask, render_template, send_file, request, \
-    redirect, flash, url_for
+    redirect, Response, url_for
 from werkzeug.utils import secure_filename
 from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
@@ -70,13 +71,20 @@ def settings(saved=''):
 @login_required
 @roles_required('admin')
 def config():
-    if request.method == 'POST':
+    if request.form['action'] == 'save':
         error = post_json(request.form)
-    # TODO base response on return code
-    if error is None:
-        return settings(saved='success')
-    else:
-        return settings(saved='failure')
+        if error is None:
+            return settings(saved='success')
+        else:
+            return settings(saved='failure')
+    elif request.form['action'] == 'download':
+        tmstmp = time.strftime("%Y%m%d-%H%M%S")
+        return Response(
+            json.dumps(request.form),
+            mimetype='application/json',
+            headers={
+            'Content-Disposition':'attachment;filename=minerctl_'+tmstmp+'.cfg'}
+        )
 
 @APP.route('/getconfig')
 @login_required

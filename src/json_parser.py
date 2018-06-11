@@ -24,6 +24,5 @@ def post_json(list):
     r = requests.post(container_conn, data=copy)
     return r.raise_for_status()
 
-
 if __name__ == '__main__':
     print(parse_json())

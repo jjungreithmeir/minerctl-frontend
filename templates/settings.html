@@ -81,17 +81,17 @@
 
         </div>
 
-        <button class="m-10 btn waves-effect waves-light float-right bg-color-main" onclick="save()">Post changes
+        <button class="m-10 btn waves-effect waves-light float-right bg-color-main" name="action" value="save">Post changes
           <i class="material-icons right">save</i>
         </button>
 
-        <button class="m-10 btn waves-effect waves-light float-right bg-color-main modal-trigger" type="submit" name="action" data-target="modal-upload">Upload config
+        <button class="m-10 btn waves-effect waves-light float-right bg-color-main modal-trigger" name="action" data-target="modal-upload" value="upload">Upload config
           <i class="material-icons right">cloud_upload</i>
         </button>
 
-        <a href="/getconfig" class="m-10 btn waves-effect waves-light float-right bg-color-main" type="submit" name="action">Download config
+        <button class="m-10 btn waves-effect waves-light float-right bg-color-main" name="action" value="download">Download config
           <i class="material-icons right">cloud_download</i>
-        </a>
+        </button>
       </div>
     </div>
 </form>
@@ -102,7 +102,7 @@
     <div class="m-t-30">
       <form action="/upload" method="POST" enctype="multipart/form-data">
         <input type="file" name="file" />
-        <button class="btn waves-effect waves-light bg-color-main right" type="submit" name="action">Submit
+        <button class="btn waves-effect waves-light bg-color-main right" type="submit" name="action" value="upload">Submit
           <i class="material-icons right">cloud_upload</i>
         </button>
       </form>
@@ -120,14 +120,6 @@
       $(document).ready(function(){
         $('.modal').modal();
       });
-      function save() {
-        $.ajax({
-          url: '/config',
-          dataType : 'json',
-          data: $('#configuration').serialize(),
-          type: 'POST'
-        });
-      }
 
       // Setup basic slider
       var slider = document.getElementById('rpm-slider');

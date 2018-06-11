@@ -53,9 +53,9 @@ def populate_db(user_datastore):
     with open('config/initial.config') as file:
         content = file.read().splitlines()
 
-    cfg_username = content[0].split('=')[1]
-    cfg_password = content[1].split('=')[1]
-    cfg_miner_number = content[2].split('=')[1]
+    cfg_username = content[4].split('=')[1]
+    cfg_password = content[5].split('=')[1]
+    cfg_miner_number = content[6].split('=')[1]
 
     user_datastore.create_role(name='admin', description='Admins are able to manage users and configure the controller.')
     user_datastore.create_user(email=cfg_username, password=encrypt_password(cfg_password), roles=['admin'])

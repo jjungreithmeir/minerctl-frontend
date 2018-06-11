@@ -11,8 +11,6 @@ from werkzeug.utils import secure_filename
 from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
     RegisterForm, current_user, utils
-from flask_admin import Admin
-from flask_admin.contrib import sqla
 from wtforms.fields import PasswordField
 from src.json_parser import parse_json
 from src.db_init import db, User, Role, Config, setup
@@ -50,47 +48,6 @@ def register_context():
         'register_user_form': RegisterForm(),
         'current_user': current_user
     }
-
-class UserAdmin(sqla.ModelView):
-    """
-    Customized User model for SQL-Admin
-    """
-
-    # Don't display the password on the list of Users
-    column_exclude_list = ('password',)
-    column_searchable_list = ['email']
-
-    create_modal = True
-    edit_modal = True
-    form_excluded_columns = ('password', 'last_login_at', 'last_login_ip',
-                             'current_login_at', 'current_login_ip',
-                             'login_count')
-
-    column_auto_select_related = True
-
-    def is_accessible(self):
-        return current_user.has_role('admin')
-
-    def scaffold_form(self):
-        form_class = super(UserAdmin, self).scaffold_form()
-        form_class.password2 = PasswordField('New Password')
-        return form_class
-
-    def on_model_change(self, form, model, is_created):
-
-        # If the password field isn't blank...
-        if model.password2:
-            # the existing password in the database will be retained.
-            model.password = utils.encrypt_password(model.password2)
-
-# Initialize Flask-Admin
-ADMIN = Admin(
-    APP,
-    url='/mgmt'
-)
-
-# Add Flask-Admin views for Users and Roles
-ADMIN.add_view(UserAdmin(User, db.session))
 
 # Views
 @APP.route('/')

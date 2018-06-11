@@ -25,33 +25,38 @@
               <select id="input-mode" class="browser-default" name="mode">
                 <option value="0">GPU</option>
                 <option value="1">ASIC/FPGA</option>
-                <option value="2">other</option>
+                <option value="2">Testing</option>
               </select>
             </div>
           </div>
 
         </div>
+        {% if data.mode == "2" %}
+          <h6>Testing mode</h6>
+        {% endif %}
 
-        {% if data.mode == "0" %}
-        <h6>GPU mode</h6>
+        {% if data.mode == "0" or data.mode == "2" %}
+          {% if data.mode == "0" %}
+            <h6>GPU mode</h6>
+          {% endif %}
         <div class="w-50 m-10 padder-30">
           <div class="m-t-10">
             <label for="input-ontime">time to turn on miner in ms: </label><input class="input-number" id="input-ontime" type="number" min="0" max="100000" step="1" value="{{data.ontime}}" name="ontime"/>
             <label class="m-l-10" for="input-offtime">time to turn on miner in ms: </label><input class="input-number" id="input-offtime" type="number" min="0" max="100000" step="1" value="{{data.offtime}}" name="offtime"/>
           </div>
         </div>
+        {% endif %}
 
-        {% elif data.mode == "1" %}
-        <h6>ASIC/FPGA mode</h6>
+        {% if data.mode == "1" or data.mode == "2" %}
+          {% if data.mode == "1" %}
+            <h6>ASIC/FPGA mode</h6>
+          {% endif %}
+
         <div class="w-50 m-10 padder-30">
           <div class="m-t-10">
             <label for="input-restime">reset time in ms: </label><input class="input-number" id="input-restime" type="number" min="0" max="100000" step="1" value="{{data.restime}}" name="restime"/>
           </div>
         </div>
-
-        {% elif data.mode == "2" %}
-        <h6>Other mode</h6>
-
         {% endif %}
 
         <h6>Ventilation</h6>

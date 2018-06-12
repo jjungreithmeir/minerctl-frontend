@@ -23,14 +23,19 @@
           <p class="font-bold font-white font-large center-align no-margin"> rack {{ row + 1}} </p>
 
           {% for miner in range(10) %}
-            <div class="h-rig">
-              <div class="bg-color-white z-depth-2 h-rig" id="miner{{ cnt[0] }}">
-
+            <div class="h-rig m-b-5">
+              <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5" id="miner{{ cnt[0] }}">
                   <p class="">
                     #{{ cnt[0] }}
-                      <a href="#!" class="right"><i title="reset" class="material-icons color-main">settings_backup_restore</i></a>
                   </p>
+                  <div class="switch">
+                    <label>
+                      <input type="checkbox" checked>
+                      <span class="lever"></span>
+                    </label>
+                  </div>
 
+                  <a href="#!" class="right"><i title="reset" class="material-icons color-main">settings_backup_restore</i></a>
               </div>
             </div>
             {% if cnt.append(cnt.pop() + 1) %}{% endif %}

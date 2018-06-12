@@ -1,4 +1,5 @@
 .no-padder { padding: 0px !important; }
+.padder-5 { padding: 5px !important; }
 .padder { padding: 10px !important; }
 .padder-30 { padding: 30px !important; }
 .p-b-10 { padding-bottom: 10px !important; }
@@ -84,6 +85,12 @@
   flex-direction: column;
   justify-content: center;
 }
+
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+
 .detail-info { @extend .color-grey; font-size: 9px; }
 .login-field {
   width: 20%;
@@ -142,6 +149,10 @@ input[type="number"] {
 
 .nav-buttons a{
   margin-left: 20px;
+}
+
+.switch label .lever {
+  margin: 0 5px !important;
 }
 
 .rotate {

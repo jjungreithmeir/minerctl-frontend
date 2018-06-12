@@ -13,8 +13,8 @@ from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
     RegisterForm, current_user, utils
 from wtforms.fields import PasswordField
-from src.json_parser import parse_json, post_json
-from src.db_init import db, User, Role, Config, setup
+from src.json_parser import parse_json, post_json, resp_to_dict
+from src.db_init import db, User, Role, Config, setup, add_or_update_user, delete_user
 
 # Create APP
 APP = Flask(__name__)
@@ -110,14 +110,22 @@ def upload_file():
             return redirect('/settings')
     return redirect('/')
 
-@APP.route('/user')
+@APP.route('/user', methods=['GET', 'POST'])
 @roles_required('admin')
 def user():
-    return render_template('user.html', userbase=User.query.all())
-
-@APP.route('/register', methods=['GET', 'POST'])
-@roles_required('admin')
-def register():
-    print('asdf')
     if request.method == 'POST':
-        print(request.form)
+        data = resp_to_dict(request.form)
+        # the following code looks quite ridiculous, however, the problem is that
+        # the POST request either returns 'on' or None...
+        if request.form['action'] == 'add':
+            is_active = bool(request.form.get('active', None))
+            is_admin = bool(request.form.get('admin', None))
+            add_or_update_user(
+                username=data['username'],
+                password=data['password'],
+                active=is_active,
+                is_admin=is_admin)
+        elif request.form['action'] == 'delete':
+            delete_user(data['username'])
+
+    return render_template('user.html', userbase=User.query.all())

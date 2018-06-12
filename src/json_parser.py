@@ -28,5 +28,8 @@ def post_json(list):
     r = requests.post(container_conn, data=copy)
     return r.raise_for_status()
 
+def resp_to_dict(resp):
+    return resp.copy().to_dict()
+
 if __name__ == '__main__':
     print(parse_json())

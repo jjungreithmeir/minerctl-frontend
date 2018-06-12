@@ -30,25 +30,56 @@
         <td>{{user.login_count}}</td>
         <td>{{user.roles[0]}}</td>
         <td class="center-checkbox">
-          <input type="checkbox" checked="{{user.active}}" disabled="disabled"/>
+          {% if user.active == 1 %}
+          <input type="checkbox" checked disabled/>
+          {% elif user.active == 0 %}
+          <input type="checkbox" disabled/>
+          {% endif %}
         </td>
-        <td> <a href="#!"><i title="delete user" class="material-icons color-main">delete</i></a> </td>
+        <td class="p-b-0">
+
+          <form action="{{ url_for('user') }}" method="POST" name="delete" class="right">
+            <input type="text" name="username" value="{{user.email}}" hidden class="d-none">
+            <button class="btn-floating bg-color-main" type="submit" name="action" value="delete">
+              <i title="delete user" class="material-icons font-white">delete</i>
+            </button>
+          </form>
+
+          <button class="btn-floating bg-color-main right m-r-10" onclick="edit('{{user.email}}', '{{user.active}}', '{{user.roles[0]}}')">
+            <i title="delete user" class="material-icons font-white">edit</i>
+          </button>
+
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  <a class="btn-floating modal-trigger bg-color-main right m-t-10 m-r-15" data-target="modal-add-user"><i title="add new user" class="material-icons right" >add</i></a>
-  <div id="modal-add-user" class="modal">
-    <div class="modal-content m-b-20">
+  <a class="btn-floating modal-trigger bg-color-main right m-t-10 m-r-5" onclick="resetModal()" data-target="modal-add-user"><i title="add new user" class="material-icons right" >add</i></a>
+  <div id="modal-add-user" class="modal w-30">
+    <div class="modal-content m-b-20 p-b-0">
       <h4>add new user</h4>
-      <form action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
-        {{ register_user_form.hidden_tag() }}
-        {{ render_field_with_errors(register_user_form.email) }}
-        {{ render_field_with_errors(register_user_form.password) }}
-        {% if register_user_form.password_confirm %}
-          {{ render_field_with_errors(register_user_form.password_confirm) }}
-        {% endif %}
-        {{ render_field(register_user_form.submit) }}
+      <form action="{{ url_for('user') }}" method="POST" name="add" class="m-t-20">
+        <div class="input-field">
+          <input id="username" type="text" class="validate" name="username">
+          <label for="username">Email/Username</label>
+        </div>
+        <div class="input-field">
+          <input id="password" type="password" class="validate" name="password">
+          <label for="password">Password</label>
+        </div>
+        <div class="fix-checkbox">
+          <label>
+            <input id="active" type="checkbox" name="active" checked/>
+            <span>active</span>
+          </label>
+          <label>
+            <input id="admin" type="checkbox" name="admin"/>
+            <span>admin</span>
+          </label>
+        </div>
+        <button class="btn waves-effect waves-light bg-color-main right m-b-20" type="submit" name="action" value="add">
+          Add user
+        </button>
       </form>
     </div>
   </div>
@@ -61,5 +92,22 @@
   $(document).ready(function(){
     $('.modal').modal();
   });
+  function edit(username, is_active, is_admin) {
+    let elem = $('.modal')
+    let inst = M.Modal.getInstance(elem);
+    inst.open()
+
+    $("#username").val(username);
+    // is_active === 'True' is required because the python types are interpreted as strings
+    $("#active").prop('checked', is_active === 'True');
+    $("#admin").prop('checked', is_admin === 'admin');
+    M.updateTextFields();
+  }
+  function resetModal() {
+    $("#username").val('');
+    $("#active").prop('checked', true);
+    $("#admin").prop('checked', false);
+    M.updateTextFields();
+  }
 </script>
 {% endblock %}

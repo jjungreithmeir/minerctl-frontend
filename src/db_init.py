@@ -57,9 +57,37 @@ def populate_db(user_datastore):
     cfg_password = content[5].split('=')[1]
     cfg_miner_number = content[6].split('=')[1]
 
-    user_datastore.create_role(name='admin', description='Admins are able to manage users and configure the controller.')
-    user_datastore.create_user(email=cfg_username, password=encrypt_password(cfg_password), roles=['admin'])
+    user_datastore.create_role(
+        name='admin',
+        description='Admins are able to manage users and configure the controller.')
+    user_datastore.create_user(email=cfg_username,
+                               password=encrypt_password(cfg_password),
+                               roles=['admin'])
     db.session.add(Config(number_of_miners=cfg_miner_number))
+    db.session.commit()
+
+def add_or_update_user(username, password, is_admin=False, active=True):
+    USER_DATASTORE = SQLAlchemyUserDatastore(db, User, Role)
+    existing_user = USER_DATASTORE.find_user(email=username)
+    if existing_user:
+        user = User.query.filter_by(email=username).first()
+        user.email=username
+        user.password=encrypt_password(password)
+        user.active=active
+    else:
+        user = USER_DATASTORE.create_user(
+            email=username,
+            password=encrypt_password(password),
+            active=active)
+
+    if is_admin:
+        USER_DATASTORE.add_role_to_user(user, 'admin')
+    db.session.commit()
+
+def delete_user(username):
+    USER_DATASTORE = SQLAlchemyUserDatastore(db, User, Role)
+    user = USER_DATASTORE.find_user(email=username)
+    USER_DATASTORE.delete_user(user)
     db.session.commit()
 
 def update_config(dictionary):

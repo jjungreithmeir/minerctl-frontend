@@ -14,6 +14,10 @@ def post_json(list):
     """
     copy = list.copy().to_dict()
 
+    # removing artifacts from the POST request
+    copy.pop('action', None)
+    copy.pop('file', None)
+
     # removing values that need to be sent to the db directly
     # unfortunately there is no pop function for dicts
     db_data = {}

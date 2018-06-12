@@ -95,6 +95,11 @@
   align-items: center;
 }
 
+.flex-sb {
+  display: flex;
+  justify-content: space-between;
+}
+
 .detail-info { @extend .color-grey; font-size: 9px; }
 .login-field {
   width: 20%;

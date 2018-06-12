@@ -30,6 +30,7 @@ APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 APP.config['SECURITY_PASSWORD_SALT'] = 'fake_salt'
 APP.config['SECURITY_TRACKABLE'] = True
 APP.config['SECURITY_REGISTERABLE'] = True
+APP.config['SECURITY_CONFIRMABLE'] = False
 
 APP.config['UPLOAD_FOLDER'] = 'config'
 # max upload size is 50 KB
@@ -68,7 +69,6 @@ def settings(saved=''):
     return render_template('settings.html', data=parse_json(), config=Config.query.all(), saved=saved)
 
 @APP.route('/config', methods=['POST'])
-@login_required
 @roles_required('admin')
 def config():
     if request.form['action'] == 'save':
@@ -86,22 +86,11 @@ def config():
             'Content-Disposition':'attachment;filename=minerctl_'+tmstmp+'.cfg'}
         )
 
-@APP.route('/getconfig')
-@login_required
-@roles_required('admin')
-def getconfig():
-    tmstmp = time.strftime("%Y%m%d-%H%M%S")
-    return send_file('config/test.txt',
-                     mimetype='text/plain',
-                     attachment_filename='minerctl_'+tmstmp+'.cfg',
-                     as_attachment=True)
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @APP.route('/upload', methods=['POST'])
-@login_required
 @roles_required('admin')
 def upload_file():
     if request.method == 'POST':
@@ -122,7 +111,13 @@ def upload_file():
     return redirect('/')
 
 @APP.route('/user')
-@login_required
 @roles_required('admin')
 def user():
     return render_template('user.html', userbase=User.query.all())
+
+@APP.route('/register', methods=['GET', 'POST'])
+@roles_required('admin')
+def register():
+    print('asdf')
+    if request.method == 'POST':
+        print(request.form)

@@ -1,5 +1,4 @@
 {% from "security/_macros.html" import render_field_with_errors, render_field %}
-{% include "security/_messages.html" %}
 {% extends "base.html" %}
 
 {% block content %}
@@ -38,7 +37,7 @@
       {% endfor %}
     </tbody>
   </table>
-  <a class="btn-floating modal-trigger bg-color-main right m-t-10" data-target="modal-add-user"><i title="add new user" class="material-icons right" >add</i></a>
+  <a class="btn-floating modal-trigger bg-color-main right m-t-10 m-r-15" data-target="modal-add-user"><i title="add new user" class="material-icons right" >add</i></a>
   <div id="modal-add-user" class="modal">
     <div class="modal-content m-b-20">
       <h4>add new user</h4>

@@ -129,3 +129,6 @@ def user():
             delete_user(data['username'])
 
     return render_template('user.html', userbase=User.query.all())
+
+if __name__ == '__main__':
+    APP.run()

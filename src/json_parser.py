@@ -2,11 +2,16 @@ import requests
 import json
 from src.db_init import update_config
 
-container_conn = 'http://localhost:3000/info'
+container_conn = 'http://localhost:12345'
 
 def parse_json():
-    resp = requests.get(container_conn)
-    return resp.json()
+    info = requests.get(container_conn + '/info').json()
+    temps = requests.get(container_conn + '/temp').json()
+    filter = requests.get(container_conn + '/filter').json()
+    fans_rel = requests.get(container_conn + '/fans/abs').json()
+    pid = requests.get(container_conn + '/pid').json()
+    # Joining the dicts
+    return {**info, **temps, **filter, **fans_rel, **pid}
 
 def post_json(list):
     """
@@ -17,13 +22,6 @@ def post_json(list):
     # removing artifacts from the POST request
     copy.pop('action', None)
     copy.pop('file', None)
-
-    # removing values that need to be sent to the db directly
-    # unfortunately there is no pop function for dicts
-    db_data = {}
-    db_data['number_of_miners'] = copy['number_of_miners']
-    update_config(db_data)
-    del copy['number_of_miners']
 
     r = requests.post(container_conn, data=copy)
     return r.raise_for_status()

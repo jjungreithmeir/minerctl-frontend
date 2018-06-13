@@ -1,31 +1,87 @@
 {% extends "base.html" %}
 
+{% block title_addition %}
+   - firmware v{{ config.firmware_version }}
+{% endblock %}
+
 {% block content %}
 
-<!--
   <div class="row m-t-10">
-    {% for key, value in data.items() %}
-      <div class="col 1">
-        <div class="card">
-          <div class="card-content">
-            <span class="card-title"> {{key}} </span>
-            <p> {{value}} </p>
-          </div>
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title"> temperature </span>
+          <p> target: <span class="right">{{temp.target}} °C</span></p>
+          <p> external reference: &nbsp; <span class="right">{{temp.external}} °C</span></p>
+          <p> main sensor ID: <span class="right">#{{temp.sensor_id}}</span> </p>
+          {% for key, value in temp.measurements.items() %}
+            <p> sensor #{{key}}: <span class="right">{{value}} °C</span></p>
+          {% endfor %}
         </div>
       </div>
-    {% endfor %}
-  </div> -->
+    </div>
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title"> filter
+            {% if filter.status_ok %}
+              <i class="material-icons right" title="filter does not need to be cleaned">check</i>
+            {% else %}
+              <i class="material-icons right" title="CLEAN FILTER!">warning</i>
+            {% endif %}
+          </span>
+          <p> pressure difference: <span class="right"> &nbsp; {{filter.pressure_diff}} mBar </span></p>
+          <p> pressure threshold: <span class="right"> {{filter.threshold}} mBar </span></p>
+        </div>
+      </div>
+    </div>
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title"> PID </span>
+          <p> P: <span class="right">{{pid.proportional}}</span> </p>
+          <p> I: <span class="right">{{pid.integral}}</span> </p>
+          <p> D: <span class="right">{{pid.deriative}}</span> </p>
+          <p> bias: &nbsp; <span class="right">{{pid.bias}}</span> </p>
+        </div>
+      </div>
+    </div>
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title"> fans </span>
+          <p> min RPM: <span class="right">{{fans_abs.min_rpm}}</span></p>
+          <p> max RPM: <span class="right">{{fans_abs.max_rpm}}</span></p>
+          <p> current RPM: <span class="right"> &nbsp; {{fans_abs.rpm}}</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="col 1">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title"> operation </span>
+          {% if operation.active_mode == 0 %}
+            <p> mode: <span class="right">GPU</span></p>
+          {% elif operation.active_mode == 1 %}
+            <p> mode: <span class="right">FPGA</span></p>
+          {% elif operation.active_mode == 2 %}
+            <p> mode: <span class="right">testing</span></p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="row flex">
     {% set cnt = [1] %}
-    {% for row in range(config[0].number_of_miners // 10) %}
+    {% for row in range(config.number_of_miners // 10) %}
       <div class="col 6 w-45 padder-5">
         <div class="bg-color-grey m-lr-2 padder">
           <p class="font-bold font-white font-large center-align no-margin"> rack {{ row + 1}} </p>
 
           {% for miner in range(10) %}
             <div class="h-rig m-b-5">
-              {% if data.miners[cnt[0]] %}
+              {% if miners.miners[cnt[0]] %}
                 <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
               {% else %}
                 <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
@@ -36,7 +92,7 @@
                   </p>
                   <div class="switch">
                     <label>
-                      {% if data.miners[cnt[0]] %}
+                      {% if miners.miners[cnt[0]] %}
                         <input type="checkbox" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox">
                       {% else %}
                         <input type="checkbox" id="miner{{ cnt[0] }}-checkbox" onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox">

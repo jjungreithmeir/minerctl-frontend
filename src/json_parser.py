@@ -4,8 +4,8 @@ from src.db_init import update_config
 
 container_conn = 'http://localhost:12345'
 
-def parse_json():
-    return requests.get(container_conn + '/cfg').json()
+def parse_json(resource='/cfg'):
+    return requests.get(container_conn + resource).json()
 
 def post_json(list):
     """

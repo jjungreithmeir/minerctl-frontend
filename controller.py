@@ -55,7 +55,14 @@ def register_context():
 @APP.route('/')
 @login_required
 def index():
-    return render_template('index.html', data=parse_json(), config=Config.query.all())
+    return render_template('index.html',
+                           miners=parse_json(),
+                           config=parse_json('/info'),
+                           temp=parse_json('/temp'),
+                           filter=parse_json('/filter'),
+                           pid=parse_json('/pid'),
+                           fans_abs=parse_json('/fans/abs'),
+                           operation=parse_json('/mode'))
 
 @APP.route('/settings')
 @login_required

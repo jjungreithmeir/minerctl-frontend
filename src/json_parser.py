@@ -1,6 +1,5 @@
 import requests
 import json
-from src.db_init import update_config
 
 container_conn = 'http://localhost:12345'
 

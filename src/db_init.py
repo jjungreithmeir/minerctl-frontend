@@ -90,10 +90,6 @@ def delete_user(username):
     USER_DATASTORE.delete_user(user)
     db.session.commit()
 
-def update_config(dictionary):
-    db.session.query(Config).filter_by(id=1).update(dictionary)
-    db.session.commit()
-
 def setup(db, user_datastore):
 
     if not check_db_populated():

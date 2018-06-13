@@ -73,7 +73,7 @@ def settings(saved=''):
     '' ... show no toast
     'success' or 'failure' ... show appropriate message
     """
-    return render_template('settings.html', data=parse_json(), config=Config.query.all(), saved=saved)
+    return render_template('settings.html', data=parse_json(), saved=saved)
 
 @APP.route('/config', methods=['POST'])
 @roles_required('admin')

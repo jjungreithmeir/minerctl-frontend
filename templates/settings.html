@@ -16,7 +16,7 @@
 
         <h6>General</h6>
         <div class="w-50 m-10 padder-30">
-          <label for="input-miner">number of miners: </label><input class="input-number" id="input-miner" name="number_of_miners" type="number" min="1" max="120" value="{{config[0].number_of_miners}}"/>
+          <label for="input-miner">number of miners: </label><input class="input-number" id="input-miner" name="number_of_miners" type="number" min="1" max="120" value="{{data.number_of_miners}}"/>
           <div class="select-small">
             <div>
               <label for="input-mode">mode of operation: </label>
@@ -66,23 +66,23 @@
             <label for="input-min">min. RPM: </label><input class="input-number" id="input-min" type="number" min="0" max="9999" step="1" name="min_rpm"/>
             <label class="m-l-10" for="input-max">max. RPM: </label><input class="input-number" id="input-max" type="number" min="0" max="9999" step="1" name="max_rpm"/>
           </div>
-          <label for="input-temp">target temperature: </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data.target_temp}}" name="target_temp"/>
+          <label for="input-temp">target temperature: </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data.target}}" name="target_temp"/>
         </div>
 
         <h6> PID </h6>
         <div class="w-50 m-10 padder-30">
-          <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data.pidp}}" name="pidp"/>
-          <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data.pidi}}" name="pidi"/>
-          <label class="m-l-10" for="input-pidd">deriative: </label><input class="input-number" id="input-pidd" type="number" value="{{data.pidd}}" name="pidd"/>
-          <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data.pidb}}" name="pidb"/>
+          <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data.pid_proportional}}" name="pidp"/>
+          <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data.pid_integral}}" name="pidi"/>
+          <label class="m-l-10" for="input-pidd">deriative: </label><input class="input-number" id="input-pidd" type="number" value="{{data.pid_deriative}}" name="pidd"/>
+          <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data.pid_bias}}" name="pidb"/>
           <br/>
           <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data.sensor_id}}" min="0" name="sensor_id"/>
         </div>
 
         <h6> Various </h6>
         <div class="w-50 m-10 padder-30">
-          <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data.filter_threshold}}" name="filter_threshold"/>
-          <label class="m-l-10" for="input-exttemp">external temperature: </label><input class="input-number" id="input-exttemp" type="number" value="{{data.exttemp}}" name="exttemp"/>
+          <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data.threshold}}" name="filter_threshold"/>
+          <label class="m-l-10" for="input-exttemp">external temperature: </label><input class="input-number" id="input-exttemp" type="number" value="{{data.external}}" name="exttemp"/>
 
         </div>
 
@@ -129,7 +129,7 @@
       // Setup basic slider
       var slider = document.getElementById('rpm-slider');
       noUiSlider.create(slider, {
-       start: [{{data.min_rpm}}, {{data.max_rpm}}],
+       start: [{{data.abs_min_rpm}}, {{data.abs_max_rpm}}],
        step: 1,
        connect: true,
        animate: true,

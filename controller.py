@@ -73,7 +73,10 @@ def settings(saved=''):
     '' ... show no toast
     'success' or 'failure' ... show appropriate message
     """
-    return render_template('settings.html', data=parse_json(), saved=saved)
+    return render_template('settings.html',
+                           data=parse_json(),
+                           config=parse_json('/info'),
+                           saved=saved)
 
 @APP.route('/config', methods=['POST'])
 @roles_required('admin')
@@ -135,7 +138,9 @@ def user():
         elif request.form['action'] == 'delete':
             delete_user(data['username'])
 
-    return render_template('user.html', userbase=User.query.all())
+    return render_template('user.html',
+                           userbase=User.query.all(),
+                           config=parse_json('/info'))
 
 if __name__ == '__main__':
     APP.run()

@@ -5,6 +5,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   {% endblock %}
 
+  {% block title_addition %}
+     - firmware v{{ config.firmware_version }}
+  {% endblock %}
+
   {% block content %}
   <form action="/config" method="POST" id="configuration">
 
@@ -86,15 +90,15 @@
 
         </div>
 
-        <button class="m-10 btn waves-effect waves-light float-right bg-color-main" name="action" value="save">Post changes
+        <button class="m-10 btn waves-effect waves-light right bg-color-main" name="action" value="save">Post changes
           <i class="material-icons right">save</i>
         </button>
 
-        <button class="m-10 btn waves-effect waves-light float-right bg-color-main modal-trigger" name="action" data-target="modal-upload" value="upload">Upload config
+        <button class="m-10 btn waves-effect waves-light right bg-color-main modal-trigger" name="action" data-target="modal-upload" value="upload">Upload config
           <i class="material-icons right">cloud_upload</i>
         </button>
 
-        <button class="m-10 btn waves-effect waves-light float-right bg-color-main" name="action" value="download">Download config
+        <button class="m-10 btn waves-effect waves-light right bg-color-main" name="action" value="download">Download config
           <i class="material-icons right">cloud_download</i>
         </button>
       </div>

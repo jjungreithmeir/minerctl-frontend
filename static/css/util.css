@@ -62,9 +62,6 @@
 .bg-color-grey { background-color: #bdbdbd; }
 .bg-color-white { background-color: white; }
 
-.float-right { float: right; }
-.float-left { float: left; }
-
 .pos-rel { position: relative; }
 .pos-abs { position: absolute; }
 .trans-center {

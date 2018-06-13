@@ -55,10 +55,12 @@
 .font-black { color: #000; }
 .font-white { color: #fff; }
 .font-bold { font-weight: 700; }
+.font-transparent { opacity: 0.5; }
 
+.color-black { color: #000000 !important; }
 .color-grey { color: #bdbdbd !important; }
-.color-main { color: #ee6e73 !important; }
-.bg-color-main { background-color: #ee6e73 !important; }
+.color-main { color: #6db03f !important; }
+.bg-color-main { background-color: #6db03f !important; }
 .bg-color-grey { background-color: #bdbdbd; }
 .bg-color-white { background-color: white; }
 

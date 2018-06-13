@@ -62,6 +62,7 @@ def index():
                            filter=parse_json('/filter'),
                            pid=parse_json('/pid'),
                            fans_abs=parse_json('/fans/abs'),
+                           fans_rel=parse_json('/fans/rel'),
                            operation=parse_json('/mode'))
 
 @APP.route('/settings')

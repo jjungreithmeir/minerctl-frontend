@@ -5,13 +5,7 @@ from src.db_init import update_config
 container_conn = 'http://localhost:12345'
 
 def parse_json():
-    info = requests.get(container_conn + '/info').json()
-    temps = requests.get(container_conn + '/temp').json()
-    filter = requests.get(container_conn + '/filter').json()
-    fans_rel = requests.get(container_conn + '/fans/abs').json()
-    pid = requests.get(container_conn + '/pid').json()
-    # Joining the dicts
-    return {**info, **temps, **filter, **fans_rel, **pid}
+    return requests.get(container_conn + '/cfg').json()
 
 def post_json(list):
     """

@@ -2,6 +2,7 @@
 
 {% block content %}
 
+<!--
   <div class="row m-t-10">
     {% for key, value in data.items() %}
       <div class="col 1">
@@ -13,7 +14,7 @@
         </div>
       </div>
     {% endfor %}
-  </div>
+  </div> -->
 
   <div class="row flex">
     {% set cnt = [1] %}
@@ -24,13 +25,22 @@
 
           {% for miner in range(10) %}
             <div class="h-rig m-b-5">
-              <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+              {% if data.miners[cnt[0]] %}
+                <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+              {% else %}
+                <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+              {% endif %}
+
                   <p class="">
                     #{{ cnt[0] }}
                   </p>
                   <div class="switch">
                     <label>
-                      <input type="checkbox" checked>
+                      {% if data.miners[cnt[0]] %}
+                        <input type="checkbox" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox">
+                      {% else %}
+                        <input type="checkbox" id="miner{{ cnt[0] }}-checkbox" onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox">
+                      {% endif %}
                       <span class="lever"></span>
                     </label>
                   </div>
@@ -58,4 +68,9 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript">
+  function toggleMinerCSS(selector) {
+    $('#'+selector).toggleClass('disabled-miner', $('#'+selector + '-checkbox').val());
+  }
+</script>
 {% endblock %}

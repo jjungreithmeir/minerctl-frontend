@@ -79,7 +79,7 @@
         <div class="w-50 m-10 padder-30">
           <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data.pid_proportional}}" name="proportional"/>
           <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data.pid_integral}}" name="integral"/>
-          <label class="m-l-10" for="input-pidd">deriative: </label><input class="input-number" id="input-pidd" type="number" value="{{data.pid_deriative}}" name="deriative"/>
+          <label class="m-l-10" for="input-pidd">derivative: </label><input class="input-number" id="input-pidd" type="number" value="{{data.pid_derivative}}" name="derivative"/>
           <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data.pid_bias}}" name="bias"/>
           <br/>
           <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data.sensor_id}}" min="0" name="sensor_id"/>
@@ -135,14 +135,17 @@
       // Setup basic slider
       var slider = document.getElementById('rpm-slider');
       noUiSlider.create(slider, {
-       start: [{{data.abs_min_rpm}}, {{data.abs_max_rpm}}],
+       start: [{{data.min_rpm}}, {{data.max_rpm}}],
        step: 1,
        connect: true,
        animate: true,
        range: {
          'min': 0,
-         'max': 9999 // TODO change to realistic setting
-       }
+         'max': 100
+       },
+       format: wNumb({
+          decimals: 0
+        })
       });
 
       // Connect the <input> fields to the slider

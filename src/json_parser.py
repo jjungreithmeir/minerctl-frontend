@@ -9,7 +9,7 @@ sess.mount('http://', adapter)
 def parse_json(resource='/cfg'):
     return sess.get(container_conn + resource).json()
 
-def post_json(list, resource='/cfg'):
+def put_json(list, resource='/cfg'):
     """
     Returns True if the POST action has been executed successfully.
     """
@@ -18,9 +18,6 @@ def post_json(list, resource='/cfg'):
     # removing artifacts from the POST request
     copy.pop('action', None)
     copy.pop('file', None)
-
-    # TODO remove
-    print(copy)
 
     r = sess.put(container_conn + resource, data=copy)
     return r.raise_for_status()

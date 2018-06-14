@@ -13,7 +13,7 @@ from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
     RegisterForm, current_user, utils
 from wtforms.fields import PasswordField
-from src.json_parser import parse_json, post_json, resp_to_dict
+from src.json_parser import parse_json, put_json, resp_to_dict
 from src.db_init import db, User, Role, Config, setup, add_or_update_user, delete_user
 
 # Create APP
@@ -61,8 +61,7 @@ def index():
                            temp=parse_json('/temp'),
                            filter=parse_json('/filter'),
                            pid=parse_json('/pid'),
-                           fans_abs=parse_json('/fans/abs'),
-                           fans_rel=parse_json('/fans/rel'),
+                           fans=parse_json('/fans'),
                            operation=parse_json('/mode'))
 
 @APP.route('/settings')
@@ -83,7 +82,7 @@ def settings(saved=''):
 @roles_required('admin')
 def config():
     if request.form['action'] == 'save':
-        error = post_json(request.form)
+        error = put_json(request.form)
         if error is None:
             return settings(saved='success')
         else:
@@ -118,6 +117,8 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
+            # TODO add put request
+
             return redirect('/settings')
     return redirect('/')
 

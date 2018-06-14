@@ -94,9 +94,9 @@
                   <div class="switch">
                     <label>
                       {% if miners.miners[cnt[0]] %}
-                        <input type="checkbox" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox">
+                        <input type="checkbox" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
                       {% else %}
-                        <input type="checkbox" id="miner{{ cnt[0] }}-checkbox" onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox">
+                        <input type="checkbox" id="miner{{ cnt[0] }}-checkbox" onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
                       {% endif %}
                       <span class="lever"></span>
                     </label>

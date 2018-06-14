@@ -144,4 +144,4 @@ def user():
                            config=parse_json('/info'))
 
 if __name__ == '__main__':
-    APP.run()
+    APP.run(host='0.0.0.0', port=80)

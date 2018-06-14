@@ -67,12 +67,12 @@
         <div class="w-50 m-10 padder-30">
           <div id="rpm-slider"></div>
           <div class="m-t-10">
-            <label for="input-min">min. RPM: </label>
-            <input class="input-number" id="input-min" type="number" min="0" max="9999" step="1" name="abs_min_rpm"/>
-            <label class="m-l-10" for="input-max">max. RPM: </label>
-            <input class="input-number" id="input-max" type="number" min="0" max="9999" step="1" name="abs_max_rpm"/>
+            <label for="input-min">min. RPM (%): </label>
+            <input class="input-number" id="input-min" type="number" min="0" max="100" step="1" name="min_rpm"/>
+            <label class="m-l-10" for="input-max">max. RPM (%): </label>
+            <input class="input-number" id="input-max" type="number" min="0" max="100" step="1" name="max_rpm"/>
           </div>
-          <label for="input-temp">target temperature: </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data.target}}" name="target"/>
+          <label for="input-temp">target temperature (°C): </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data.target}}" name="target"/>
         </div>
 
         <h6> PID </h6>
@@ -87,8 +87,8 @@
 
         <h6> Various </h6>
         <div class="w-50 m-10 padder-30">
-          <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data.threshold}}" name="threshold"/>
-          <label class="m-l-10" for="input-exttemp">external temperature: </label><input class="input-number" id="input-exttemp" type="number" value="{{data.external}}" name="external"/>
+          <label for="input-filter">filter threshold (mBar): </label><input class="input-number" id="input-filter" type="number" value="{{data.threshold}}" name="threshold"/>
+          <label class="m-l-10" for="input-exttemp">external temperature (°C): </label><input class="input-number" id="input-exttemp" type="number" value="{{data.external}}" name="external"/>
 
         </div>
 

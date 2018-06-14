@@ -73,7 +73,7 @@
 
           {% for miner in range(10) %}
             <div class="h-rig m-b-5">
-              {% if miners.miners[cnt[0]] %}
+              {% if miners.miners[cnt[0]] or operation.active_mode == 'gpu'%}
                 <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
               {% else %}
                 <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
@@ -82,7 +82,7 @@
                   <p class="">
                     #{{ cnt[0] }}
                   </p>
-                  {% if operation.active_mode == 'gpu' %}
+                  {% if operation.active_mode == 'fpga' %}
                   <div class="switch">
                     <label>
                       {% if miners.miners[cnt[0]] %}
@@ -93,6 +93,11 @@
                       <span class="lever"></span>
                     </label>
                   </div>
+                  {% elif operation.active_mode == 'gpu' %}
+                    <div>
+                      <a class="waves-effect waves-light btn btn-tiny bg-color-main">ON</a>
+                      <a class="waves-effect waves-light btn btn-tiny bg-color-red">OFF</a>
+                    </div>
                   {% endif %}
                   <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a>
               </div>
@@ -120,6 +125,9 @@
 <script type="text/javascript">
   function toggleMinerCSS(selector) {
     $('#'+selector).toggleClass('disabled-miner', $('#'+selector + '-checkbox').val());
+  }
+  function removeMinerCSS(selector) {
+    $('#'+selector).removeClass('disabled-miner', $('#'+selector + '-checkbox').val());
   }
 </script>
 {% endblock %}

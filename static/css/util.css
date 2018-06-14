@@ -65,9 +65,18 @@
 .bg-color-main { background-color: #6db03f !important; }
 .bg-color-grey { background-color: #bdbdbd; }
 .bg-color-white { background-color: white; }
+.bg-color-red { background-color: #D90000 !important; }
 
 .pos-rel { position: relative; }
 .pos-abs { position: absolute; }
+
+.btn-tiny {
+  font-size: 10px !important;
+  line-height: unset !important;
+  height: unset !important;
+  padding: 0px !important;
+}
+
 .trans-center {
   top: 50%;
   left: 50%;

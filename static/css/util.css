@@ -46,6 +46,8 @@
 .w-50 { width: 50% !important; }
 .w-45 { width: 45% !important; }
 
+.w-150px { width: 150px !important; }
+
 .h-rig { height: 45px !important; }
 
 .font-large { font-size: 20px; }
@@ -88,8 +90,9 @@
 
 .flex {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-around;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .flex-v-center {

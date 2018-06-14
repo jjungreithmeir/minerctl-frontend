@@ -39,7 +39,7 @@
 
 .border-0 { border: 0px !important; }
 .pointer { cursor: pointer; }
-.d-none { display: none; }
+.d-none { display: none !important; }
 
 .h-80 { height: 80% !important; }
 .w-30 { width: 30% !important; }

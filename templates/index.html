@@ -73,10 +73,12 @@
 
           {% for miner in range(10) %}
             <div class="h-rig m-b-5">
-              {% if miners.miners[cnt[0]] or operation.active_mode == 'gpu'%}
+              {% if miners.miners[cnt[0] - 1] == True or operation.active_mode == 'gpu' and miners.miners[cnt[0] - 1] != None %}
                 <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
-              {% else %}
+              {% elif miners.miners[cnt[0] - 1] == False %}
                 <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+              {% else %}
+                <div class="d-none z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}" hidden>
               {% endif %}
 
                   <p class="">
@@ -85,7 +87,7 @@
                   {% if operation.active_mode == 'fpga' %}
                   <div class="switch">
                     <label>
-                      {% if miners.miners[cnt[0]] %}
+                      {% if miners.miners[cnt[0] - 1] %}
                         <input type="checkbox" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
                       {% else %}
                         <input type="checkbox" id="miner{{ cnt[0] }}-checkbox" onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">

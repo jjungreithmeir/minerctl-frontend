@@ -58,13 +58,7 @@
       <div class="card">
         <div class="card-content">
           <span class="card-title"> operation </span>
-          {% if operation.active_mode == 0 %}
-            <p> mode: <span class="right">GPU</span></p>
-          {% elif operation.active_mode == 1 %}
-            <p> mode: <span class="right">FPGA</span></p>
-          {% elif operation.active_mode == 2 %}
-            <p> mode: <span class="right">testing</span></p>
-          {% endif %}
+            <p> mode: <span class="right">{{operation.active_mode}}</span></p>
         </div>
       </div>
     </div>
@@ -88,6 +82,7 @@
                   <p class="">
                     #{{ cnt[0] }}
                   </p>
+                  {% if operation.active_mode == 'gpu' %}
                   <div class="switch">
                     <label>
                       {% if miners.miners[cnt[0]] %}
@@ -98,7 +93,7 @@
                       <span class="lever"></span>
                     </label>
                   </div>
-
+                  {% endif %}
                   <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a>
               </div>
             </div>

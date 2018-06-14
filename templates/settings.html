@@ -27,9 +27,8 @@
             </div>
             <div class="m-l-5">
               <select id="input-mode" class="browser-default" name="active_mode">
-                <option value="0">GPU</option>
-                <option value="1">ASIC/FPGA</option>
-                <option value="2">Testing</option>
+                <option value="gpu">GPU</option>
+                <option value="fpga">ASIC/FPGA</option>
               </select>
             </div>
           </div>
@@ -168,7 +167,7 @@
       });
 
       // Select default mode
-      $("#input-mode").val({{data.mode}});
+      $("#input-mode").val({{data.active_mode}});
 
       {% if saved == 'success' %}
         M.toast({html: 'Configuration saved successfully.', classes: 'rounded'});

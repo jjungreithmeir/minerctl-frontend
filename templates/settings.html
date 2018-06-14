@@ -10,7 +10,7 @@
   {% endblock %}
 
   {% block content %}
-  <form action="/config" method="POST" id="configuration">
+  <form action="{{url_for('settings')}}" method="POST" id="configuration">
 
     <div class="container">
 

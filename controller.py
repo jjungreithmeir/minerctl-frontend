@@ -64,37 +64,36 @@ def index():
                            fans=parse_json('/fans'),
                            operation=parse_json('/mode'))
 
-@APP.route('/settings')
+@APP.route('/settings', methods=['GET', 'POST'])
 @login_required
 @roles_required('admin')
-def settings(saved=''):
+def settings():
     """
     saved is of type str because there are three valid states
     '' ... show no toast
     'success' or 'failure' ... show appropriate message
     """
+    saved = ''
+    if request.method == 'POST':
+        if request.form['action'] == 'save':
+            error = put_json(request.form)
+            if error is None:
+                saved='success'
+            else:
+                saved='failure'
+        elif request.form['action'] == 'download':
+            tmstmp = time.strftime("%Y%m%d-%H%M%S")
+            return Response(
+                json.dumps(request.form),
+                mimetype='application/json',
+                headers={
+                'Content-Disposition':'attachment;filename=minerctl_'+tmstmp+'.cfg'}
+            )
+
     return render_template('settings.html',
                            data=parse_json(),
                            config=parse_json('/info'),
                            saved=saved)
-
-@APP.route('/config', methods=['POST'])
-@roles_required('admin')
-def config():
-    if request.form['action'] == 'save':
-        error = put_json(request.form)
-        if error is None:
-            return settings(saved='success')
-        else:
-            return settings(saved='failure')
-    elif request.form['action'] == 'download':
-        tmstmp = time.strftime("%Y%m%d-%H%M%S")
-        return Response(
-            json.dumps(request.form),
-            mimetype='application/json',
-            headers={
-            'Content-Disposition':'attachment;filename=minerctl_'+tmstmp+'.cfg'}
-        )
 
 def allowed_file(filename):
     return '.' in filename and \

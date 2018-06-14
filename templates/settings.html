@@ -26,7 +26,7 @@
               <label for="input-mode">mode of operation: </label>
             </div>
             <div class="m-l-5">
-              <select id="input-mode" class="browser-default" name="mode">
+              <select id="input-mode" class="browser-default" name="active_mode">
                 <option value="0">GPU</option>
                 <option value="1">ASIC/FPGA</option>
                 <option value="2">Testing</option>
@@ -67,26 +67,28 @@
         <div class="w-50 m-10 padder-30">
           <div id="rpm-slider"></div>
           <div class="m-t-10">
-            <label for="input-min">min. RPM: </label><input class="input-number" id="input-min" type="number" min="0" max="9999" step="1" name="min_rpm"/>
-            <label class="m-l-10" for="input-max">max. RPM: </label><input class="input-number" id="input-max" type="number" min="0" max="9999" step="1" name="max_rpm"/>
+            <label for="input-min">min. RPM: </label>
+            <input class="input-number" id="input-min" type="number" min="0" max="9999" step="1" name="abs_min_rpm"/>
+            <label class="m-l-10" for="input-max">max. RPM: </label>
+            <input class="input-number" id="input-max" type="number" min="0" max="9999" step="1" name="abs_max_rpm"/>
           </div>
-          <label for="input-temp">target temperature: </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data.target}}" name="target_temp"/>
+          <label for="input-temp">target temperature: </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data.target}}" name="target"/>
         </div>
 
         <h6> PID </h6>
         <div class="w-50 m-10 padder-30">
-          <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data.pid_proportional}}" name="pidp"/>
-          <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data.pid_integral}}" name="pidi"/>
-          <label class="m-l-10" for="input-pidd">deriative: </label><input class="input-number" id="input-pidd" type="number" value="{{data.pid_deriative}}" name="pidd"/>
-          <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data.pid_bias}}" name="pidb"/>
+          <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data.pid_proportional}}" name="proportional"/>
+          <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data.pid_integral}}" name="integral"/>
+          <label class="m-l-10" for="input-pidd">deriative: </label><input class="input-number" id="input-pidd" type="number" value="{{data.pid_deriative}}" name="deriative"/>
+          <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data.pid_bias}}" name="bias"/>
           <br/>
           <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data.sensor_id}}" min="0" name="sensor_id"/>
         </div>
 
         <h6> Various </h6>
         <div class="w-50 m-10 padder-30">
-          <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data.threshold}}" name="filter_threshold"/>
-          <label class="m-l-10" for="input-exttemp">external temperature: </label><input class="input-number" id="input-exttemp" type="number" value="{{data.external}}" name="exttemp"/>
+          <label for="input-filter">filter threshold: </label><input class="input-number" id="input-filter" type="number" value="{{data.threshold}}" name="threshold"/>
+          <label class="m-l-10" for="input-exttemp">external temperature: </label><input class="input-number" id="input-exttemp" type="number" value="{{data.external}}" name="external"/>
 
         </div>
 
@@ -150,7 +152,7 @@
       slider.noUiSlider.on('update', function( values, handle ) {
       	var value = values[handle];
       	if (handle) {
-      		inputMax.value = value;
+      		inputMax.value = Math.round(value);
       	} else {
       		inputMin.value = Math.round(value);
       	}

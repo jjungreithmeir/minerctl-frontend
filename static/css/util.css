@@ -122,6 +122,7 @@
 
 .detail-info { @extend .color-grey; font-size: 9px; }
 .login-field {
+  min-width: 300px !important;
   width: 20%;
   border-style: solid;
   border-width: 1px;

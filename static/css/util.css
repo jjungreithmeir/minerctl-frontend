@@ -71,10 +71,10 @@
 .pos-abs { position: absolute; }
 
 .btn-tiny {
-  font-size: 10px !important;
+  font-size: 12px !important;
   line-height: unset !important;
   height: unset !important;
-  padding: 0px !important;
+  padding: 3px !important;
 }
 
 .trans-center {

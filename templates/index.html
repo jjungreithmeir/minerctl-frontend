@@ -101,7 +101,9 @@
                       <a class="waves-effect waves-light btn btn-tiny bg-color-red">OFF</a>
                     </div>
                   {% endif %}
-                  <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a>
+                  {% if operation.active_mode == 'fpga' %}
+                    <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a>
+                  {% endif %}
               </div>
             </div>
             {% if cnt.append(cnt.pop() + 1) %}{% endif %}

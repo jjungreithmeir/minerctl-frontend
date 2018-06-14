@@ -13,8 +13,9 @@ from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
     RegisterForm, current_user, utils
 from wtforms.fields import PasswordField
-from src.json_parser import parse_json, put_json, resp_to_dict
-from src.db_init import db, User, Role, Config, setup, add_or_update_user, delete_user
+from src.json_parser import parse_json, put_dict, resp_to_dict, put_str
+from src.db_init import db, User, Role, Config, setup, add_or_update_user, \
+    delete_user
 
 # Create APP
 APP = Flask(__name__)
@@ -76,15 +77,17 @@ def settings():
     saved = ''
     if request.method == 'POST':
         if request.form['action'] == 'save':
-            error = put_json(request.form)
+            error = put_dict(request.form)
             if error is None:
                 saved='success'
             else:
                 saved='failure'
         elif request.form['action'] == 'download':
             tmstmp = time.strftime("%Y%m%d-%H%M%S")
+            data = request.form.copy()
+            data.pop('action', None)
             return Response(
-                json.dumps(request.form),
+                json.dumps(data),
                 mimetype='application/json',
                 headers={
                 'Content-Disposition':'attachment;filename=minerctl_'+tmstmp+'.cfg'}
@@ -114,9 +117,12 @@ def upload_file():
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
-            # TODO add put request
+            filename = 'current_conf.cfg'
+            path = os.path.join(APP.config['UPLOAD_FOLDER'], filename)
+            file.save(path)
+
+            with open(path) as json_file:
+                put_str(json_file)
 
             return redirect('/settings')
     return redirect('/')

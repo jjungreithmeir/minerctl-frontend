@@ -94,6 +94,8 @@ def settings():
                 headers={
                 'Content-Disposition':'attachment;filename=minerctl_'+tmstmp+'.cfg'}
             )
+        # POST/Redirect/GET
+        return redirect(url_for('settings'))
     return render_template('settings.html',
                            data=parse_json(),
                            config=parse_json('/info'),
@@ -154,6 +156,8 @@ def user():
                 is_admin=form.is_admin.data)
         elif request.form.get('action') == 'delete':
             delete_user(data['username'])
+        # POST/Redirect/GET
+        return redirect(url_for('user'))
 
     return render_template('user.html',
                            userbase=User.query.all(),

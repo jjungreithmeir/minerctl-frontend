@@ -41,18 +41,13 @@
           {% endif %}
         </td>
         <td class="p-b-0">
-
-          <form action="{{ url_for('user') }}" method="POST" name="delete" class="right">
-            <input type="text" name="username" value="{{user.email}}" hidden class="d-none">
-            <button class="btn-floating bg-color-main" type="submit" name="action" value="delete">
-              <i title="delete user" class="material-icons font-white">delete</i>
-            </button>
-          </form>
-
-          <button class="btn-floating bg-color-main right m-r-10" onclick="edit('{{user.email}}', '{{user.active}}', '{{user.roles[0]}}')">
-            <i title="delete user" class="material-icons font-white">edit</i>
+          <button class="btn-floating bg-color-main modal-trigger right m-b-10" data-target="modal-delete-confirmation" title="delete user" onclick="pickUser('{{user.email}}')">
+            <i class="material-icons font-white">delete</i>
           </button>
 
+          <button class="btn-floating bg-color-main right m-r-10" onclick="edit('{{user.email}}', '{{user.active}}', '{{user.roles[0]}}')" title="edit user">
+            <i class="material-icons font-white">edit</i>
+          </button>
         </td>
       </tr>
       {% endfor %}
@@ -87,6 +82,23 @@
       </form>
     </div>
   </div>
+  <div id="modal-delete-confirmation" class="modal">
+    <div class="modal-content">
+      <h4>Warning!</h4>
+      <p>You are about to permanently delete a user account! Are you sure you want to proceed?</p>
+    </div>
+    <div class="modal-footer">
+      <form action="{{ url_for('user') }}" method="POST" name="delete" class="right">
+        <input type="text" name="username" id="hidden-username" value="" class="d-none"/>
+        <button class="btn bg-color-red modal-close">
+          No, take me out of here.
+        </button>
+        <button class="btn bg-color-main" type="submit" name="action" value="delete">
+          Yes, I am sure.
+        </button>
+      </form>
+    </div>
+  </div>
 </div>
 
 {% endblock %}
@@ -97,7 +109,7 @@
     $('.modal').modal();
   });
   function edit(username, is_active, is_admin) {
-    let elem = $('.modal')
+    let elem = $('#modal-add-user')
     let inst = M.Modal.getInstance(elem);
     inst.open()
 
@@ -112,6 +124,9 @@
     $("#active").prop('checked', true);
     $("#admin").prop('checked', false);
     M.updateTextFields();
+  }
+  function pickUser(user) {
+    $("#hidden-username").val(user);
   }
 </script>
 {% endblock %}

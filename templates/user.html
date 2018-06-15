@@ -55,6 +55,8 @@
   </table>
   <a class="btn-floating modal-trigger bg-color-main right m-t-10 m-r-5" onclick="resetModal()" data-target="modal-add-user"><i title="add new user" class="material-icons right" >add</i></a>
   <div id="modal-add-user" class="modal w-30">
+    <a class="modal-close color-main right m-t-10 m-r-10"><i class="small material-icons right" >close</i></a>
+
     <div class="modal-content m-b-20 p-b-0">
       <h4>add new user</h4>
       <form action="{{ url_for('user') }}" method="POST" name="add" class="m-t-20">

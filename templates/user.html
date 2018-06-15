@@ -115,6 +115,7 @@
     inst.open()
 
     $("#username").val(username);
+    $("#username").prop("disabled", true);
     // is_active === 'True' is required because the python types are interpreted as strings
     $("#active").prop('checked', is_active === 'True');
     $("#admin").prop('checked', is_admin === 'admin');
@@ -122,6 +123,7 @@
   }
   function resetModal() {
     $("#username").val('');
+    $("#username").prop("disabled", false);
     $("#active").prop('checked', true);
     $("#admin").prop('checked', false);
     M.updateTextFields();

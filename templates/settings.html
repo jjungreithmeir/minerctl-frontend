@@ -34,33 +34,25 @@
           </div>
 
         </div>
-        {% if data.mode == "2" %}
-          <h6>Testing mode</h6>
-        {% endif %}
 
-        {% if data.mode == "0" or data.mode == "2" %}
-          {% if data.mode == "0" %}
-            <h6>GPU mode</h6>
-          {% endif %}
-        <div class="w-50 m-10 padder-30">
-          <div class="m-t-10">
-            <label for="input-ontime">time to turn on miner in ms: </label><input class="input-number" id="input-ontime" type="number" min="0" max="100000" step="1" value="{{data.ontime}}" name="ontime"/>
-            <label class="m-l-10" for="input-offtime">time to turn on miner in ms: </label><input class="input-number" id="input-offtime" type="number" min="0" max="100000" step="1" value="{{data.offtime}}" name="offtime"/>
+        <div id="gpu-mode-settings" class="hide-div">
+          <h6>GPU mode</h6>
+          <div class="w-50 m-10 padder-30">
+            <div class="m-t-10">
+              <label for="input-ontime">time to turn on miner in ms: </label><input class="input-number" id="input-ontime" type="number" min="0" max="100000" step="1" value="{{data.ontime}}" name="ontime"/>
+              <label class="m-l-10" for="input-offtime">time to turn on miner in ms: </label><input class="input-number" id="input-offtime" type="number" min="0" max="100000" step="1" value="{{data.offtime}}" name="offtime"/>
+            </div>
           </div>
         </div>
-        {% endif %}
 
-        {% if data.mode == "1" or data.mode == "2" %}
-          {% if data.mode == "1" %}
-            <h6>ASIC/FPGA mode</h6>
-          {% endif %}
-
-        <div class="w-50 m-10 padder-30">
-          <div class="m-t-10">
-            <label for="input-restime">reset time in ms: </label><input class="input-number" id="input-restime" type="number" min="0" max="100000" step="1" value="{{data.restime}}" name="restime"/>
+        <div id="fpga-mode-settings" class="hide-div">
+          <h6>ASIC/FPGA mode</h6>
+          <div class="w-50 m-10 padder-30">
+            <div class="m-t-10">
+              <label for="input-restime">reset time in ms: </label><input class="input-number" id="input-restime" type="number" min="0" max="100000" step="1" value="{{data.restime}}" name="restime"/>
+            </div>
           </div>
         </div>
-        {% endif %}
 
         <h6>Ventilation</h6>
         <div class="w-50 m-10 padder-30">
@@ -167,7 +159,17 @@
       });
 
       // Select default mode
-      $("#input-mode").val({{data.active_mode}});
+      $("#input-mode").val('{{data.active_mode}}');
+
+      // Live changing of mode settings
+      $(function(){
+                $('#input-mode').change(function(){
+                  var selected = $(this).find(':selected').val();
+                  $(".hide-div").hide();
+                  $('#' + selected + '-mode-settings').show();
+                }).change()
+      });
+
 
       {% if saved == 'success' %}
         M.toast({html: 'Configuration saved successfully.', classes: 'rounded'});

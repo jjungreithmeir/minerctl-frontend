@@ -1,100 +1,94 @@
-  {% extends "base.html" %}
+ {% extends "base.html" %}
+ {% block css %}
+<link href="{{ url_for('static',filename='css/nouislider.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
+{% endblock %}
+{% block title_addition %} - firmware v{{ config.firmware_version }} {% endblock %} {% block content %}
+<form action="{{url_for('settings')}}" method="POST" id="configuration">
 
-  {% block css %}
-    <link href="{{ url_for('static',filename='css/nouislider.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
-  {% endblock %}
+  <div class="container">
 
-  {% block title_addition %}
-     - firmware v{{ config.firmware_version }}
-  {% endblock %}
+    <h3> Settings </h3>
+    <div class="divider"></div>
+    <div class="section">
 
-  {% block content %}
-  <form action="{{url_for('settings')}}" method="POST" id="configuration">
-
-    <div class="container">
-
-      <h3> Settings </h3>
-      <div class="divider"></div>
-      <div class="section">
-
-        <h6>General</h6>
-        <div class="w-50 m-10 padder-30">
-          <label for="input-miner">number of miners: </label><input class="input-number" id="input-miner" name="number_of_miners" type="number" min="1" max="120" value="{{data.number_of_miners}}"/>
-          <div class="select-small">
-            <div>
-              <label for="input-mode">mode of operation: </label>
-            </div>
-            <div class="m-l-5">
-              <select id="input-mode" class="browser-default" name="active_mode">
+      <h6>General</h6>
+      <div class="w-50 m-10 padder-30">
+        <label for="input-miner">number of miners: </label><input class="input-number" id="input-miner" name="number_of_miners" type="number" min="1" max="120" value="{{data.number_of_miners}}" />
+        <div class="select-small">
+          <div>
+            <label for="input-mode">mode of operation: </label>
+          </div>
+          <div class="m-l-5">
+            <select id="input-mode" class="browser-default" name="active_mode">
                 <option value="gpu">GPU</option>
                 <option value="fpga">ASIC/FPGA</option>
               </select>
-            </div>
-          </div>
-
-        </div>
-
-        <div id="gpu-mode-settings" class="hide-div">
-          <h6>GPU mode</h6>
-          <div class="w-50 m-10 padder-30">
-            <div class="m-t-10">
-              <label for="input-ontime">time to turn on miner in ms: </label><input class="input-number" id="input-ontime" type="number" min="0" max="100000" step="1" value="{{data.ontime}}" name="ontime"/>
-              <label class="m-l-10" for="input-offtime">time to turn on miner in ms: </label><input class="input-number" id="input-offtime" type="number" min="0" max="100000" step="1" value="{{data.offtime}}" name="offtime"/>
-            </div>
           </div>
         </div>
 
-        <div id="fpga-mode-settings" class="hide-div">
-          <h6>ASIC/FPGA mode</h6>
-          <div class="w-50 m-10 padder-30">
-            <div class="m-t-10">
-              <label for="input-restime">reset time in ms: </label><input class="input-number" id="input-restime" type="number" min="0" max="100000" step="1" value="{{data.restime}}" name="restime"/>
-            </div>
-          </div>
-        </div>
+      </div>
 
-        <h6>Ventilation</h6>
+      <div id="gpu-mode-settings" class="hide-div">
+        <h6>GPU mode</h6>
         <div class="w-50 m-10 padder-30">
-          <div id="rpm-slider"></div>
           <div class="m-t-10">
-            <label for="input-min">min. RPM (%): </label>
-            <input class="input-number" id="input-min" type="number" min="0" max="100" step="1" name="min_rpm"/>
-            <label class="m-l-10" for="input-max">max. RPM (%): </label>
-            <input class="input-number" id="input-max" type="number" min="0" max="100" step="1" name="max_rpm"/>
+            <label for="input-ontime">time to turn on miner in ms: </label><input class="input-number" id="input-ontime" type="number" min="0" max="100000" step="1" value="{{data.ontime}}" name="ontime" />
+            <label class="m-l-10" for="input-offtime">time to turn on miner in ms: </label><input class="input-number" id="input-offtime" type="number" min="0" max="100000" step="1" value="{{data.offtime}}" name="offtime" />
           </div>
-          <label for="input-temp">target temperature (°C): </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data.target}}" name="target"/>
         </div>
+      </div>
 
-        <h6> PID </h6>
+      <div id="fpga-mode-settings" class="hide-div">
+        <h6>ASIC/FPGA mode</h6>
         <div class="w-50 m-10 padder-30">
-          <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data.pid_proportional}}" name="proportional"/>
-          <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data.pid_integral}}" name="integral"/>
-          <label class="m-l-10" for="input-pidd">derivative: </label><input class="input-number" id="input-pidd" type="number" value="{{data.pid_derivative}}" name="derivative"/>
-          <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data.pid_bias}}" name="bias"/>
-          <br/>
-          <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data.sensor_id}}" min="0" name="sensor_id"/>
+          <div class="m-t-10">
+            <label for="input-restime">reset time in ms: </label><input class="input-number" id="input-restime" type="number" min="0" max="100000" step="1" value="{{data.restime}}" name="restime" />
+          </div>
         </div>
+      </div>
 
-        <h6> Various </h6>
-        <div class="w-50 m-10 padder-30">
-          <label for="input-filter">filter threshold (mBar): </label><input class="input-number" id="input-filter" type="number" value="{{data.threshold}}" name="threshold"/>
-          <label class="m-l-10" for="input-exttemp">external temperature (°C): </label><input class="input-number" id="input-exttemp" type="number" value="{{data.external}}" name="external"/>
-
+      <h6>Ventilation</h6>
+      <div class="w-50 m-10 padder-30">
+        <div id="rpm-slider"></div>
+        <div class="m-t-10">
+          <label for="input-min">min. RPM (%): </label>
+          <input class="input-number" id="input-min" type="number" min="0" max="100" step="1" name="min_rpm" />
+          <label class="m-l-10" for="input-max">max. RPM (%): </label>
+          <input class="input-number" id="input-max" type="number" min="0" max="100" step="1" name="max_rpm" />
         </div>
+        <label for="input-temp">target temperature (°C): </label><input class="input-number" id="input-temp" type="number" min="0" max="100" step="1" value="{{data.target}}" name="target" />
+      </div>
 
-        <button class="m-10 btn waves-effect waves-light right bg-color-main" name="action" value="save">Post changes
+      <h6> PID </h6>
+      <div class="w-50 m-10 padder-30">
+        <label for="input-pidp">proportional: </label><input class="input-number" id="input-pidp" type="number" value="{{data.pid_proportional}}" name="proportional" />
+        <label class="m-l-10" for="input-pidi">integral: </label><input class="input-number" id="input-pidi" type="number" value="{{data.pid_integral}}" name="integral" />
+        <label class="m-l-10" for="input-pidd">derivative: </label><input class="input-number" id="input-pidd" type="number" value="{{data.pid_derivative}}" name="derivative" />
+        <label class="m-l-10" for="input-pidb">bias: </label><input class="input-number" id="input-pidb" type="number" value="{{data.pid_bias}}" name="bias" />
+        <br/>
+        <label for="input-sensor">main sensor id: </label><input class="input-number" id="input-sensor" type="number" value="{{data.sensor_id}}" min="0" name="sensor_id" />
+      </div>
+
+      <h6> Various </h6>
+      <div class="w-50 m-10 padder-30">
+        <label for="input-filter">filter threshold (mBar): </label><input class="input-number" id="input-filter" type="number" value="{{data.threshold}}" name="threshold" />
+        <label class="m-l-10" for="input-exttemp">external temperature (°C): </label><input class="input-number" id="input-exttemp" type="number" value="{{data.external}}" name="external" />
+
+      </div>
+
+      <button class="m-10 btn waves-effect waves-light right bg-color-main" name="action" value="save">Post changes
           <i class="material-icons right">save</i>
         </button>
 
-        <button class="m-10 btn waves-effect waves-light right bg-color-main modal-trigger" name="action" data-target="modal-upload" value="upload">Upload config
+      <button class="m-10 btn waves-effect waves-light right bg-color-main modal-trigger" name="action" data-target="modal-upload" value="upload">Upload config
           <i class="material-icons right">cloud_upload</i>
         </button>
 
-        <button class="m-10 btn waves-effect waves-light right bg-color-main" name="action" value="download">Download config
+      <button class="m-10 btn waves-effect waves-light right bg-color-main" name="action" value="download">Download config
           <i class="material-icons right">cloud_download</i>
         </button>
-      </div>
     </div>
+  </div>
 </form>
 <div id="modal-upload" class="modal w-30">
   <a class="modal-close color-main right m-t-10 m-r-10"><i class="small material-icons right" >close</i></a>
@@ -111,70 +105,69 @@
     </div>
   </div>
 </div>
-  {% endblock %}
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript" src="static/js/nouislider.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('select').formSelect();
+  });
+  $(document).ready(function() {
+    $('.modal').modal();
+  });
 
-  {% block scripts %}
-    <script type="text/javascript" src="static/js/nouislider.min.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function(){
-        $('select').formSelect();
-      });
-      $(document).ready(function(){
-        $('.modal').modal();
-      });
+  // Setup basic slider
+  var slider = document.getElementById('rpm-slider');
+  noUiSlider.create(slider, {
+    start: [{{ data.min_rpm }}, {{data.max_rpm}}],
+    step: 1,
+    connect: true,
+    animate: true,
+    range: {
+      'min': 0,
+      'max': 100
+    },
+    format: wNumb({
+      decimals: 0
+    })
+  });
 
-      // Setup basic slider
-      var slider = document.getElementById('rpm-slider');
-      noUiSlider.create(slider, {
-       start: [{{data.min_rpm}}, {{data.max_rpm}}],
-       step: 1,
-       connect: true,
-       animate: true,
-       range: {
-         'min': 0,
-         'max': 100
-       },
-       format: wNumb({
-          decimals: 0
-        })
-      });
+  // Connect the <input> fields to the slider
+  var inputMin = document.getElementById('input-min');
+  var inputMax = document.getElementById('input-max');
 
-      // Connect the <input> fields to the slider
-      var inputMin = document.getElementById('input-min');
-      var inputMax = document.getElementById('input-max');
+  slider.noUiSlider.on('update', function(values, handle) {
+    var value = values[handle];
+    if (handle) {
+      inputMax.value = Math.round(value);
+    } else {
+      inputMin.value = Math.round(value);
+    }
+  });
+  inputMin.addEventListener('change', function() {
+    slider.noUiSlider.set([this.value, null]);
+  });
+  inputMax.addEventListener('change', function() {
+    slider.noUiSlider.set([null, this.value]);
+  });
 
-      slider.noUiSlider.on('update', function( values, handle ) {
-      	var value = values[handle];
-      	if (handle) {
-      		inputMax.value = Math.round(value);
-      	} else {
-      		inputMin.value = Math.round(value);
-      	}
-      });
-      inputMin.addEventListener('change', function(){
-      	slider.noUiSlider.set([this.value, null]);
-      });
-      inputMax.addEventListener('change', function(){
-      	slider.noUiSlider.set([null, this.value]);
-      });
+  // Select default mode
+  $("#input-mode").val('{{data.active_mode}}');
 
-      // Select default mode
-      $("#input-mode").val('{{data.active_mode}}');
-
-      // Live changing of mode settings
-      $(function(){
-                $('#input-mode').change(function(){
-                  var selected = $(this).find(':selected').val();
-                  $(".hide-div").hide();
-                  $('#' + selected + '-mode-settings').show();
-                }).change()
-      });
+  // Live changing of mode settings
+  $(function() {
+    $('#input-mode').change(function() {
+      var selected = $(this).find(':selected').val();
+      $(".hide-div").hide();
+      $('#' + selected + '-mode-settings').show();
+    }).change()
+  });
 
 
-      {% if saved == 'success' %}
-        M.toast({html: 'Configuration saved successfully.', classes: 'rounded'});
-      {% elif saved == 'failure' %}
-        M.toast({html: 'Configuration could not be saved.', classes: 'rounded'});
-      {% endif %}
-    </script>
-  {% endblock %}
+  {% if saved == 'success' %}
+  M.toast({html: 'Configuration saved successfully.',classes: 'rounded'});
+  {% elif saved == 'failure' %}
+  M.toast({html: 'Configuration could not be saved.',classes: 'rounded'});
+  {% endif %}
+</script>
+{% endblock %}

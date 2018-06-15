@@ -1,25 +1,18 @@
-{% from "security/_macros.html" import render_field_with_errors, render_field %}
-{% extends "base.html" %}
-
-{% block title_addition %}
-   - firmware v{{ config.firmware_version }}
-{% endblock %}
-
-{% block content %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %} {% extends "base.html" %} {% block title_addition %} - firmware v{{ config.firmware_version }} {% endblock %} {% block content %}
 
 <div class="container m-t-20">
   <table class="highlight">
     <thead>
       <tr>
-          <th>email</th>
-          <th>last login at</th>
-          <th>last login IP</th>
-          <th>current login at</th>
-          <th>current login IP</th>
-          <th>login count</th>
-          <th>roles</th>
-          <th>account active</th>
-          <th></th>
+        <th>email</th>
+        <th>last login at</th>
+        <th>last login IP</th>
+        <th>current login at</th>
+        <th>current login IP</th>
+        <th>login count</th>
+        <th>roles</th>
+        <th>account active</th>
+        <th></th>
       </tr>
     </thead>
 
@@ -35,7 +28,7 @@
         <td>{{user.roles[0]}}</td>
         <td class="center-checkbox">
           {% if user.active == 1 %}
-          <input type="checkbox" checked disabled/>
+          <input type="checkbox" checked disabled/> 
           {% elif user.active == 0 %}
           <input type="checkbox" disabled/>
           {% endif %}
@@ -61,19 +54,16 @@
       <h4>add new user</h4>
       {% from "helpers/_formhelpers.html" import render_field, render_checkbox, render_hidden_field %}
       <form action="{{ url_for('user') }}" method="POST" name="add">
-          <dl>
-            {{ render_hidden_field(form.is_update, label='', id='is_update') }}
-            {{ render_field(form.email, id='username') }}
-            {{ render_field(form.password) }}
-            {{ render_field(form.confirm) }}
-            <div class="flex m-t-10">
-              {{ render_checkbox(form.active, label='active', id='active') }} {{ render_checkbox(form.is_admin, label='admin', id='admin') }}
-            </div>
-          </dl>
-          <button class="btn waves-effect waves-light bg-color-main right m-b-20" type="submit" value="register">
+        <dl>
+          {{ render_hidden_field(form.is_update, label='', id='is_update') }} {{ render_field(form.email, id='username') }} {{ render_field(form.password) }} {{ render_field(form.confirm) }}
+          <div class="flex m-t-10">
+            {{ render_checkbox(form.active, label='active', id='active') }} {{ render_checkbox(form.is_admin, label='admin', id='admin') }}
+          </div>
+        </dl>
+        <button class="btn waves-effect waves-light bg-color-main right m-b-20" type="submit" value="register">
             Add user
           </button>
-        </form>
+      </form>
     </div>
   </div>
   <div id="modal-delete-confirmation" class="modal w-30">
@@ -84,7 +74,7 @@
     </div>
     <div class="modal-footer">
       <form action="{{ url_for('user') }}" method="POST" name="delete" class="right">
-        <input type="text" name="username" id="hidden-username" value="" class="d-none"/>
+        <input type="text" name="username" id="hidden-username" value="" class="d-none" />
         <button class="btn bg-color-main modal-close m-r-10" type="button">
           No, take me out of here.
         </button>
@@ -97,12 +87,12 @@
 </div>
 
 {% endblock %}
-
 {% block scripts %}
 <script type="text/javascript">
-  $(document).ready(function(){
+  $(document).ready(function() {
     $('.modal').modal();
   });
+
   function edit(username, is_active, is_admin) {
     let elem = $('#modal-add-user')
     let inst = M.Modal.getInstance(elem);
@@ -114,6 +104,7 @@
     $("#is_update").val('updating');
     M.updateTextFields();
   }
+
   function resetModal() {
     $("#username").val('');
     $("#username").prop("readonly", false);
@@ -122,6 +113,7 @@
     $("#is_update").val('');
     M.updateTextFields();
   }
+
   function pickUser(user) {
     $("#hidden-username").val(user);
     if (user == "{{current_user}}") {

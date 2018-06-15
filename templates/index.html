@@ -1,93 +1,90 @@
 {% extends "base.html" %}
-
-{% block title_addition %}
-   - firmware v{{ config.firmware_version }}
-{% endblock %}
+{% block title_addition %} - firmware v{{ config.firmware_version }} {% endblock %}
 
 {% block content %}
 
-  <div class="row m-t-10">
-    <div class="col 1">
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title"> temperature </span>
-          <p> target: <span class="right">{{temp.target}} °C</span></p>
-          <p> external reference: &nbsp; <span class="right">{{temp.external}} °C</span></p>
-          <p> main sensor ID: <span class="right">#{{temp.sensor_id}}</span> </p>
-          {% for key, value in temp.measurements.items() %}
-            <p> sensor #{{key}}: <span class="right">{{value}} °C</span></p>
-          {% endfor %}
-        </div>
+<div class="row m-t-10">
+  <div class="col 1">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title"> temperature </span>
+        <p> target: <span class="right">{{temp.target}} °C</span></p>
+        <p> external reference: &nbsp; <span class="right">{{temp.external}} °C</span></p>
+        <p> main sensor ID: <span class="right">#{{temp.sensor_id}}</span> </p>
+        {% for key, value in temp.measurements.items() %}
+        <p> sensor #{{key}}: <span class="right">{{value}} °C</span></p>
+        {% endfor %}
       </div>
     </div>
-    <div class="col 1">
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title"> filter
+  </div>
+  <div class="col 1">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title"> filter
             {% if filter.status_ok %}
               <i class="material-icons right" title="filter does not need to be cleaned">check</i>
             {% else %}
               <i class="material-icons right" title="CLEAN FILTER!">warning</i>
             {% endif %}
           </span>
-          <p> pressure difference: <span class="right"> &nbsp; {{filter.pressure_diff}} mBar </span></p>
-          <p> pressure threshold: <span class="right"> {{filter.threshold}} mBar </span></p>
-        </div>
-      </div>
-    </div>
-    <div class="col 1">
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title"> fans </span>
-          <p> min RPM:
-            <span class="right">{{fans.min_rpm}}%&nbsp;
-            </span>
-          </p>
-          <p> max RPM:
-            <span class="right">{{fans.max_rpm}}%&nbsp;
-            </span>
-          </p>
-          <p> current RPM:
-            <span class="right">&nbsp;{{fans.rpm}}%&nbsp;
-            </span>
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="col 1">
-      <div class="card">
-        <div class="card-content">
-          <span class="card-title"> operation </span>
-            <p> mode: <span class="right">{{operation.active_mode}}</span></p>
-        </div>
+        <p> pressure difference: <span class="right"> &nbsp; {{filter.pressure_diff}} mBar </span></p>
+        <p> pressure threshold: <span class="right"> {{filter.threshold}} mBar </span></p>
       </div>
     </div>
   </div>
+  <div class="col 1">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title"> fans </span>
+        <p> min RPM:
+          <span class="right">{{fans.min_rpm}}%&nbsp;
+            </span>
+        </p>
+        <p> max RPM:
+          <span class="right">{{fans.max_rpm}}%&nbsp;
+            </span>
+        </p>
+        <p> current RPM:
+          <span class="right">&nbsp;{{fans.rpm}}%&nbsp;
+            </span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col 1">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title"> operation </span>
+        <p> mode: <span class="right">{{operation.active_mode}}</span></p>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <div class="row flex">
-    {% set cnt = [1] %}
-    {% for row in range(config.number_of_miners // 10) %}
-      <div class="col 6 w-150px padder-5">
+<div class="row flex">
+  {% set cnt = [1] %}
+  {% for row in range(config.number_of_miners // 10) %}
+  <div class="col 6 w-150px padder-5">
 
-        <div class="bg-color-grey m-lr-2 padder">
-          <p class="font-bold font-white font-large center-align no-margin"> rack {{ row + 1}} </p>
+    <div class="bg-color-grey m-lr-2 padder">
+      <p class="font-bold font-white font-large center-align no-margin"> rack {{ row + 1}} </p>
 
-          {% for miner in range(10) %}
-            <div class="h-rig m-b-5">
-              {% if miners.miners[cnt[0] - 1] == True or operation.active_mode == 'gpu' and miners.miners[cnt[0] - 1] != None %}
-                <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
-              {% elif miners.miners[cnt[0] - 1] == False %}
-                <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
-              {% else %}
-                <div class="d-none z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}" hidden>
+      {% for miner in range(10) %}
+      <div class="h-rig m-b-5">
+        {% if miners.miners[cnt[0] - 1] == True or operation.active_mode == 'gpu' and miners.miners[cnt[0] - 1] != None %}
+        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+          {% elif miners.miners[cnt[0] - 1] == False %}
+          <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+            {% else %}
+            <div class="d-none z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}" hidden>
               {% endif %}
 
-                  <p class="">
-                    #{{ cnt[0] }}
-                  </p>
-                  {% if operation.active_mode == 'fpga' %}
-                  <div class="switch">
-                    <label>
+              <p class="">
+                #{{ cnt[0] }}
+              </p>
+              {% if operation.active_mode == 'fpga' %}
+              <div class="switch">
+                <label>
                       {% if miners.miners[cnt[0] - 1] %}
                         <input type="checkbox" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
                       {% else %}
@@ -95,51 +92,48 @@
                       {% endif %}
                       <span class="lever"></span>
                     </label>
-                  </div>
-                  {% elif operation.active_mode == 'gpu' %}
-                    <div>
-                      <a class="waves-effect waves-light btn btn-tiny bg-color-main">ON</a>
-                      <a class="waves-effect waves-light btn btn-tiny bg-color-red">OFF</a>
-                    </div>
-                  {% endif %}
-                  {% if operation.active_mode == 'fpga' %}
-                    <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a>
-                  {% endif %}
               </div>
+              {% elif operation.active_mode == 'gpu' %}
+              <div>
+                <a class="waves-effect waves-light btn btn-tiny bg-color-main">ON</a>
+                <a class="waves-effect waves-light btn btn-tiny bg-color-red">OFF</a>
+              </div>
+              {% endif %} {% if operation.active_mode == 'fpga' %}
+              <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a> {% endif %}
             </div>
-            {% if cnt.append(cnt.pop() + 1) %}{% endif %}
-          {% endfor %}
+          </div>
+          {% if cnt.append(cnt.pop() + 1) %}{% endif %} {% endfor %}
 
         </div>
       </div>
-    {% endfor %}
-  </div>
-
-  <div id="cancel" class="modal">
-    <div class="modal-content">
-      <h4> Miner # </h4>
-      <a href="#!" class="modal-close btn-flat">ON</a>
-      <a href="#!" class="modal-close btn-flat">OFF</a>
-      <a href="#!" class="modal-close btn-flat">RESET</a>
+      {% endfor %}
     </div>
-  </div>
 
-{% endblock %}
+    <div id="cancel" class="modal">
+      <div class="modal-content">
+        <h4> Miner # </h4>
+        <a href="#!" class="modal-close btn-flat">ON</a>
+        <a href="#!" class="modal-close btn-flat">OFF</a>
+        <a href="#!" class="modal-close btn-flat">RESET</a>
+      </div>
+    </div>
 
-{% block scripts %}
-<script type="text/javascript">
-  function toggleMinerCSS(selector) {
-    $('#'+selector).toggleClass('disabled-miner', $('#'+selector + '-checkbox').val());
-  }
-  function removeMinerCSS(selector) {
-    $('#'+selector).removeClass('disabled-miner', $('#'+selector + '-checkbox').val());
-  }
-  $( function() {
-    $( "#rack0" ).sortable();
-    $( "#rack0" ).disableSelection();
-    $( "#rack1" ).sortable();
-    $( "#rack1" ).disableSelection();
+    {% endblock %}
+    {% block scripts %}
+    <script type="text/javascript">
+      function toggleMinerCSS(selector) {
+        $('#' + selector).toggleClass('disabled-miner', $('#' + selector + '-checkbox').val());
+      }
 
-} );
-</script>
-{% endblock %}
+      function removeMinerCSS(selector) {
+        $('#' + selector).removeClass('disabled-miner', $('#' + selector + '-checkbox').val());
+      }
+      $(function() {
+        $("#rack0").sortable();
+        $("#rack0").disableSelection();
+        $("#rack1").sortable();
+        $("#rack1").disableSelection();
+
+      });
+    </script>
+    {% endblock %}

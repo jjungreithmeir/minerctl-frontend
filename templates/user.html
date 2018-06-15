@@ -82,7 +82,7 @@
       </form>
     </div>
   </div>
-  <div id="modal-delete-confirmation" class="modal">
+  <div id="modal-delete-confirmation" class="modal w-30">
     <div class="modal-content">
       <h4>Warning!</h4>
       <p>You are about to permanently delete a user account! Are you sure you want to proceed?</p>
@@ -90,10 +90,10 @@
     <div class="modal-footer">
       <form action="{{ url_for('user') }}" method="POST" name="delete" class="right">
         <input type="text" name="username" id="hidden-username" value="" class="d-none"/>
-        <button class="btn bg-color-red modal-close">
+        <button class="btn bg-color-red modal-close m-r-10" type="button">
           No, take me out of here.
         </button>
-        <button class="btn bg-color-main" type="submit" name="action" value="delete">
+        <button class="btn bg-color-main m-r-10" type="submit" name="action" value="delete">
           Yes, I am sure.
         </button>
       </form>

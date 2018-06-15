@@ -59,29 +59,20 @@
 
     <div class="modal-content m-b-20 p-b-0">
       <h4>add new user</h4>
-      <form action="{{ url_for('user') }}" method="POST" name="add" class="m-t-20">
-        <div class="input-field">
-          <input id="username" type="text" class="validate" name="username">
-          <label for="username">Email/Username</label>
-        </div>
-        <div class="input-field">
-          <input id="password" type="password" class="validate" name="password">
-          <label for="password">Password</label>
-        </div>
-        <div class="fix-checkbox">
-          <label>
-            <input id="active" type="checkbox" name="active" checked/>
-            <span>active</span>
-          </label>
-          <label>
-            <input id="admin" type="checkbox" name="admin"/>
-            <span>admin</span>
-          </label>
-        </div>
-        <button class="btn waves-effect waves-light bg-color-main right m-b-20" type="submit" name="action" value="add">
-          Add user
-        </button>
-      </form>
+      {% from "helpers/_formhelpers.html" import render_field, render_checkbox %}
+      <form action="{{ url_for('user') }}" method="POST" name="add">
+          <dl>
+            {{ render_field(form.email, id='username') }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.confirm) }}
+            <div class="flex m-t-10">
+              {{ render_checkbox(form.active, label='active', id='active') }} {{ render_checkbox(form.is_admin, label='admin', id='admin') }}
+            </div>
+          </dl>
+          <button class="btn waves-effect waves-light bg-color-main right m-b-20" type="submit" value="register">
+            Add user
+          </button>
+        </form>
     </div>
   </div>
   <div id="modal-delete-confirmation" class="modal w-30">

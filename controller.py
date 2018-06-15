@@ -12,7 +12,8 @@ from werkzeug.utils import secure_filename
 from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
     RegisterForm, current_user, utils
-from wtforms.fields import PasswordField
+from wtforms import Form, BooleanField, StringField, PasswordField, \
+    validators, SubmitField
 from src.json_parser import parse_json, put_dict, resp_to_dict, put_str
 from src.db_init import db, User, Role, Config, setup, add_or_update_user, \
     delete_user
@@ -127,27 +128,37 @@ def upload_file():
             return redirect('/settings')
     return redirect('/')
 
+class RegistrationForm(Form):
+    email = StringField('username/email', [validators.DataRequired(),
+                                           validators.Length(min=4, max=35)])
+    password = PasswordField('password', [
+        validators.DataRequired(),
+        validators.EqualTo('confirm', message='Passwords must match')
+    ])
+    confirm = PasswordField('confirm password', [validators.DataRequired()])
+    active = BooleanField('active', default=True)
+    is_admin = BooleanField('is_admin', default=False)
+
 @APP.route('/user', methods=['GET', 'POST'])
 @roles_required('admin')
 def user():
+    form = RegistrationForm(request.form)
     if request.method == 'POST':
         data = resp_to_dict(request.form)
-        # the following code looks quite ridiculous, however, the problem is that
-        # the POST request either returns 'on' or None...
-        if request.form['action'] == 'add':
-            is_active = bool(request.form.get('active', None))
-            is_admin = bool(request.form.get('admin', None))
+
+        if form.validate(): # equal to request.form['action'] == 'add':
             add_or_update_user(
-                username=data['username'],
-                password=data['password'],
-                active=is_active,
-                is_admin=is_admin)
-        elif request.form['action'] == 'delete':
+                username=form.email.data,
+                password=form.password.data,
+                active=form.active.data,
+                is_admin=form.is_admin.data)
+        elif request.form.get('action') == 'delete':
             delete_user(data['username'])
 
     return render_template('user.html',
                            userbase=User.query.all(),
-                           config=parse_json('/info'))
+                           config=parse_json('/info'),
+                           form=form)
 
 if __name__ == '__main__':
     APP.run(host='0.0.0.0', port=80)

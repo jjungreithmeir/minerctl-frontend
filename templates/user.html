@@ -85,7 +85,8 @@
   <div id="modal-delete-confirmation" class="modal w-30">
     <div class="modal-content">
       <h4>Warning!</h4>
-      <p>You are about to permanently delete a user account! Are you sure you want to proceed?</p>
+      <p>You are about to permanently delete <span id="warning-msg">a</span> user account!</p>
+      <p>Are you sure you want to proceed?</p>
     </div>
     <div class="modal-footer">
       <form action="{{ url_for('user') }}" method="POST" name="delete" class="right">
@@ -127,6 +128,13 @@
   }
   function pickUser(user) {
     $("#hidden-username").val(user);
+    if (user == "{{current_user}}") {
+      $("#warning-msg").text("YOUR OWN");
+      $("#warning-msg").addClass("font-bold");
+    } else {
+      $("#warning-msg").text("a");
+      $("#warning-msg").removeClass("font-bold");
+    }
   }
 </script>
 {% endblock %}

@@ -16,3 +16,7 @@
   <label>{{ label }}</label> {{ field(**kwargs)|safe }}
 </div>
 {% endmacro %}
+
+{% macro render_hidden_field(field, id) %}
+  {{ field(id=id,**kwargs)|safe }}
+{% endmacro %}

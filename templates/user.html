@@ -45,7 +45,7 @@
             <i class="material-icons font-white">delete</i>
           </button>
 
-          <button class="btn-floating bg-color-main right m-r-10" onclick="edit('{{user.email}}', '{{user.active}}', '{{user.roles[0]}}')" title="edit user">
+          <button class="btn-floating bg-color-main right m-r-10 modal-trigger" onclick="edit('{{user.email}}', '{{user.active}}', '{{user.roles[0]}}')" title="edit user" data-target="modal-add-user">
             <i class="material-icons font-white">edit</i>
           </button>
         </td>
@@ -59,9 +59,10 @@
 
     <div class="modal-content m-b-20 p-b-0">
       <h4>add new user</h4>
-      {% from "helpers/_formhelpers.html" import render_field, render_checkbox %}
+      {% from "helpers/_formhelpers.html" import render_field, render_checkbox, render_hidden_field %}
       <form action="{{ url_for('user') }}" method="POST" name="add">
           <dl>
+            {{ render_hidden_field(form.is_update, label='', id='is_update') }}
             {{ render_field(form.email, id='username') }}
             {{ render_field(form.password) }}
             {{ render_field(form.confirm) }}
@@ -84,10 +85,10 @@
     <div class="modal-footer">
       <form action="{{ url_for('user') }}" method="POST" name="delete" class="right">
         <input type="text" name="username" id="hidden-username" value="" class="d-none"/>
-        <button class="btn bg-color-red modal-close m-r-10" type="button">
+        <button class="btn bg-color-main modal-close m-r-10" type="button">
           No, take me out of here.
         </button>
-        <button class="btn bg-color-main m-r-10" type="submit" name="action" value="delete">
+        <button class="btn bg-color-red m-r-10" type="submit" name="action" value="delete">
           Yes, I am sure.
         </button>
       </form>
@@ -105,20 +106,20 @@
   function edit(username, is_active, is_admin) {
     let elem = $('#modal-add-user')
     let inst = M.Modal.getInstance(elem);
-    inst.open()
-
     $("#username").val(username);
-    $("#username").prop("disabled", true);
+    $("#username").prop("readonly", true);
     // is_active === 'True' is required because the python types are interpreted as strings
     $("#active").prop('checked', is_active === 'True');
     $("#admin").prop('checked', is_admin === 'admin');
+    $("#is_update").val('updating');
     M.updateTextFields();
   }
   function resetModal() {
     $("#username").val('');
-    $("#username").prop("disabled", false);
+    $("#username").prop("readonly", false);
     $("#active").prop('checked', true);
     $("#admin").prop('checked', false);
+    $("#is_update").val('');
     M.updateTextFields();
   }
   function pickUser(user) {

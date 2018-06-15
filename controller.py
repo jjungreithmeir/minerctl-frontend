@@ -13,7 +13,7 @@ from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
     RegisterForm, current_user, utils
 from wtforms import Form, BooleanField, StringField, PasswordField, \
-    validators, SubmitField
+    validators, SubmitField, HiddenField
 from src.json_parser import parse_json, put_dict, resp_to_dict, put_str
 from src.db_init import db, User, Role, Config, setup, add_or_update_user, \
     delete_user
@@ -140,6 +140,7 @@ class RegistrationForm(Form):
     confirm = PasswordField('confirm password', [validators.DataRequired()])
     active = BooleanField('active', default=True)
     is_admin = BooleanField('is_admin', default=False)
+    is_update = HiddenField("is_update")
 
 @APP.route('/user', methods=['GET', 'POST'])
 @roles_required('admin')
@@ -147,8 +148,7 @@ def user():
     form = RegistrationForm(request.form)
     if request.method == 'POST':
         data = resp_to_dict(request.form)
-
-        if form.validate(): # equal to request.form['action'] == 'add':
+        if form.validate() or form.is_update.data: # equal to request.form['action'] == 'add':
             add_or_update_user(
                 username=form.email.data,
                 password=form.password.data,

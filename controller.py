@@ -49,7 +49,8 @@ def register_context():
     return {
         'url_for_security': url_for_security,
         'register_user_form': RegisterForm(),
-        'current_user': current_user
+        'current_user': current_user,
+        'is_admin': current_user.has_role('admin')
     }
 
 # Views
@@ -92,7 +93,6 @@ def settings():
                 headers={
                 'Content-Disposition':'attachment;filename=minerctl_'+tmstmp+'.cfg'}
             )
-
     return render_template('settings.html',
                            data=parse_json(),
                            config=parse_json('/info'),

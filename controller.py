@@ -7,7 +7,8 @@ import os
 import time
 import json
 from flask import Flask, render_template, send_file, request, \
-    redirect, Response, url_for, flash
+    redirect, Response, url_for, flash, g
+import flask_sijax
 from werkzeug.utils import secure_filename
 from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
@@ -38,6 +39,12 @@ APP.config['UPLOAD_FOLDER'] = 'config'
 # max upload size is 50 KB
 APP.config['MAX_CONTENT_LENGTH'] = 50 * 1024
 ALLOWED_EXTENSIONS = set(['cfg'])
+
+PATH = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
+
+APP.config['SIJAX_STATIC_PATH'] = PATH
+APP.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
+flask_sijax.Sijax(APP)
 
 with APP.app_context():
     db.init_app(APP)

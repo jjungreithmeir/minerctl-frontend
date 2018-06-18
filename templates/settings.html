@@ -2,7 +2,8 @@
  {% block css %}
 <link href="{{ url_for('static',filename='css/nouislider.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
 {% endblock %}
-{% block title_addition %} - firmware v{{ config.firmware_version }} {% endblock %} {% block content %}
+{% block title_addition %} - firmware v{{ config.firmware_version }} {% endblock %}
+{% block content %}
 <form action="{{url_for('settings')}}" method="POST" id="configuration">
 
   <div class="container">
@@ -162,12 +163,12 @@
       $('#' + selected + '-mode-settings').show();
     }).change()
   });
-
-
-  {% if saved == 'success' %}
-  M.toast({html: 'Configuration saved successfully.',classes: 'rounded'});
-  {% elif saved == 'failure' %}
-  M.toast({html: 'Configuration could not be saved.',classes: 'rounded'});
-  {% endif %}
+  {% for message in get_flashed_messages() %}
+    {% if message == 'success' %}
+    M.toast({html: 'Configuration saved successfully.',classes: 'rounded'});
+    {% elif message == 'failure' %}
+    M.toast({html: 'Configuration could not be saved.',classes: 'rounded'});
+   {% endif %}
+  {% endfor %}
 </script>
 {% endblock %}

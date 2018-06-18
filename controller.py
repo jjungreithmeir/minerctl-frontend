@@ -7,7 +7,7 @@ import os
 import time
 import json
 from flask import Flask, render_template, send_file, request, \
-    redirect, Response, url_for
+    redirect, Response, url_for, flash
 from werkzeug.utils import secure_filename
 from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
@@ -80,19 +80,13 @@ def config():
 @login_required
 @roles_required('admin')
 def settings():
-    """
-    saved is of type str because there are three valid states
-    '' ... show no toast
-    'success' or 'failure' ... show appropriate message
-    """
-    saved = ''
     if request.method == 'POST':
         if request.form['action'] == 'save':
             error = put_dict(request.form)
             if error is None:
-                saved='success'
+                flash('success')
             else:
-                saved='failure'
+                flash('failure')
         elif request.form['action'] == 'download':
             tmstmp = time.strftime("%Y%m%d-%H%M%S")
             data = request.form.copy()
@@ -107,8 +101,7 @@ def settings():
         return redirect(url_for('settings'))
     return render_template('settings.html',
                            data=parse_json(),
-                           config=parse_json('/info'),
-                           saved=saved)
+                           config=parse_json('/info'))
 
 def allowed_file(filename):
     return '.' in filename and \

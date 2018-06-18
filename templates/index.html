@@ -3,6 +3,18 @@
 
 {% block content %}
 
+{% if is_admin %}
+<div class="right">
+  <div class="left m-r-30 m-t-15">
+    <label for="edit-mode">edit rigs</label>
+    <input id="edit-mode" type="checkbox" class="filled-in m-r-30" onchange="toggleEditMode()" autocomplete="off"/>
+  </div>
+  <div class="right">
+    <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10" onclick="saveLayout()">save layout</a>
+  </div>
+</div>
+{% endif %}
+
 <div class="row m-t-10">
   <div class="col 1">
     <div class="card">
@@ -67,42 +79,49 @@
   <div class="col 6 w-150px padder-5">
 
     <div class="bg-color-grey m-lr-2 padder rack" id="rack{{row}}">
-      <p class="font-bold font-white font-large center-align no-margin"> rack {{ row + 1}} </p>
+      <p class="font-bold font-white font-large center-align no-margin rack-title"> rack {{ row + 1}} </p>
 
       {% for miner in range(10) %}
-      <div class="h-rig m-b-5">
+      <div class="h-rig m-b-5" id="rig_{{cnt[0] - 1}}">
         {% if miners.miners[cnt[0] - 1] == True or operation.active_mode == 'gpu' and miners.miners[cnt[0] - 1] != None %}
         <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
-          {% elif miners.miners[cnt[0] - 1] == False %}
-          <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
-            {% else %}
-            <div class="d-none z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}" hidden>
-              {% endif %}
+        {% elif miners.miners[cnt[0] - 1] == False %}
+        <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+        {% else %}
+        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb d-none placeholder-rig">
+          <p class="color-grey fill-parent flex-text-center">
+            placeholder
+          </p>
 
-              <p class="">
-                #{{ cnt[0] }}
-              </p>
-              {% if operation.active_mode == 'fpga' %}
-              <div class="switch">
-                <label>
-                      {% if miners.miners[cnt[0] - 1] %}
-                        <input type="checkbox" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
-                      {% else %}
-                        <input type="checkbox" id="miner{{ cnt[0] }}-checkbox" onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
-                      {% endif %}
-                      <span class="lever"></span>
-                    </label>
-              </div>
-              {% elif operation.active_mode == 'gpu' %}
-              <div>
-                <a class="waves-effect waves-light btn btn-tiny bg-color-main">ON</a>
-                <a class="waves-effect waves-light btn btn-tiny bg-color-red">OFF</a>
-              </div>
-              {% endif %} {% if operation.active_mode == 'fpga' %}
-              <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a> {% endif %}
-            </div>
+        </div>
+        <div class="d-none z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}" hidden>
+        {% endif %}
+
+          <p class="">
+            #{{ cnt[0] }}
+          </p>
+          {% if operation.active_mode == 'fpga' %}
+          <div class="switch">
+            <label>
+                  {% if miners.miners[cnt[0] - 1] %}
+                    <input type="checkbox" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
+                  {% else %}
+                    <input type="checkbox" id="miner{{ cnt[0] }}-checkbox" onclick="toggleMinerCSS('miner{{ cnt[0] }}')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
+                  {% endif %}
+                  <span class="lever"></span>
+                </label>
           </div>
-          {% if cnt.append(cnt.pop() + 1) %}{% endif %} {% endfor %}
+          {% elif operation.active_mode == 'gpu' %}
+          <div>
+            <a class="waves-effect waves-light btn btn-tiny bg-color-main">ON</a>
+            <a class="waves-effect waves-light btn btn-tiny bg-color-red">OFF</a>
+          </div>
+          {% endif %} {% if operation.active_mode == 'fpga' %}
+          <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a> {% endif %}
+        </div>
+        </div>
+        {% if cnt.append(cnt.pop() + 1) %}{% endif %}
+        {% endfor %}
 
         </div>
       </div>
@@ -124,15 +143,45 @@
       function toggleMinerCSS(selector) {
         $('#' + selector).toggleClass('disabled-miner', $('#' + selector + '-checkbox').val());
       }
-
       function removeMinerCSS(selector) {
         $('#' + selector).removeClass('disabled-miner', $('#' + selector + '-checkbox').val());
       }
+      function toggleEditMode() {
+        if ($('#edit-mode').prop('checked') === true) {
+          $(".rack").sortable("enable")
+        } else {
+          $(".rack").sortable("disable")
+        }
+        $(".placeholder-rig").toggleClass('d-none')
+        // If you uncomment the following line the rigs will wiggle if you enter
+        // the edit mode, similiar to the IOS functionality.
+        // $(".h-rig").toggleClass("wiggle")
+      }
+      function saveLayout() {
+        $(".rack").each(function() {
+            console.log($(this).sortable('toArray'));
+        })
+        // TODO add POST request
+      }
       $(function() {
         $(".rack").sortable({
-          connectWith: ".rack"
+          connectWith: ".rack",
+          items: "> .h-rig, > p:not(.rack-title)"
+          //receive: This event is triggered when a
+          //connected sortable list has received an item from another list.
+          /*
+          receive: function(event, ui) {
+              // so if > 10
+              if ($(this).children().length > 10) {
+                  //ui.sender: will cancel the change.
+                  //Useful in the 'receive' callback.
+                  $(ui.sender).sortable('cancel');
+              }
+          }
+          */ //TODO enable this
         });
         $(".rack").disableSelection();
+        $(".rack").sortable("disable");
       });
     </script>
     {% endblock %}

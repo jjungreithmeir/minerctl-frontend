@@ -38,7 +38,8 @@ class User(db.Model, UserMixin):
 
 class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    number_of_miners = db.Column(db.Integer())
+    number_of_racks = db.Column(db.Integer())
+    order_of_rigs = db.Column(db.String(640))
 
 def check_db_populated():
     try:
@@ -55,7 +56,6 @@ def populate_db(user_datastore):
 
     cfg_username = content[4].split('=')[1]
     cfg_password = content[5].split('=')[1]
-    cfg_miner_number = content[6].split('=')[1]
 
     user_datastore.create_role(
         name='admin',
@@ -63,7 +63,7 @@ def populate_db(user_datastore):
     user_datastore.create_user(email=cfg_username,
                                password=encrypt_password(cfg_password),
                                roles=['admin'])
-    db.session.add(Config(number_of_miners=cfg_miner_number))
+    db.session.add(Config(number_of_racks=120))
     db.session.commit()
 
 def add_or_update_user(username, password, is_admin=False, active=True):
@@ -89,6 +89,14 @@ def delete_user(username):
     user = USER_DATASTORE.find_user(email=username)
     USER_DATASTORE.delete_user(user)
     db.session.commit()
+
+def save_order_of_rigs(nested_list):
+    # TODO
+    pass
+
+def get_order_of_rigs():
+    # TODO
+    pass
 
 def setup(db, user_datastore):
 

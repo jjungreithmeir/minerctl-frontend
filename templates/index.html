@@ -5,12 +5,11 @@
 
 {% if is_admin %}
 <div class="right">
-  <div class="left m-r-30 m-t-15">
-    <label for="edit-mode">edit rigs</label>
-    <input id="edit-mode" type="checkbox" class="filled-in m-r-30" onchange="toggleEditMode()" autocomplete="off"/>
+  <div class="left">
+    <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10" onclick="toggleEditMode()" id="edit-layout">edit layout</a>
   </div>
   <div class="right">
-    <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10" onclick="saveLayout()">save layout</a>
+    <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10" onclick="saveLayout()" id="save-layout">save layout</a>
   </div>
 </div>
 {% endif %}
@@ -75,7 +74,7 @@
 
 <div class="row flex">
   {% set cnt = [1] %}
-  {% for row in range(config.number_of_miners // 10) %}
+  {% for row in range((config.number_of_miners / 10)|round(method='ceil')|int) %}
   <div class="col 6 w-150px padder-5">
 
     <div class="bg-color-grey m-lr-2 padder rack" id="rack{{row}}">
@@ -85,12 +84,15 @@
       <div class="h-rig m-b-5" id="rig_{{cnt[0] - 1}}">
         {% if miners.miners[cnt[0] - 1] == True or operation.active_mode == 'gpu' and miners.miners[cnt[0] - 1] != None %}
         <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+
         {% elif miners.miners[cnt[0] - 1] == False %}
         <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+
         {% else %}
         <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb d-none placeholder-rig">
           <p class="color-grey fill-parent flex-text-center">
             placeholder
+            <a href="#!" class="right delete-rig pos-abs delete-btn d-none m-l-120"><i title="add" class="material-icons color-main">add_circle</i></a>
           </p>
 
         </div>
@@ -116,8 +118,12 @@
             <a class="waves-effect waves-light btn btn-tiny bg-color-main">ON</a>
             <a class="waves-effect waves-light btn btn-tiny bg-color-red">OFF</a>
           </div>
-          {% endif %} {% if operation.active_mode == 'fpga' %}
-          <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a> {% endif %}
+          {% endif %}
+          {% if operation.active_mode == 'fpga' %}
+          <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a>
+          {% endif %}
+          <a href="#!" class="right delete-rig pos-abs delete-btn d-none"><i title="delete" class="material-icons color-red">remove_circle</i></a>
+
         </div>
         </div>
         {% if cnt.append(cnt.pop() + 1) %}{% endif %}
@@ -147,17 +153,21 @@
         $('#' + selector).removeClass('disabled-miner', $('#' + selector + '-checkbox').val());
       }
       function toggleEditMode() {
-        if ($('#edit-mode').prop('checked') === true) {
+        if ($('#edit-layout').text() === 'edit layout') {
           $(".rack").sortable("enable")
+          $('#edit-layout').text("stop editing")
         } else {
           $(".rack").sortable("disable")
+          $('#edit-layout').text('edit layout')
         }
+        $('#save-layout').toggleClass('disabled')
         $(".placeholder-rig").toggleClass('d-none')
+        $(".delete-rig").toggleClass('d-none')
 
         // If you uncomment the following line the rigs will wiggle if you enter
         // the edit mode, similiar to the IOS feature when you long-press an
         // app. It is disabled, however, because it needs a ton of resources.
-        // $(".h-rig").toggleClass("wiggle")
+        //$(".h-rig").toggleClass("wiggle")
       }
       function saveLayout() {
         layout = {}

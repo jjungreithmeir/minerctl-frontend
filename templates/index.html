@@ -153,15 +153,26 @@
           $(".rack").sortable("disable")
         }
         $(".placeholder-rig").toggleClass('d-none')
+
         // If you uncomment the following line the rigs will wiggle if you enter
-        // the edit mode, similiar to the IOS functionality.
+        // the edit mode, similiar to the IOS feature when you long-press an
+        // app. It is disabled, however, because it needs a ton of resources.
         // $(".h-rig").toggleClass("wiggle")
       }
       function saveLayout() {
+        layout = {}
         $(".rack").each(function() {
-            console.log($(this).sortable('toArray'));
+          layout[this.id] = $(this).sortable('toArray')
         })
-        // TODO add POST request
+        $.ajax({
+          url: "{{url_for('config')}}",
+          type: 'POST',
+          dataType: 'json',
+          data: JSON.stringify(layout)
+        });
+        // TODO fix this. somehow the flask app receives the entire json as a
+        //single json attribute
+        console.log(JSON.stringify(layout))
       }
       $(function() {
         $(".rack").sortable({

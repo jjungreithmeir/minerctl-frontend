@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import UserMixin, RoleMixin, SQLAlchemyUserDatastore, Security
 from flask_security.utils import encrypt_password
+from src.db_helpers import TextPickleType
 
 db = SQLAlchemy()
 
@@ -39,7 +40,7 @@ class User(db.Model, UserMixin):
 class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     number_of_racks = db.Column(db.Integer())
-    order_of_rigs = db.Column(db.String(640))
+    order_of_rigs = db.Column(TextPickleType())
 
 def check_db_populated():
     try:
@@ -90,9 +91,13 @@ def delete_user(username):
     USER_DATASTORE.delete_user(user)
     db.session.commit()
 
-def save_order_of_rigs(nested_list):
-    # TODO
-    pass
+def save_order_of_rigs(dict):
+    """
+    the input is received as a nested list encoded as json
+    """
+    cfg = Config.query.filter_by(id=1).first()
+    cfg.order_of_rigs = json
+    db.session.commit()
 
 def get_order_of_rigs():
     # TODO

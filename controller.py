@@ -67,6 +67,15 @@ def index():
                            fans=parse_json('/fans'),
                            operation=parse_json('/mode'))
 
+@APP.route('/config', methods=['POST'])
+@login_required
+@roles_required('admin')
+def config():
+    if request.method == 'POST':
+        config = request.form.copy()
+        print(config)
+    return redirect('/')
+
 @APP.route('/settings', methods=['GET', 'POST'])
 @login_required
 @roles_required('admin')

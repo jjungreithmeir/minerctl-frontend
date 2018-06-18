@@ -66,7 +66,7 @@
   {% for row in range(config.number_of_miners // 10) %}
   <div class="col 6 w-150px padder-5">
 
-    <div class="bg-color-grey m-lr-2 padder">
+    <div class="bg-color-grey m-lr-2 padder rack" id="rack{{row}}">
       <p class="font-bold font-white font-large center-align no-margin"> rack {{ row + 1}} </p>
 
       {% for miner in range(10) %}
@@ -129,11 +129,10 @@
         $('#' + selector).removeClass('disabled-miner', $('#' + selector + '-checkbox').val());
       }
       $(function() {
-        $("#rack0").sortable();
-        $("#rack0").disableSelection();
-        $("#rack1").sortable();
-        $("#rack1").disableSelection();
-
+        $(".rack").sortable({
+          connectWith: ".rack"
+        });
+        $(".rack").disableSelection();
       });
     </script>
     {% endblock %}

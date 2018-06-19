@@ -93,10 +93,10 @@
         <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
 
         {% else %}
-        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb d-none placeholder-rig">
+        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb d-none placeholder-rig" id="placeholder{{ cnt[0] }}">
           <p class="color-grey fill-parent flex-text-center">
             placeholder
-            <a href="#!" class="right delete-rig pos-abs delete-btn d-none"><i title="add" class="material-icons color-main">add_circle</i></a>
+            <a class="right delete-rig pos-abs delete-btn d-none pointer" onclick="sendMinerAction({{cnt[0]}},'register')"><i title="add" class="material-icons color-main">add_circle</i></a>
           </p>
 
         </div>
@@ -110,23 +110,23 @@
           <div class="switch">
             <label>
                   {% if miners.miners[cnt[0] - 1] %}
-                    <input type="checkbox" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}');sendMinerAction({{cnt[0]}},'toggle')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
+                    <input type="checkbox" class="miner-toggle" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}');sendMinerAction({{cnt[0]}},'toggle')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
                   {% else %}
-                    <input type="checkbox" id="miner{{ cnt[0] }}-checkbox" onclick="toggleMinerCSS('miner{{ cnt[0] }}');sendMinerAction({{cnt[0]}},'toggle')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
+                    <input type="checkbox" class="miner-toggle" id="miner{{ cnt[0] }}-checkbox" onclick="toggleMinerCSS('miner{{ cnt[0] }}');sendMinerAction({{cnt[0]}},'toggle')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
                   {% endif %}
                   <span class="lever"></span>
                 </label>
           </div>
           {% elif operation.active_mode == 'gpu' %}
           <div>
-            <a class="waves-effect waves-light btn btn-tiny bg-color-main" onclick="sendMinerAction({{cnt[0]}},'on')">ON</a>
-            <a class="waves-effect waves-light btn btn-tiny bg-color-red" onclick="sendMinerAction({{cnt[0]}},'off')">OFF</a>
+            <a class="waves-effect waves-light btn btn-tiny bg-color-main miner-btn" onclick="sendMinerAction({{cnt[0]}},'on')">ON</a>
+            <a class="waves-effect waves-light btn btn-tiny bg-color-red miner-btn" onclick="sendMinerAction({{cnt[0]}},'off')">OFF</a>
           </div>
           {% endif %}
           {% if operation.active_mode == 'fpga' %}
-          <a href="#!" class="right"><i title="reset" class="material-icons color-black font-transparent">settings_backup_restore</i></a>
+          <a class="right"><i title="reset" class="material-icons color-black font-transparent pointer waves-effect" onclick="sendMinerAction({{cnt[0]}},'reset')">settings_backup_restore</i></a>
           {% endif %}
-          <a href="#!" class="right delete-rig pos-abs delete-btn d-none"><i title="delete" class="material-icons color-red">remove_circle</i></a>
+          <a class="right delete-rig pos-abs delete-btn d-none pointer" onclick="sendMinerAction({{cnt[0]}},'deregister')"><i title="delete" class="material-icons color-red">remove_circle</i></a>
 
         </div>
         </div>
@@ -163,6 +163,10 @@
           type: 'PATCH',
           dataType: 'json'
         });
+        if (action == 'register' || action == 'deregister') {
+          $("#miner" + id).toggleClass('d-none')
+          $("#placeholder" + id).toggleClass('d-none')
+        }
       }
       function toggleEditMode() {
         if ($('#edit-layout').text() === 'edit layout') {
@@ -173,9 +177,11 @@
           $('#edit-layout').text('edit layout')
         }
         $('#save-layout').toggleClass('disabled')
+        $('.miner-btn').toggleClass('disabled')
         $(".placeholder-rig").toggleClass('d-none')
         $(".delete-rig").toggleClass('d-none')
-
+        // inverts disabled prop
+        $('.miner-toggle').prop('disabled', function(i, v) { return !v; });
         // If you uncomment the following line the rigs will wiggle if you enter
         // the edit mode, similiar to the IOS feature when you long-press an
         // app. It is disabled, however, because it needs a ton of resources.

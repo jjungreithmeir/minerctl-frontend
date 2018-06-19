@@ -87,7 +87,6 @@ def config():
 def action():
     if request.method == 'PATCH':
         # TODO error handling
-        print(request.args)
         patch(request.args)
 
     return '', 204

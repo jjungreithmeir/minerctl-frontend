@@ -6,21 +6,23 @@ for controlling various variables regarding ventilation, resetting miners, etc.
 import os
 import time
 import json
-from flask import Flask, render_template, send_file, request, \
+from flask import Flask, render_template, request, \
     redirect, Response, url_for, flash, g
-import flask_sijax
 from werkzeug.utils import secure_filename
 from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
-    RegisterForm, current_user, utils
+    RegisterForm, current_user
 from wtforms import Form, BooleanField, StringField, PasswordField, \
-    validators, SubmitField, HiddenField
-from src.json_parser import parse_json, put_dict, resp_to_dict, put_str
+    validators, HiddenField
+from flask_jsglue import JSGlue
+import flask_sijax
+from src.json_parser import parse_json, put_dict, resp_to_dict, put_str, patch
 from src.db_init import db, User, Role, Config, setup, add_or_update_user, \
     delete_user
 
 # Create APP
 APP = Flask(__name__)
+JSGLUE = JSGlue(APP)
 
 APP.config['SECRET_KEY'] = 'n0b0dy-c0u1d-gue55-th15'
 APP.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///config/database.sqlite3'
@@ -75,16 +77,22 @@ def index():
                            operation=parse_json('/mode'))
 
 @APP.route('/config', methods=['POST'])
-@login_required
 @roles_required('admin')
 def config():
     if request.method == 'POST':
         config = request.form.copy()
-        print(config)
     return redirect('/')
 
+@APP.route('/action', methods=['PATCH'])
+def action():
+    if request.method == 'PATCH':
+        # TODO error handling
+        print(request.args)
+        patch(request.args)
+
+    return '', 204
+
 @APP.route('/settings', methods=['GET', 'POST'])
-@login_required
 @roles_required('admin')
 def settings():
     if request.method == 'POST':
@@ -102,7 +110,7 @@ def settings():
                 json.dumps(data),
                 mimetype='application/json',
                 headers={
-                'Content-Disposition':'attachment;filename=minerctl_'+tmstmp+'.cfg'}
+                    'Content-Disposition':'attachment;filename=minerctl_'+tmstmp+'.cfg'}
             )
         # POST/Redirect/GET
         return redirect(url_for('settings'))

@@ -1,6 +1,7 @@
 import requests
 import json
 
+# TODO query addr from central config file
 container_conn = 'http://localhost:12345'
 sess = requests.Session()
 adapter = requests.adapters.HTTPAdapter(max_retries=10)
@@ -20,6 +21,14 @@ def put_dict(list, resource='/cfg'):
     copy.pop('file', None)
 
     r = sess.put(container_conn + resource, data=copy)
+    # TODO Error handling
+    return r.raise_for_status()
+
+def patch(params, resource='/miner'):
+    copy = params.copy().to_dict()
+    r = sess.patch(container_conn + resource, data=copy)
+    # TODO Error handling
+
     return r.raise_for_status()
 
 def put_str(data, resource='/cfg'):

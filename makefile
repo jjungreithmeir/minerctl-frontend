@@ -10,7 +10,7 @@ clean_db:
 	rm -f config/database.sqlite3
 
 lint:
-	source env/bin/activate; pylint controller.py
+	source env/bin/activate; pylint controller.py || exit 0
 
 freeze:
 	source env/bin/activate; pip freeze > requirements.txt

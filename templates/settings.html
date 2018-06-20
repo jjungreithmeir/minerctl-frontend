@@ -21,7 +21,7 @@
           <div class="m-l-5">
             <select id="input-mode" class="browser-default" name="active_mode">
                 <option value="gpu">GPU</option>
-                <option value="fpga">ASIC/FPGA</option>
+                <option value="asic">ASIC/FPGA</option>
               </select>
           </div>
         </div>
@@ -38,7 +38,7 @@
         </div>
       </div>
 
-      <div id="fpga-mode-settings" class="hide-div">
+      <div id="asic-mode-settings" class="hide-div">
         <h6>ASIC/FPGA mode</h6>
         <div class="w-50 m-10 padder-30">
           <div class="m-t-10">
@@ -111,8 +111,6 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $('select').formSelect();
-  });
-  $(document).ready(function() {
     $('.modal').modal();
   });
 

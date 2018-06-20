@@ -2,7 +2,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import UserMixin, RoleMixin, SQLAlchemyUserDatastore, Security
 from flask_security.utils import encrypt_password
-from src.db_helpers import TextPickleType
 from src.config_reader import ConfigReader
 
 db = SQLAlchemy()

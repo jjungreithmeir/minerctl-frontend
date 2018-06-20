@@ -15,7 +15,7 @@
       <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10 d-none" onclick="toggleEditMode();saveLayout()" id="save-layout">save layout</a>
     </div>
     <div class="left">
-      <a class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode" onclick="resetLayout()">cancel editing</a>
+      <a class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode" onclick="resetLayout()">reset layout</a>
     </div>
   </div>
   <div class="edit-mode d-none row">
@@ -120,7 +120,7 @@
           <p class="">
             #{{ miner_id + 1 }}
           </p>
-          {% if operation.active_mode == 'fpga' %}
+          {% if operation.active_mode == 'asic' %}
           <div class="switch">
             <label>
                   {% if miners.miners[miner_id] %}
@@ -137,7 +137,7 @@
             <a class="waves-effect waves-light btn btn-tiny bg-color-red miner-btn" onclick="sendMinerAction({{miner_id}},'off')">OFF</a>
           </div>
           {% endif %}
-          {% if operation.active_mode == 'fpga' %}
+          {% if operation.active_mode == 'asic' %}
           <a class="right"><i title="reset" class="material-icons color-black font-transparent pointer waves-effect" onclick="sendMinerAction({{miner_id}},'reset')">settings_backup_restore</i></a>
           {% endif %}
           <a class="right delete-rig pos-abs delete-btn d-none pointer" onclick="sendMinerAction({{miner_id}},'deregister')"><i title="delete" class="material-icons color-red">remove_circle</i></a>
@@ -166,9 +166,6 @@
       function toggleMinerCSS(selector) {
         $('#' + selector).toggleClass('disabled-miner', $('#' + selector + '-checkbox').val());
       }
-      function removeMinerCSS(selector) {
-        $('#' + selector).removeClass('disabled-miner', $('#' + selector + '-checkbox').val());
-      }
       /** Dynamically removes .rack divs based on the number in the #number-rack input field. */
       function updateRacks() {
         $(".rack").each(function() {
@@ -193,15 +190,14 @@
           $("#placeholder" + id).toggleClass('d-none');
         }
       }
-      let cache = null;
+      let cache = {};
       function toggleEditMode() {
-        cache = $(".rack").html();
-
         if ($('#save-layout').hasClass('d-none')) {
           $(".rack").sortable("enable");
           $('#edit-layout').toggleClass('d-none');
           $("#save-layout").toggleClass('d-none');
         } else {
+          $(".rack").sortable("disable");
           $('#edit-layout').toggleClass('d-none');
           $("#save-layout").toggleClass('d-none');
         }
@@ -219,7 +215,7 @@
         //$(".h-rig").toggleClass("wiggle")
       }
       function resetLayout() {
-        $(".rack").html(cache).sortable("refresh");
+        // TODO
       }
       function saveLayout() {
         let data = {'number_of_racks': $('#number-racks').val()}
@@ -232,19 +228,14 @@
           dataType: 'json',
           data: data
         });
-        // TODO fix this. somehow the flask app receives the entire json as a
-        //single json attribute
-        /*
-        $(".rack").each(function() {
-          layout[this.id] = $(this).sortable('toArray')
-        })
-        */
       }
       $(function() {
         $(".rack").sortable({
           connectWith: ".rack",
+          // skip the .rack-title elements
           items: "> .h-rig, > p:not(.rack-title)",
           receive: function(event, ui) {
+            // disable saving if the .racks have too many elements
             if ($(this).children().length > 11) {
               $('#save-layout').addClass('disabled');
               $('#overflow-warning').removeClass('d-none');

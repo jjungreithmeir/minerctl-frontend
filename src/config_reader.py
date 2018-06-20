@@ -1,6 +1,6 @@
+"""Small module used for abstracting configuration reads."""
 import configparser
 
-"""Small module used for abstracting configuration reads."""
 class ConfigReader: # pylint: disable=too-few-public-methods
     """
     This small helper class reads a specified config file and returns the
@@ -15,19 +15,29 @@ class ConfigReader: # pylint: disable=too-few-public-methods
         self.config = configparser.ConfigParser()
         cfg = self.config.read(self.path)
 
-        if not len(cfg):
+        if not cfg:
             raise FileNotFoundError
 
 
     def get_attr(self, attr):
         """
-        Returns the value of the specified attribute
+        Returns the value of the specified attribute.
 
         :param attr: e.g.: username
         :returns: value of attribute
         :raises FileNotFoundError: if the config file does not exist
         """
         return self.config['Initial Setup'][attr]
+
+    def write_attr(self, attr, value):
+        """
+        Writes the value to the specified attribute.
+
+        :param attr: e.g.: username
+        :param value: e.g.: admin@mail.com
+        :raises FileNotFoundError: if the config file does not exist
+        """
+        self.config[attr] = value
 
 if __name__ == '__main__':
     CFG_RDR = ConfigReader()

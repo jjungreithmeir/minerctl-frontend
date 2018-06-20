@@ -9,12 +9,21 @@
 
 {% if is_admin %}
 <div class="right">
-  <div class="left">
-    <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10" onclick="toggleEditMode()" id="edit-layout">edit layout</a>
+  <div class="row">
+    <div class="right">
+      <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10" onclick="toggleEditMode()" id="edit-layout">edit layout</a>
+      <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10 d-none" onclick="toggleEditMode();saveLayout()" id="save-layout">save layout</a>
+    </div>
+    <div class="left">
+      <a class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode" onclick="resetLayout()">cancel editing</a>
+    </div>
   </div>
-  <div class="right">
-    <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10" onclick="saveLayout()" id="save-layout">save layout</a>
+  <div class="edit-mode d-none row">
+    <label for="number-racks">number of racks: </label><input class="input-number" id="number-racks" type="number" min="1" max="12" step="1" value="{{local_config.number_of_racks}}" onchange="updateRacks()" autocomplete="off"/>
   </div>
+  <p class="d-none font-bold" id="overflow-warning">
+    Only 10 rigs per rack are allowed!
+  </p>
 </div>
 {% endif %}
 
@@ -84,8 +93,7 @@
 
 <div class="row flex">
   {% set cnt = [1] %}
-  <!-- TODO set this dynamically -->
-  {% for row in range(12) %}
+  {% for row in range(local_config.number_of_racks) %}
   <div class="col 6 w-150px padder-5">
 
     <div class="bg-color-grey m-lr-2 padder rack" id="rack{{row}}">
@@ -163,6 +171,18 @@
       function removeMinerCSS(selector) {
         $('#' + selector).removeClass('disabled-miner', $('#' + selector + '-checkbox').val());
       }
+      /** Dynamically removes .rack divs based on the number in the #number-rack input field. */
+      function updateRacks() {
+        $(".rack").each(function() {
+          let id = parseInt(this.id.split('rack')[1])
+          if (id >= $('#number-racks').val()) {
+            $(this).addClass('d-none');
+          } else {
+            $(this).removeClass('d-none');
+          }
+        })
+      }
+      /** Sends an ajax PATCH request which is toggled by the miner buttons. */
       function sendMinerAction(id, action) {
         $.ajax({
           // -1 because the values start at 1 in the html elements
@@ -171,60 +191,62 @@
           dataType: 'json'
         });
         if (action == 'register' || action == 'deregister') {
-          $("#miner" + id).toggleClass('d-none')
-          $("#placeholder" + id).toggleClass('d-none')
+          $("#miner" + id).toggleClass('d-none');
+          $("#placeholder" + id).toggleClass('d-none');
         }
       }
       function toggleEditMode() {
-        if ($('#edit-layout').text() === 'edit layout') {
-          $(".rack").sortable("enable")
-          $('#edit-layout').text("stop editing")
+        if ($('#save-layout').hasClass('d-none')) {
+          $(".rack").sortable("enable");
+          $('#edit-layout').toggleClass('d-none');
+          $("#save-layout").toggleClass('d-none');
         } else {
-          $(".rack").sortable("disable")
-          $('#edit-layout').text('edit layout')
+          $('#edit-layout').toggleClass('d-none');
+          $("#save-layout").toggleClass('d-none');
         }
-        $('#save-layout').toggleClass('disabled')
-        $('.miner-btn').toggleClass('disabled')
-        $(".placeholder-rig").toggleClass('d-none')
-        $(".delete-rig").toggleClass('d-none')
+        $('.h-rig').toggleClass('pointer');
+        $('.edit-mode').toggleClass('d-none');
+        $('.miner-btn').toggleClass('disabled');
+        $(".placeholder-rig").toggleClass('d-none');
+        $(".delete-rig").toggleClass('d-none');
         // inverts disabled prop
         $('.miner-toggle').prop('disabled', function(i, v) { return !v; });
+
         // If you uncomment the following line the rigs will wiggle if you enter
         // the edit mode, similiar to the IOS feature when you long-press an
         // app. It is disabled, however, because it needs a ton of resources.
         //$(".h-rig").toggleClass("wiggle")
       }
       function saveLayout() {
-        layout = {}
-        $(".rack").each(function() {
-          layout[this.id] = $(this).sortable('toArray')
-        })
+        let data = {'number_of_racks': $('#number-racks').val()}
         $.ajax({
           url: Flask.url_for("config"),
           type: 'PUT',
           dataType: 'json',
-          data: JSON.stringify(layout)
+          data: data
         });
+
         // TODO fix this. somehow the flask app receives the entire json as a
         //single json attribute
-        console.log(JSON.stringify(layout))
+        /*
+        $(".rack").each(function() {
+          layout[this.id] = $(this).sortable('toArray')
+        })
+        */
       }
       $(function() {
         $(".rack").sortable({
           connectWith: ".rack",
-          items: "> .h-rig, > p:not(.rack-title)"
-          //receive: This event is triggered when a
-          //connected sortable list has received an item from another list.
-          /*
+          items: "> .h-rig, > p:not(.rack-title)",
           receive: function(event, ui) {
-              // so if > 10
-              if ($(this).children().length > 10) {
-                  //ui.sender: will cancel the change.
-                  //Useful in the 'receive' callback.
-                  $(ui.sender).sortable('cancel');
-              }
+            if ($(this).children().length > 11) {
+              $('#save-layout').addClass('disabled');
+              $('#overflow-warning').removeClass('d-none');
+            } else {
+              $('#save-layout').removeClass('disabled');
+              $('#overflow-warning').addClass('d-none');
+            }
           }
-          */ //TODO enable this
         });
         $(".rack").disableSelection();
         $(".rack").sortable("disable");

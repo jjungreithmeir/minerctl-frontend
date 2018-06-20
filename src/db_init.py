@@ -39,12 +39,6 @@ class User(db.Model, UserMixin):
     def __str__(self):
         return self.email
 
-class Config(db.Model):
-    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    number_of_racks = db.Column(db.Integer())
-    # TODO fix this
-    order_of_rigs = db.Column(TextPickleType())
-
 def check_db_populated():
     try:
         return len(User.query.all())
@@ -65,7 +59,6 @@ def populate_db(user_datastore):
                                password=
                                encrypt_password(cfg_rdr.get_attr('password')),
                                roles=['admin'])
-    db.session.add(Config(number_of_racks=120))
     db.session.commit()
 
 def add_or_update_user(username, password, is_admin=False, active=True):
@@ -91,18 +84,6 @@ def delete_user(username):
     user = USER_DATASTORE.find_user(email=username)
     USER_DATASTORE.delete_user(user)
     db.session.commit()
-
-def save_order_of_rigs(dict):
-    """
-    the input is received as a nested list encoded as json
-    """
-    cfg = Config.query.filter_by(id=1).first()
-    cfg.order_of_rigs = json
-    db.session.commit()
-
-def get_order_of_rigs():
-    # TODO
-    pass
 
 def setup(db, user_datastore):
 

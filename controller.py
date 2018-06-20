@@ -17,7 +17,7 @@ from wtforms import Form, BooleanField, StringField, PasswordField, \
 from flask_jsglue import JSGlue
 import flask_sijax
 from src.json_parser import parse_json, put_dict, resp_to_dict, put_str, patch
-from src.db_init import db, User, Role, Config, setup, add_or_update_user, \
+from src.db_init import db, User, Role, setup, add_or_update_user, \
     delete_user
 from src.config_reader import ConfigReader
 
@@ -71,8 +71,11 @@ def register_context():
 @APP.route('/')
 @login_required
 def index():
+    # TODO add local_config from database
+    local_config = {'number_of_racks':12}
     return render_template('index.html',
                            miners=parse_json(),
+                           local_config=local_config,
                            config=parse_json('/info'),
                            temp=parse_json('/temp'),
                            filter=parse_json('/filter'),
@@ -80,12 +83,14 @@ def index():
                            fans=parse_json('/fans'),
                            operation=parse_json('/mode'))
 
-@APP.route('/config', methods=['POST'])
+@APP.route('/config', methods=['PUT'])
 @roles_required('admin')
 def config():
-    if request.method == 'POST':
-        config = request.form.copy()
-    return redirect('/')
+    if request.method == 'PUT':
+        request.form['number_of_racks']
+        # TODO
+        #config = request.form.copy()
+    return '', 204
 
 @APP.route('/action', methods=['PATCH'])
 def action():

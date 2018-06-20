@@ -39,9 +39,15 @@
             {% if filter.status_ok %}
               <i class="material-icons right" title="filter does not need to be cleaned">check</i>
             {% else %}
-              <i class="material-icons right" title="CLEAN FILTER!">warning</i>
+              <i class="material-icons right blinking" title="CLEAN FILTER!">warning</i>
             {% endif %}
           </span>
+
+        {% if not filter.status_ok %}
+        <p class="font-bold">
+          FILTER REQUIRES CLEANING!
+        </p>
+        {% endif %}
         <p> pressure difference: <span class="right"> &nbsp; {{filter.pressure_diff}} mBar </span></p>
         <p> pressure threshold: <span class="right"> {{filter.threshold}} mBar </span></p>
       </div>
@@ -86,7 +92,7 @@
 
       {% for miner in range(10) %}
       <div class="h-rig m-b-5" id="rig_{{cnt[0] - 1}}">
-        {% if miners.miners[cnt[0] - 1] == True or operation.active_mode == 'gpu' and miners.miners[cnt[0] - 1] != None %}
+        {% if miners.miners[cnt[0] - 1] or operation.active_mode == 'gpu' and miners.miners[cnt[0] - 1] != None %}
         <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
 
         {% elif miners.miners[cnt[0] - 1] == False %}
@@ -100,7 +106,7 @@
           </p>
 
         </div>
-        <div class="d-none z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}" hidden>
+        <div class="d-none z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
         {% endif %}
 
           <p class="">

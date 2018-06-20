@@ -189,6 +189,16 @@ input[type="number"] {
 
 .disabled-miner { background-color: #bdbdbd !important; }
 
+.blinking {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
 /* needed to fix the remember me button */
 [type="checkbox"]:not(:checked), [type="checkbox"]:checked {
   opacity: 1;

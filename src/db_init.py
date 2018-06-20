@@ -1,3 +1,4 @@
+# TODO refactor this hot spaghetti code mess
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import UserMixin, RoleMixin, SQLAlchemyUserDatastore, Security
 from flask_security.utils import encrypt_password
@@ -7,7 +8,7 @@ from src.config_reader import ConfigReader
 db = SQLAlchemy()
 
 # Define models
-roles_users = db.Table('roles_users',
+ROLES_USERS = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
@@ -33,7 +34,7 @@ class User(db.Model, UserMixin):
     last_login_ip = db.Column(db.String(100))
     current_login_ip = db.Column(db.String(100))
     login_count = db.Column(db.Integer())
-    roles = db.relationship('Role', secondary=roles_users,
+    roles = db.relationship('Role', secondary=ROLES_USERS,
                             backref=db.backref('users', lazy='dynamic'))
     def __str__(self):
         return self.email
@@ -41,6 +42,7 @@ class User(db.Model, UserMixin):
 class Config(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     number_of_racks = db.Column(db.Integer())
+    # TODO fix this
     order_of_rigs = db.Column(TextPickleType())
 
 def check_db_populated():

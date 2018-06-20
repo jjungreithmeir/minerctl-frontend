@@ -1,3 +1,4 @@
+# TODO refactor this hot spaghetti code mess
 import requests
 import json
 from src.config_reader import ConfigReader

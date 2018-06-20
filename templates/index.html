@@ -84,7 +84,8 @@
 
 <div class="row flex">
   {% set cnt = [1] %}
-  {% for row in range((config.number_of_miners / 10)|round(method='ceil')|int) %}
+  <!-- TODO set this dynamically -->
+  {% for row in range(12) %}
   <div class="col 6 w-150px padder-5">
 
     <div class="bg-color-grey m-lr-2 padder rack" id="rack{{row}}">

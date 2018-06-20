@@ -12,9 +12,6 @@ def parse_json(resource='/cfg'):
     return sess.get(container_conn + resource).json()
 
 def put_dict(list, resource='/cfg'):
-    """
-    Returns True if the POST action has been executed successfully.
-    """
     copy = list.copy().to_dict()
 
     # removing artifacts from the POST request

@@ -92,64 +92,64 @@
 </div>
 
 <div class="row flex">
-  {% set cnt = [1] %}
-  {% for row in range(local_config.number_of_racks) %}
+  {% set cnt = [0] %}
+  {% for rack in range(local_config.number_of_racks) %}
   <div class="col 6 w-150px padder-5">
 
-    <div class="bg-color-grey m-lr-2 padder rack" id="rack{{row}}">
-      <p class="font-bold font-white font-large center-align no-margin rack-title"> rack {{ row + 1}} </p>
+    <div class="bg-color-grey m-lr-2 padder rack" id="rack{{cnt[0]}}">
+      <p class="font-bold font-white font-large center-align no-margin rack-title"> rack {{ cnt[0] }} </p>
 
-      {% for miner in range(10) %}
-      <div class="h-rig m-b-5" id="rig_{{cnt[0] - 1}}">
-        {% if miners.miners[cnt[0] - 1] or operation.active_mode == 'gpu' and miners.miners[cnt[0] - 1] != None %}
-        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+      {% for miner_id in local_config.racks[rack] %}
+      <div class="h-rig m-b-5" id="rig_{{miner_id}}">
+        {% if miners.miners[miner_id] or operation.active_mode == 'gpu' and miners.miners[miner_id] != None %}
+        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ miner_id }}">
 
-        {% elif miners.miners[cnt[0] - 1] == False %}
-        <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+        {% elif miners.miners[miner_id] == False %}
+        <div class="bg-color-white disabled-miner z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ miner_id }}">
 
         {% else %}
-        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb d-none placeholder-rig" id="placeholder{{ cnt[0] }}">
+        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb d-none placeholder-rig" id="placeholder{{ miner_id }}">
           <p class="color-grey fill-parent flex-text-center">
             placeholder
-            <a class="right delete-rig pos-abs delete-btn d-none pointer" onclick="sendMinerAction({{cnt[0]}},'register')"><i title="add" class="material-icons color-main">add_circle</i></a>
+            <a class="right delete-rig pos-abs delete-btn d-none pointer" onclick="sendMinerAction({{miner_id}},'register')"><i title="add" class="material-icons color-main">add_circle</i></a>
           </p>
 
         </div>
-        <div class="d-none z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ cnt[0] }}">
+        <div class="d-none z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ miner_id }}">
         {% endif %}
 
           <p class="">
-            #{{ cnt[0] }}
+            #{{ miner_id }}
           </p>
           {% if operation.active_mode == 'fpga' %}
           <div class="switch">
             <label>
-                  {% if miners.miners[cnt[0] - 1] %}
-                    <input type="checkbox" class="miner-toggle" checked onclick="toggleMinerCSS('miner{{ cnt[0] }}');sendMinerAction({{cnt[0]}},'toggle')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
+                  {% if miners.miners[miner_id] %}
+                    <input type="checkbox" class="miner-toggle" checked onclick="toggleMinerCSS('miner{{ miner_id }}');sendMinerAction({{miner_id}},'toggle')" id="miner{{ miner_id }}-checkbox" autocomplete="off">
                   {% else %}
-                    <input type="checkbox" class="miner-toggle" id="miner{{ cnt[0] }}-checkbox" onclick="toggleMinerCSS('miner{{ cnt[0] }}');sendMinerAction({{cnt[0]}},'toggle')" id="miner{{ cnt[0] }}-checkbox" autocomplete="off">
+                    <input type="checkbox" class="miner-toggle" id="miner{{ miner_id }}-checkbox" onclick="toggleMinerCSS('miner{{ miner_id }}');sendMinerAction({{miner_id}},'toggle')" id="miner{{ miner_id }}-checkbox" autocomplete="off">
                   {% endif %}
                   <span class="lever"></span>
                 </label>
           </div>
           {% elif operation.active_mode == 'gpu' %}
           <div>
-            <a class="waves-effect waves-light btn btn-tiny bg-color-main miner-btn" onclick="sendMinerAction({{cnt[0]}},'on')">ON</a>
-            <a class="waves-effect waves-light btn btn-tiny bg-color-red miner-btn" onclick="sendMinerAction({{cnt[0]}},'off')">OFF</a>
+            <a class="waves-effect waves-light btn btn-tiny bg-color-main miner-btn" onclick="sendMinerAction({{miner_id}},'on')">ON</a>
+            <a class="waves-effect waves-light btn btn-tiny bg-color-red miner-btn" onclick="sendMinerAction({{miner_id}},'off')">OFF</a>
           </div>
           {% endif %}
           {% if operation.active_mode == 'fpga' %}
-          <a class="right"><i title="reset" class="material-icons color-black font-transparent pointer waves-effect" onclick="sendMinerAction({{cnt[0]}},'reset')">settings_backup_restore</i></a>
+          <a class="right"><i title="reset" class="material-icons color-black font-transparent pointer waves-effect" onclick="sendMinerAction({{miner_id}},'reset')">settings_backup_restore</i></a>
           {% endif %}
-          <a class="right delete-rig pos-abs delete-btn d-none pointer" onclick="sendMinerAction({{cnt[0]}},'deregister')"><i title="delete" class="material-icons color-red">remove_circle</i></a>
+          <a class="right delete-rig pos-abs delete-btn d-none pointer" onclick="sendMinerAction({{miner_id}},'deregister')"><i title="delete" class="material-icons color-red">remove_circle</i></a>
 
         </div>
         </div>
-        {% if cnt.append(cnt.pop() + 1) %}{% endif %}
         {% endfor %}
 
         </div>
       </div>
+      {% if cnt.append(cnt.pop() + 1) %}{% endif %}
       {% endfor %}
     </div>
 
@@ -186,7 +186,7 @@
       function sendMinerAction(id, action) {
         $.ajax({
           // -1 because the values start at 1 in the html elements
-          url: Flask.url_for("action") + '?' + $.param({ action: action, id: id - 1 }),
+          url: Flask.url_for("action") + '?' + $.param({ action: action, id: id }),
           type: 'PATCH',
           dataType: 'json'
         });
@@ -219,13 +219,15 @@
       }
       function saveLayout() {
         let data = {'number_of_racks': $('#number-racks').val()}
+        $(".rack").each(function() {
+          data[this.id] = $(this).sortable( "serialize", { key: "rack" } );
+        });
         $.ajax({
           url: Flask.url_for("config"),
           type: 'PUT',
           dataType: 'json',
           data: data
         });
-
         // TODO fix this. somehow the flask app receives the entire json as a
         //single json attribute
         /*

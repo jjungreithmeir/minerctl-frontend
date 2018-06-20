@@ -9,6 +9,9 @@ clean:
 clean_db:
 	rm -f config/database.sqlite3
 
+clean_layout:
+	rm -f config/layout.json
+
 lint:
 	source env/bin/activate; pylint controller.py || exit 0
 

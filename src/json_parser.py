@@ -30,6 +30,22 @@ def patch(params, resource='/miner'):
 
     return r.raise_for_status()
 
+def save_json(data, filename='config/layout.json'):
+    layout = data.copy().to_dict()
+    with open(filename, 'w') as file:
+        json.dump(layout, file)
+
+def read_json(filename='config/layout.json', catch_exception=True):
+    try:
+        with open(filename) as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        if catch_exception:
+            data = None
+        else:
+            raise FileNotFoundError
+    return data
+
 def put_str(data, resource='/cfg'):
     json_data = json.load(data)
 

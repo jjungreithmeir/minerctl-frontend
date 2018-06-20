@@ -16,7 +16,8 @@ from wtforms import Form, BooleanField, StringField, PasswordField, \
     validators, HiddenField
 from flask_jsglue import JSGlue
 import flask_sijax
-from src.json_parser import parse_json, put_dict, resp_to_dict, put_str, patch
+from src.json_parser import parse_json, put_dict, resp_to_dict, put_str, \
+    patch, save_json, read_json
 from src.db_init import db, User, Role, setup, add_or_update_user, \
     delete_user
 from src.config_reader import ConfigReader
@@ -71,8 +72,31 @@ def register_context():
 @APP.route('/')
 @login_required
 def index():
-    # TODO add local_config from database
-    local_config = {'number_of_racks':12}
+    # first the layout.json has to be converted into an iterable dictionary
+    layout = read_json()
+
+    if layout is None:
+        local_config = {'number_of_racks': 12}
+        racks = []
+        index = 0
+        for rack in range(12):
+            rack = []
+            for miner_id in range(10):
+                rack.append(index)
+                index += 1
+            racks.append(rack)
+        local_config['racks'] = racks
+    else:
+        local_config = {'number_of_racks': int(layout.pop('number_of_racks'))}
+        racks = []
+        for rack, string in layout.items():
+            temp = string.replace('rack=', '')
+            ids = temp.split('&')                
+            # casting all strs to ints
+            ids = list(map(int, ids))
+            racks.append(ids)
+        local_config['racks'] = racks
+
     return render_template('index.html',
                            miners=parse_json(),
                            local_config=local_config,
@@ -87,9 +111,7 @@ def index():
 @roles_required('admin')
 def config():
     if request.method == 'PUT':
-        request.form['number_of_racks']
-        # TODO
-        #config = request.form.copy()
+        save_json(request.form)
     return '', 204
 
 @APP.route('/action', methods=['PATCH'])

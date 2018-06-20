@@ -75,6 +75,7 @@ def index():
     # first the layout.json has to be converted into an iterable dictionary
     layout = read_json()
 
+    # TODO add this to RESET EVERYTHING
     if layout is None:
         local_config = {'number_of_racks': 12}
         racks = []
@@ -91,7 +92,7 @@ def index():
         racks = []
         for rack, string in layout.items():
             temp = string.replace('rack=', '')
-            ids = temp.split('&')                
+            ids = temp.split('&')
             # casting all strs to ints
             ids = list(map(int, ids))
             racks.append(ids)

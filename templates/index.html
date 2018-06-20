@@ -92,12 +92,11 @@
 </div>
 
 <div class="row flex">
-  {% set cnt = [0] %}
   {% for rack in range(local_config.number_of_racks) %}
   <div class="col 6 w-150px padder-5">
 
-    <div class="bg-color-grey m-lr-2 padder rack" id="rack{{cnt[0]}}">
-      <p class="font-bold font-white font-large center-align no-margin rack-title"> rack {{ cnt[0] }} </p>
+    <div class="bg-color-grey m-lr-2 padder rack" id="rack{{rack}}">
+      <p class="font-bold font-white font-large center-align no-margin rack-title"> rack {{ rack + 1 }} </p>
 
       {% for miner_id in local_config.racks[rack] %}
       <div class="h-rig m-b-5" id="rig_{{miner_id}}">
@@ -119,7 +118,7 @@
         {% endif %}
 
           <p class="">
-            #{{ miner_id }}
+            #{{ miner_id + 1 }}
           </p>
           {% if operation.active_mode == 'fpga' %}
           <div class="switch">
@@ -149,7 +148,6 @@
 
         </div>
       </div>
-      {% if cnt.append(cnt.pop() + 1) %}{% endif %}
       {% endfor %}
     </div>
 
@@ -195,7 +193,10 @@
           $("#placeholder" + id).toggleClass('d-none');
         }
       }
+      let cache = null;
       function toggleEditMode() {
+        cache = $(".rack").html();
+
         if ($('#save-layout').hasClass('d-none')) {
           $(".rack").sortable("enable");
           $('#edit-layout').toggleClass('d-none');
@@ -216,6 +217,9 @@
         // the edit mode, similiar to the IOS feature when you long-press an
         // app. It is disabled, however, because it needs a ton of resources.
         //$(".h-rig").toggleClass("wiggle")
+      }
+      function resetLayout() {
+        $(".rack").html(cache).sortable("refresh");
       }
       function saveLayout() {
         let data = {'number_of_racks': $('#number-racks').val()}

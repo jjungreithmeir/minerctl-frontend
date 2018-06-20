@@ -1,8 +1,9 @@
 import requests
 import json
+from src.config_reader import ConfigReader
 
-# TODO query addr from central config file
-container_conn = 'http://localhost:12345'
+cfg_rdr = ConfigReader()
+container_conn = cfg_rdr.get_attr('backend_address')
 sess = requests.Session()
 adapter = requests.adapters.HTTPAdapter(max_retries=10)
 sess.mount('http://', adapter)

@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_security import UserMixin, RoleMixin, SQLAlchemyUserDatastore, Security
 from flask_security.utils import encrypt_password
 from src.db_helpers import TextPickleType
+from src.config_reader import ConfigReader
 
 db = SQLAlchemy()
 
@@ -52,17 +53,15 @@ def check_db_populated():
 def populate_db(user_datastore):
     db.create_all()
 
-    with open('config/initial.config') as file:
-        content = file.read().splitlines()
-
-    cfg_username = content[4].split('=')[1]
-    cfg_password = content[5].split('=')[1]
+    cfg_rdr = ConfigReader()
 
     user_datastore.create_role(
         name='admin',
-        description='Admins are able to manage users and configure the controller.')
-    user_datastore.create_user(email=cfg_username,
-                               password=encrypt_password(cfg_password),
+        description='Admins are able to manage users and configure the \
+        controller.')
+    user_datastore.create_user(email=cfg_rdr.get_attr('username'),
+                               password=
+                               encrypt_password(cfg_rdr.get_attr('password')),
                                roles=['admin'])
     db.session.add(Config(number_of_racks=120))
     db.session.commit()

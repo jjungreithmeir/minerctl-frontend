@@ -19,13 +19,17 @@ import flask_sijax
 from src.json_parser import parse_json, put_dict, resp_to_dict, put_str, patch
 from src.db_init import db, User, Role, Config, setup, add_or_update_user, \
     delete_user
+from src.config_reader import ConfigReader
 
 # Create APP
 APP = Flask(__name__)
+# init JSGLUE. this is needed to query URLs in javascript
 JSGLUE = JSGlue(APP)
 
-APP.config['SECRET_KEY'] = 'n0b0dy-c0u1d-gue55-th15'
-APP.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///config/database.sqlite3'
+CFG_RDR = ConfigReader()
+
+APP.config['SECRET_KEY'] = CFG_RDR.get_attr('db_secret_key')
+APP.config['SQLALCHEMY_DATABASE_URI'] = CFG_RDR.get_attr('db_address')
 # needed because this functionality is already depricated
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

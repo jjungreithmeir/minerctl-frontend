@@ -177,6 +177,11 @@ def user():
                            config=parse_json('/info'),
                            form=form)
 
+@APP.errorhandler(500)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return render_template('500.html'), 500
+
 def prepare_app():
     # init JSGLUE. this is needed to query URLs in javascript
     JSGLUE = JSGlue(APP)

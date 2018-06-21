@@ -127,6 +127,13 @@
   align-items: center;
 }
 
+.flex-error-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .flex-sb {
   display: flex;
   justify-content: space-between;

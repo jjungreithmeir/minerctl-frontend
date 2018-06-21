@@ -20,3 +20,6 @@ freeze:
 
 run:
 	source env/bin/activate; export FLASK_APP=controller.py; export FLASK_ENV=development; python controller.py
+
+run_prod:
+	source env/bin/activate; export FLASK_APP=controller.py; python controller.py

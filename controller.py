@@ -17,7 +17,7 @@ from wtforms import Form, BooleanField, StringField, PasswordField, \
 from flask_jsglue import JSGlue
 import flask_sijax
 from src.json_parser import parse_json, put_dict, resp_to_dict, put_str, \
-    patch, save_json, read_json
+    patch, save_json, read_json, patch_dict
 from src.db_init import db, User, Role, setup, add_or_update_user, \
     delete_user
 from src.config_reader import ConfigReader
@@ -93,7 +93,7 @@ def action():
 def settings():
     if request.method == 'POST':
         if request.form['action'] == 'save':
-            error = put_dict(request.form)
+            error = patch_dict(request.form)
             if error is None:
                 flash('success')
             else:

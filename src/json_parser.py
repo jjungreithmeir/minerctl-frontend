@@ -23,6 +23,17 @@ def put_dict(list, resource='/cfg'):
     # TODO Error handling
     return r.raise_for_status()
 
+def patch_dict(list, resource='/cfg'):
+    copy = list.copy().to_dict()
+
+    # removing artifacts from the POST request
+    copy.pop('action', None)
+    copy.pop('file', None)
+
+    r = sess.patch(container_conn + resource, data=copy)
+    # TODO Error handling
+    return r.raise_for_status()
+
 def patch(params, resource='/miner'):
     copy = params.copy().to_dict()
     r = sess.patch(container_conn + resource, data=copy)

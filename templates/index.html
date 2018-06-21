@@ -15,7 +15,7 @@
       <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10 d-none" onclick="toggleEditMode();saveLayout()" id="save-layout">save layout</a>
     </div>
     <div class="left">
-      <a href="/" class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode" onclick="saveLayout(reset=true)">reset layout</a>
+      <a href="#modal-reset-confirmation" class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode modal-trigger">reset layout</a>
     </div>
   </div>
   <div class="edit-mode d-none row">
@@ -151,12 +151,15 @@
     {% endfor %}
     </div>
 
-    <div id="cancel" class="modal">
+    <div id="modal-reset-confirmation" class="modal w-30">
       <div class="modal-content">
-        <h4> Miner # </h4>
-        <a href="#!" class="modal-close btn-flat">ON</a>
-        <a href="#!" class="modal-close btn-flat">OFF</a>
-        <a href="#!" class="modal-close btn-flat">RESET</a>
+        <h4>Warning!</h4>
+        <p>You are about to permanently reset the layout!
+        <p>Are you sure you want to proceed?</p>
+      </div>
+      <div class="modal-footer">
+          <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10 modal-close">No, take me out of here.</a>
+          <a href="/" class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode" onclick="saveLayout(reset=true)">Yes, I am sure.</a>
       </div>
     </div>
   </div>
@@ -164,6 +167,10 @@
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript">
+  $(document).ready(function() {
+    $('.modal').modal();
+  });
+
   function toggleMinerCSS(selector) {
     $('#' + selector).toggleClass('disabled-miner', $('#' + selector + '-checkbox').val());
   }

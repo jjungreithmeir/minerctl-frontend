@@ -15,7 +15,7 @@
       <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10 d-none" onclick="toggleEditMode();saveLayout()" id="save-layout">save layout</a>
     </div>
     <div class="left">
-      <a class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode" onclick="saveLayout(reset=true)">reset layout</a>
+      <a href="/" class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode" onclick="saveLayout(reset=true)">reset layout</a>
     </div>
   </div>
   <div class="edit-mode d-none row">
@@ -236,7 +236,6 @@
     } else {
       $(".rack").each(function() {
         data[this.id] = $(this).sortable( "serialize", { key: "rack" } );
-        console.log(data[this.id])
       });
     }
     $.ajax({

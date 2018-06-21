@@ -22,42 +22,7 @@ from src.db_init import db, User, Role, setup, add_or_update_user, \
     delete_user
 from src.config_reader import ConfigReader
 
-# Create APP
 APP = Flask(__name__)
-# init JSGLUE. this is needed to query URLs in javascript
-JSGLUE = JSGlue(APP)
-
-CFG_RDR = ConfigReader()
-
-APP.config['SECRET_KEY'] = CFG_RDR.get_attr('db_secret_key')
-APP.config['SQLALCHEMY_DATABASE_URI'] = CFG_RDR.get_attr('db_address')
-# needed because this functionality is already depricated
-APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# the salt is a workaround for a bug, as flask-security salts  passwords
-# automatically but somehow it requires and uses this config value which breaks
-# the login if the salt is individually unique (as a salt should be)
-APP.config['SECURITY_PASSWORD_SALT'] = 'fake_salt'
-APP.config['SECURITY_TRACKABLE'] = True
-APP.config['SECURITY_REGISTERABLE'] = True
-APP.config['SECURITY_CONFIRMABLE'] = False
-
-APP.config['UPLOAD_FOLDER'] = 'config'
-# max upload size is 50 KB
-APP.config['MAX_CONTENT_LENGTH'] = 50 * 1024
-ALLOWED_EXTENSIONS = set(['cfg'])
-
-PATH = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
-
-APP.config['SIJAX_STATIC_PATH'] = PATH
-APP.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
-flask_sijax.Sijax(APP)
-
-with APP.app_context():
-    db.init_app(APP)
-    USER_DATASTORE = SQLAlchemyUserDatastore(db, User, Role)
-    SECURITY = Security(APP, USER_DATASTORE)
-    setup(db, USER_DATASTORE)
 
 @APP.context_processor
 def register_context():
@@ -212,5 +177,47 @@ def user():
                            config=parse_json('/info'),
                            form=form)
 
+def prepare_app():
+    # init JSGLUE. this is needed to query URLs in javascript
+    JSGLUE = JSGlue(APP)
+
+    CFG_RDR = ConfigReader()
+
+    APP.config['SECRET_KEY'] = CFG_RDR.get_attr('db_secret_key')
+    APP.config['SQLALCHEMY_DATABASE_URI'] = CFG_RDR.get_attr('db_address')
+    # needed because this functionality is already depricated
+    APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # the salt is a workaround for a bug, as flask-security salts  passwords
+    # automatically but somehow it requires and uses this config value which breaks
+    # the login if the salt is individually unique (as a salt should be)
+    APP.config['SECURITY_PASSWORD_SALT'] = 'fake_salt'
+    APP.config['SECURITY_TRACKABLE'] = True
+    APP.config['SECURITY_REGISTERABLE'] = True
+    APP.config['SECURITY_CONFIRMABLE'] = False
+
+    APP.config['UPLOAD_FOLDER'] = 'config'
+    # max upload size is 50 KB
+    APP.config['MAX_CONTENT_LENGTH'] = 50 * 1024
+    ALLOWED_EXTENSIONS = set(['cfg'])
+
+    PATH = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
+
+    APP.config['SIJAX_STATIC_PATH'] = PATH
+    APP.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
+    flask_sijax.Sijax(APP)
+
+    with APP.app_context():
+        db.init_app(APP)
+        USER_DATASTORE = SQLAlchemyUserDatastore(db, User, Role)
+        SECURITY = Security(APP, USER_DATASTORE)
+        setup(db, USER_DATASTORE)
+
+    return APP
+
+def create_app():
+    app = prepare_app()
+    app.run(host='0.0.0.0', port=80)
+
 if __name__ == '__main__':
-    APP.run(host='0.0.0.0', port=80)
+    create_app()

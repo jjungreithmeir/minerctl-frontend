@@ -28,8 +28,11 @@ def patch(data, resource='/miner', exclude=[]):
     r = sess.patch(container_conn + resource, data=copy)
     return r.raise_for_status()
 
-def write_json(data, filename='config/layout.json'):
-    layout = data.copy().to_dict()
+def write_json(data, filename='config/layout.json', needs_conversion=True):
+    if needs_conversion:
+        layout = data.copy().to_dict()
+    else:
+        layout = data
     with open(filename, 'w') as file:
         json.dump(layout, file)
 

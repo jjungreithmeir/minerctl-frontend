@@ -15,7 +15,7 @@
       <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10 d-none" onclick="toggleEditMode();saveLayout()" id="save-layout">save layout</a>
     </div>
     <div class="left">
-      <a class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode" onclick="resetLayout()">reset layout</a>
+      <a class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode" onclick="saveLayout(reset=true)">reset layout</a>
     </div>
   </div>
   <div class="edit-mode d-none row">
@@ -214,15 +214,31 @@
     // app. It is disabled, however, because it needs a ton of resources.
     //$(".h-rig").toggleClass("wiggle")
   }
-  function resetLayout() {
-    // TODO
+
+  function generate_array(start, end) {
+    let array = []
+    for (let i = start; i < end; i++) {
+      array.push(i)
+    }
+    return array;
   }
+
   /** sends the layout of IDs to flask in order to persist it */
-  function saveLayout() {
-    let data = {'number_of_racks': $('#number-racks').val()}
-    $(".rack").each(function() {
-      data[this.id] = $(this).sortable( "serialize", { key: "rack" } );
-    });
+  function saveLayout(reset=false) {
+    let number_of_racks = $('#number-racks').val();
+    let data = {'number_of_racks': number_of_racks};
+    if (reset) {
+      for (let i = 0; i < number_of_racks; i++) {
+        temp = generate_array(0 + 10 * i, 0 + 10 * i + 10)
+        temp = 'rack=' + temp.join('&rack=')
+        data['rack' + i] = temp
+      }
+    } else {
+      $(".rack").each(function() {
+        data[this.id] = $(this).sortable( "serialize", { key: "rack" } );
+        console.log(data[this.id])
+      });
+    }
     $.ajax({
       url: Flask.url_for("config"),
       type: 'PUT',

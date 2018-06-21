@@ -40,7 +40,6 @@ def index():
     # first the layout.json has to be converted into an iterable dictionary
     layout = read_json()
 
-    # TODO add this to RESET EVERYTHING
     if layout is None:
         local_config = {'number_of_racks': 12}
         racks = []

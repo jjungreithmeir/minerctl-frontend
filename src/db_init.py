@@ -1,6 +1,6 @@
-# TODO refactor this hot spaghetti code mess
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import UserMixin, RoleMixin, SQLAlchemyUserDatastore, Security
+from flask_security import UserMixin, RoleMixin, SQLAlchemyUserDatastore, \
+Security
 from flask_security.utils import encrypt_password
 from src.config_reader import ConfigReader
 
@@ -44,10 +44,8 @@ def check_db_populated():
     except:
         return False
 
-# not needed anymore
 def populate_db(user_datastore):
     db.create_all()
-
     cfg_rdr = ConfigReader()
 
     user_datastore.create_role(
@@ -85,6 +83,5 @@ def delete_user(username):
     db.session.commit()
 
 def setup(db, user_datastore):
-
     if not check_db_populated():
         populate_db(user_datastore)

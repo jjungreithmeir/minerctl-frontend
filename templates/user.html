@@ -97,6 +97,7 @@
     $("#add-user").on('click', resetModal());
   });
 
+  /** fills the user modal with the appropriate information about the current user */
   function edit(username, is_active, is_admin) {
     let elem = $('#modal-add-user')
     let inst = M.Modal.getInstance(elem);
@@ -118,6 +119,7 @@
     M.updateTextFields();
   }
 
+  /** Fills the deletion modal with the appropriate warning message */
   function pickUser(user) {
     $("#hidden-username").val(user);
     if (user == "{{current_user}}") {

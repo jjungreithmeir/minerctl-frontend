@@ -16,8 +16,8 @@ from wtforms import Form, BooleanField, StringField, PasswordField, \
     validators, HiddenField
 from flask_jsglue import JSGlue
 import flask_sijax
-from src.json_parser import parse_json, put_dict, resp_to_dict, put_str, \
-    patch, save_json, read_json, patch_dict
+from src.json_parser import get, resp_to_dict, patch_str, \
+    patch, write_json, read_json
 from src.db_init import db, User, Role, setup, add_or_update_user, \
     delete_user
 from src.config_reader import ConfigReader
@@ -64,26 +64,25 @@ def index():
         local_config['racks'] = racks
 
     return render_template('index.html',
-                           miners=parse_json(),
+                           miners=get(),
                            local_config=local_config,
-                           config=parse_json('/info'),
-                           temp=parse_json('/temp'),
-                           filter=parse_json('/filter'),
-                           pid=parse_json('/pid'),
-                           fans=parse_json('/fans'),
-                           operation=parse_json('/mode'))
+                           config=get('/info'),
+                           temp=get('/temp'),
+                           filter=get('/filter'),
+                           pid=get('/pid'),
+                           fans=get('/fans'),
+                           operation=get('/mode'))
 
 @APP.route('/config', methods=['PUT'])
 @roles_required('admin')
 def config():
     if request.method == 'PUT':
-        save_json(request.form)
+        write_json(request.form)
     return '', 204
 
 @APP.route('/action', methods=['PATCH'])
 def action():
     if request.method == 'PATCH':
-        # TODO error handling
         patch(request.args)
 
     return '', 204
@@ -93,7 +92,8 @@ def action():
 def settings():
     if request.method == 'POST':
         if request.form['action'] == 'save':
-            error = patch_dict(request.form)
+            error = patch(data=request.form, exclude=['action', 'file'],
+                          resource='/cfg')
             if error is None:
                 flash('success')
             else:
@@ -106,14 +106,16 @@ def settings():
                 json.dumps(data),
                 mimetype='application/json',
                 headers={
-                    'Content-Disposition':'attachment;filename=minerctl_'+tmstmp+'.cfg'}
+                    'Content-Disposition':'attachment;filename=minerctl_' +
+                    tmstmp + '.cfg'}
             )
         # POST/Redirect/GET
         return redirect(url_for('settings'))
     return render_template('settings.html',
-                           data=parse_json(),
-                           config=parse_json('/info'))
+                           data=get(),
+                           config=get('/info'))
 
+ALLOWED_EXTENSIONS = set(['cfg'])
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -138,7 +140,7 @@ def upload_file():
             file.save(path)
 
             with open(path) as json_file:
-                put_str(json_file)
+                patch_str(json_file)
 
             return redirect('/settings')
     return redirect('/')
@@ -174,7 +176,7 @@ def user():
 
     return render_template('user.html',
                            userbase=User.query.all(),
-                           config=parse_json('/info'),
+                           config=get('/info'),
                            form=form)
 
 @APP.errorhandler(500)
@@ -204,7 +206,6 @@ def prepare_app():
     APP.config['UPLOAD_FOLDER'] = 'config'
     # max upload size is 50 KB
     APP.config['MAX_CONTENT_LENGTH'] = 50 * 1024
-    ALLOWED_EXTENSIONS = set(['cfg'])
 
     PATH = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
 

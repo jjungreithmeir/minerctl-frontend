@@ -8,7 +8,6 @@ import time
 import json
 from flask import Flask, render_template, request, \
     redirect, Response, url_for, flash, g
-from werkzeug.utils import secure_filename
 from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required, url_for_security, \
     RegisterForm, current_user
@@ -43,12 +42,12 @@ def index():
     if layout is None:
         local_config = {'number_of_racks': 12}
         racks = []
-        index = 0
+        counter = 0
         for rack in range(12):
             rack = []
-            for miner_id in range(10):
-                rack.append(index)
-                index += 1
+            for _ in range(10):
+                rack.append(counter)
+                counter += 1
             racks.append(rack)
         local_config['racks'] = racks
     else:
@@ -106,7 +105,7 @@ def settings():
                 mimetype='application/json',
                 headers={
                     'Content-Disposition':'attachment;filename=minerctl_' +
-                    tmstmp + '.cfg'}
+                                          tmstmp + '.cfg'}
             )
         # POST/Redirect/GET
         return redirect(url_for('settings'))
@@ -179,18 +178,18 @@ def user():
                            form=form)
 
 @APP.errorhandler(500)
-def page_not_found(e):
+def page_not_found(error):
     # note that we set the 404 status explicitly
     return render_template('500.html'), 500
 
 def prepare_app():
     # init JSGLUE. this is needed to query URLs in javascript
-    JSGLUE = JSGlue(APP)
+    js_glue = JSGlue(APP)
 
-    CFG_RDR = ConfigReader()
+    cfg_rdr = ConfigReader()
 
-    APP.config['SECRET_KEY'] = CFG_RDR.get_attr('db_secret_key')
-    APP.config['SQLALCHEMY_DATABASE_URI'] = CFG_RDR.get_attr('db_address')
+    APP.config['SECRET_KEY'] = cfg_rdr.get_attr('db_secret_key')
+    APP.config['SQLALCHEMY_DATABASE_URI'] = cfg_rdr.get_attr('db_address')
     # needed because this functionality is already depricated
     APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -206,17 +205,17 @@ def prepare_app():
     # max upload size is 50 KB
     APP.config['MAX_CONTENT_LENGTH'] = 50 * 1024
 
-    PATH = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
+    path = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
 
-    APP.config['SIJAX_STATIC_PATH'] = PATH
+    APP.config['SIJAX_STATIC_PATH'] = path
     APP.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
     flask_sijax.Sijax(APP)
 
     with APP.app_context():
         db.init_app(APP)
-        USER_DATASTORE = SQLAlchemyUserDatastore(db, User, Role)
-        SECURITY = Security(APP, USER_DATASTORE)
-        setup(db, USER_DATASTORE)
+        user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+        security = Security(APP, user_datastore)
+        setup(db, user_datastore)
 
     return APP
 

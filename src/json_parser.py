@@ -1,32 +1,32 @@
-import requests
 import json
+import requests
 from src.config_reader import ConfigReader
 
-cfg_rdr = ConfigReader()
-container_conn = cfg_rdr.get_attr('backend_address')
-sess = requests.Session()
-adapter = requests.adapters.HTTPAdapter(max_retries=10)
-sess.mount('http://', adapter)
+CFG_RDR = ConfigReader()
+CONTAINER_CONN = CFG_RDR.get_attr('backend_address')
+SESSION = requests.Session()
+ADAPTER = requests.adapters.HTTPAdapter(max_retries=10)
+SESSION.mount('http://', ADAPTER)
 
 def get(resource='/cfg'):
-    return sess.get(container_conn + resource).json()
+    return SESSION.get(CONTAINER_CONN + resource).json()
 
-def put(list, resource='/cfg'):
-    copy = list.copy().to_dict()
+def put(data, resource='/cfg'):
+    copy = data.copy().to_dict()
 
     # removing artifacts from the POST request
     copy.pop('action', None)
     copy.pop('file', None)
 
-    r = sess.put(container_conn + resource, data=copy)
-    return r.raise_for_status()
+    resp = SESSION.put(CONTAINER_CONN + resource, data=copy)
+    return resp.raise_for_status()
 
-def patch(data, resource='/miner', exclude=[]):
+def patch(data, resource='/miner', exclude=None):
     copy = data.copy().to_dict()
     for item in exclude:
         copy.pop(item, None)
-    r = sess.patch(container_conn + resource, data=copy)
-    return r.raise_for_status()
+    resp = SESSION.patch(CONTAINER_CONN + resource, data=copy)
+    return resp.raise_for_status()
 
 def write_json(data, filename='config/layout.json', needs_conversion=True):
     if needs_conversion:
@@ -49,7 +49,8 @@ def read_json(filename='config/layout.json', catch_exception=True):
 
 def patch_str(data, resource='/cfg'):
     json_data = json.load(data)
-    r = sess.patch(container_conn + resource, data=json_data)
+    resp = SESSION.patch(CONTAINER_CONN + resource, data=json_data)
+    return resp.raise_for_status()
 
 def resp_to_dict(resp):
     return resp.copy().to_dict()

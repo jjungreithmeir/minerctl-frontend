@@ -17,7 +17,7 @@ from flask_jsglue import JSGlue
 import flask_sijax
 from src.json_parser import get, resp_to_dict, patch_str, \
     patch, write_json, read_json
-from src.db_init import db, User, Role, setup, add_or_update_user, \
+from src.db_init import DB, User, Role, setup, add_or_update_user, \
     delete_user
 from src.config_reader import ConfigReader
 
@@ -41,17 +41,17 @@ class SijaxHandler(object):
 
     @staticmethod
     def get_config(obj_response):
-        config=get('/cfg')
-        for key, value in config['measurements'].items():
+        cfg = get('/cfg')
+        for key, value in cfg['measurements'].items():
             obj_response.html('#card-measurement-' + key,
                               "<span id='card-measurement-'" + key + ">" +
                               str(value) + "</span>")
         obj_response.html('#card-pressure_diff',
                           "<span id='card-pressure_diff'>" +
-                          str(config['pressure_diff']) + "</span>")
+                          str(cfg['pressure_diff']) + "</span>")
         obj_response.html('#card-rpm',
                           "<span id='card-rpm'>" +
-                          str(config['rpm']) + "</span>")
+                          str(cfg['rpm']) + "</span>")
 
 
 # Views
@@ -238,10 +238,10 @@ def prepare_app():
     flask_sijax.Sijax(APP)
 
     with APP.app_context():
-        db.init_app(APP)
-        user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+        DB.init_app(APP)
+        user_datastore = SQLAlchemyUserDatastore(DB, User, Role)
         _security = Security(APP, user_datastore)
-        setup(db, user_datastore)
+        setup(user_datastore)
 
     return APP
 

@@ -92,10 +92,14 @@
 </div>
 
 <div class="row flex">
-  {% for rack in range(local_config.number_of_racks) %}
+  {% for rack in range(local_config.max_number_of_racks) %}
   <div class="col 6 w-150px padder-5">
 
+    {% if rack < local_config.number_of_racks %}
     <div class="bg-color-grey m-lr-2 padder rack" id="rack{{rack}}">
+    {% else %}
+    <div class="bg-color-grey m-lr-2 padder rack d-none" id="rack{{rack}}">
+    {% endif %}
       <p class="font-bold font-white font-large center-align no-margin rack-title"> rack {{ rack + 1 }} </p>
 
       {% for miner_id in local_config.racks[rack] %}
@@ -177,7 +181,7 @@
   /** Dynamically removes .rack divs based on the number in the #number-rack input field. */
   function updateRacks() {
     $(".rack").each(function() {
-      let id = parseInt(this.id.split('rack')[1])
+      let id = parseInt(this.id.split('rack')[1]);
       if (id >= $('#number-racks').val()) {
         $(this).addClass('d-none');
       } else {
@@ -223,10 +227,10 @@
     // displaying the invisible placeholders
     $(".rig").each(function() {
       if ($(this).hasClass('placeholder-rig')) {
-        $(this).toggleClass('d-none')
-        $(this).find('.placeholder-content').toggleClass('d-none')
-        $(this).find('.rig-content').toggleClass('d-none')
-        $(this).find('.add-rig').toggleClass('d-none')
+        $(this).toggleClass('d-none');
+        $(this).find('.placeholder-content').toggleClass('d-none');
+        $(this).find('.rig-content').toggleClass('d-none');
+        $(this).find('.add-rig').toggleClass('d-none');
       }
     });
     $('.edit-mode').toggleClass('d-none');

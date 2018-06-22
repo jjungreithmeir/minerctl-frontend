@@ -38,9 +38,9 @@ def register_context():
 def index():
     # first the layout.json has to be converted into an iterable dictionary
     layout = read_json()
-
+    local_config = {'max_number_of_racks': 12}
     if layout is None:
-        local_config = {'number_of_racks': 12}
+        local_config['number_of_racks'] = 12
         racks = []
         counter = 0
         for rack in range(12):
@@ -51,7 +51,7 @@ def index():
             racks.append(rack)
         local_config['racks'] = racks
     else:
-        local_config = {'number_of_racks': int(layout.pop('number_of_racks'))}
+        local_config['number_of_racks'] = int(layout.pop('number_of_racks'))
         racks = []
         for rack, string in layout.items():
             temp = string.replace('rack=', '')

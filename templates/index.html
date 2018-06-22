@@ -101,46 +101,46 @@
       {% for miner_id in local_config.racks[rack] %}
       <div class="h-rig m-b-5" id="rig_{{miner_id}}">
         {% if miners.miners[miner_id] or operation.active_mode == 'gpu' and miners.miners[miner_id] != None %}
-        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ miner_id }}">
+        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb rig" id="miner{{ miner_id }}">
 
         {% elif miners.miners[miner_id] == False %}
-        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb disabled-miner" id="miner{{ miner_id }}">
+        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb rig disabled-miner" id="miner{{ miner_id }}">
 
         {% else %}
-        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb d-none placeholder-rig" id="placeholder{{ miner_id }}">
-          <p class="color-grey fill-parent flex-text-center">
-            placeholder
-            <a class="right delete-rig pos-abs delete-btn d-none pointer" onclick="sendMinerAction({{miner_id}},'register')"><i title="add" class="material-icons color-main">add_circle</i></a>
-          </p>
-
-        </div>
-        <div class="d-none z-depth-2 h-rig valign-wrapper padder-5 flex-sb" id="miner{{ miner_id }}">
+        <div class="bg-color-white z-depth-2 h-rig valign-wrapper padder-5 flex-sb rig d-none placeholder-rig" id="miner{{ miner_id }}">
         {% endif %}
 
-          <p class="">
+          <div class="placeholder-content fill-parent flex-text-center d-none">
+            <p class="color-grey">
+              placeholder
+            </p>
+          </div>
+
+          <p class="rig-content">
             #{{ miner_id + 1 }}
           </p>
           {% if operation.active_mode == 'asic' %}
-          <div class="switch">
+          <div class="switch rig-content">
             <label>
-                  {% if miners.miners[miner_id] %}
-                    <input type="checkbox" class="miner-toggle" checked onclick="toggleMinerCSS('miner{{ miner_id }}');sendMinerAction({{miner_id}},'toggle')" id="miner{{ miner_id }}-checkbox" autocomplete="off">
-                  {% else %}
-                    <input type="checkbox" class="miner-toggle" id="miner{{ miner_id }}-checkbox" onclick="toggleMinerCSS('miner{{ miner_id }}');sendMinerAction({{miner_id}},'toggle')" id="miner{{ miner_id }}-checkbox" autocomplete="off">
-                  {% endif %}
-                  <span class="lever"></span>
-                </label>
+              {% if miners.miners[miner_id] %}
+                <input type="checkbox" class="miner-toggle" checked onclick="toggleMinerCSS('miner{{ miner_id }}');sendMinerAction({{miner_id}},'toggle')" id="miner{{ miner_id }}-checkbox" autocomplete="off">
+              {% else %}
+                <input type="checkbox" class="miner-toggle" id="miner{{ miner_id }}-checkbox" onclick="toggleMinerCSS('miner{{ miner_id }}');sendMinerAction({{miner_id}},'toggle')" id="miner{{ miner_id }}-checkbox" autocomplete="off">
+              {% endif %}
+              <span class="lever"></span>
+            </label>
           </div>
           {% elif operation.active_mode == 'gpu' %}
-          <div>
+          <div class="rig-content">
             <a class="waves-effect waves-light btn btn-tiny bg-color-main miner-btn" onclick="sendMinerAction({{miner_id}},'on')">ON</a>
             <a class="waves-effect waves-light btn btn-tiny bg-color-red miner-btn" onclick="sendMinerAction({{miner_id}},'off')">OFF</a>
           </div>
           {% endif %}
           {% if operation.active_mode == 'asic' %}
-          <a class="right"><i title="reset" class="material-icons color-black font-transparent pointer waves-effect" onclick="sendMinerAction({{miner_id}},'reset')">settings_backup_restore</i></a>
+          <a class="right rig-content"><i title="reset" class="material-icons color-black font-transparent pointer waves-effect" onclick="sendMinerAction({{miner_id}},'reset')">settings_backup_restore</i></a>
           {% endif %}
-          <a class="right delete-rig pos-abs delete-btn d-none pointer" onclick="sendMinerAction({{miner_id}},'deregister')"><i title="delete" class="material-icons color-red">remove_circle</i></a>
+          <a class="right delete-rig pos-abs delete-btn d-none pointer rig-content" onclick="sendMinerAction({{miner_id}},'deregister')"><i title="delete" class="material-icons color-red">remove_circle</i></a>
+          <a class="right add-rig pos-abs delete-btn pointer d-none" onclick="sendMinerAction({{miner_id}},'register')"><i title="add" class="material-icons color-main">add_circle</i></a>
 
         </div>
         </div>
@@ -193,9 +193,17 @@
       type: 'PATCH',
       dataType: 'json'
     });
-    if (action == 'register' || action == 'deregister') {
-      $("#miner" + id).toggleClass('d-none');
-      $("#placeholder" + id).toggleClass('d-none');
+    // toggle placeholder/miner rig
+    if (action == 'register') {
+      $("#miner" + id).removeClass('placeholder-rig');
+      $("#miner" + id + '> .rig-content').toggleClass('d-none');
+      $("#miner" + id + '> .placeholder-content').toggleClass('d-none');
+      $("#miner" + id + '> .add-rig').toggleClass('d-none');
+    } else if (action == 'deregister') {
+      $("#miner" + id).addClass('placeholder-rig');
+      $("#miner" + id + '> .rig-content').toggleClass('d-none');
+      $("#miner" + id + '> .placeholder-content').toggleClass('d-none');
+      $("#miner" + id + '> .add-rig').toggleClass('d-none');
     }
   }
   function toggleEditMode() {
@@ -209,9 +217,18 @@
       $("#save-layout").toggleClass('d-none');
     }
     $('.h-rig').toggleClass('pointer');
+
+    // displaying the invisible placeholders
+    $(".rig").each(function() {
+      if ($(this).hasClass('placeholder-rig')) {
+        $(this).toggleClass('d-none')
+        $(this).find('.placeholder-content').toggleClass('d-none')
+        $(this).find('.rig-content').toggleClass('d-none')
+        $(this).find('.add-rig').toggleClass('d-none')
+      }
+    });
     $('.edit-mode').toggleClass('d-none');
     $('.miner-btn').toggleClass('disabled');
-    $(".placeholder-rig").toggleClass('d-none');
     $(".delete-rig").toggleClass('d-none');
     // inverts disabled prop
     $('.miner-toggle').prop('disabled', function(i, v) { return !v; });

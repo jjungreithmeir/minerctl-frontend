@@ -32,8 +32,30 @@ def register_context():
         'is_admin': current_user.has_role('admin')
     }
 
+class SijaxHandler(object):
+    """A container class for all Sijax handlers.
+    Grouping all Sijax handler functions in a class
+    (or a Python module) allows them all to be registered with
+    a single line of code.
+    """
+
+    @staticmethod
+    def get_config(obj_response):
+        config=get('/cfg')
+        for key, value in config['measurements'].items():
+            obj_response.html('#card-measurement-' + key,
+                              "<span id='card-measurement-'" + key + ">" +
+                              str(value) + "</span>")
+        obj_response.html('#card-pressure_diff',
+                          "<span id='card-pressure_diff'>" +
+                          str(config['pressure_diff']) + "</span>")
+        obj_response.html('#card-rpm',
+                          "<span id='card-rpm'>" +
+                          str(config['rpm']) + "</span>")
+
+
 # Views
-@APP.route('/')
+@APP.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
     # first the layout.json has to be converted into an iterable dictionary
@@ -60,6 +82,10 @@ def index():
             ids = list(map(int, ids))
             racks.append(ids)
         local_config['racks'] = racks
+
+    if g.sijax.is_sijax_request:
+        g.sijax.register_object(SijaxHandler)
+        return g.sijax.process_request()
 
     return render_template('index.html',
                            miners=get(),

@@ -178,13 +178,13 @@ def user():
                            form=form)
 
 @APP.errorhandler(500)
-def page_not_found(error):
+def page_not_found(_error):
     # note that we set the 404 status explicitly
     return render_template('500.html'), 500
 
 def prepare_app():
     # init JSGLUE. this is needed to query URLs in javascript
-    js_glue = JSGlue(APP)
+    _js_glue = JSGlue(APP)
 
     cfg_rdr = ConfigReader()
 
@@ -214,7 +214,7 @@ def prepare_app():
     with APP.app_context():
         db.init_app(APP)
         user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-        security = Security(APP, user_datastore)
+        _security = Security(APP, user_datastore)
         setup(db, user_datastore)
 
     return APP

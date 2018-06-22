@@ -199,8 +199,10 @@
       $("#miner" + id + '> .rig-content').toggleClass('d-none');
       $("#miner" + id + '> .placeholder-content').toggleClass('d-none');
       $("#miner" + id + '> .add-rig').toggleClass('d-none');
+      $("#miner" + id + '-checkbox').prop('checked', true);
     } else if (action == 'deregister') {
       $("#miner" + id).addClass('placeholder-rig');
+      $("#miner" + id).removeClass('disabled-miner');
       $("#miner" + id + '> .rig-content').toggleClass('d-none');
       $("#miner" + id + '> .placeholder-content').toggleClass('d-none');
       $("#miner" + id + '> .add-rig').toggleClass('d-none');

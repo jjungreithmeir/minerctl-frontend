@@ -14,6 +14,7 @@ from flask_security import Security, SQLAlchemyUserDatastore, \
 from wtforms import Form, BooleanField, StringField, PasswordField, \
     validators, HiddenField
 from flask_jsglue import JSGlue
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 import flask_sijax
 from src.json_parser import get, resp_to_dict, patch_str, \
     patch, write_json, read_json
@@ -41,7 +42,7 @@ class SijaxHandler(object):
 
     @staticmethod
     def get_config(obj_response):
-        cfg = get('/cfg')
+        cfg = get('/cfg', APP.config['access_headers'])
         for key, value in cfg['measurements'].items():
             obj_response.html('#card-measurement-' + key,
                               "<span id='card-measurement-'" + key + ">" +
@@ -100,15 +101,18 @@ def index():
         g.sijax.register_object(SijaxHandler)
         return g.sijax.process_request()
 
+    miners=get('/cfg', APP.config['access_headers'])
+    print(miners)
+
     return render_template('index.html',
-                           miners=get(),
+                           miners=get('/cfg', APP.config['access_headers']),
                            local_config=local_config,
-                           config=get('/info'),
-                           temp=get('/temp'),
-                           filter=get('/filter'),
-                           pid=get('/pid'),
-                           fans=get('/fans'),
-                           operation=get('/mode'))
+                           config=get('/info', APP.config['access_headers']),
+                           temp=get('/temp', APP.config['access_headers']),
+                           filter=get('/filter', APP.config['access_headers']),
+                           pid=get('/pid', APP.config['access_headers']),
+                           fans=get('/fans', APP.config['access_headers']),
+                           operation=get('/mode', APP.config['access_headers']))
 
 @APP.route('/config', methods=['PUT'])
 @roles_required('admin')
@@ -120,7 +124,7 @@ def config():
 @APP.route('/action', methods=['PATCH'])
 def action():
     if request.method == 'PATCH':
-        patch(request.args)
+        patch('/miners', APP.config['access_headers'], request.args)
 
     return '', 204
 
@@ -129,8 +133,8 @@ def action():
 def settings():
     if request.method == 'POST':
         if request.form['action'] == 'save':
-            error = patch(data=request.form, exclude=['action', 'file'],
-                          resource='/cfg')
+            error = patch('/cfg', APP.config['access_headers'],
+                          data=request.form, exclude=['action', 'file'])
             if error is None:
                 flash('success')
             else:
@@ -149,8 +153,8 @@ def settings():
         # POST/Redirect/GET
         return redirect(url_for('settings'))
     return render_template('settings.html',
-                           data=get(),
-                           config=get('/info'))
+                           data=get('/cfg', APP.config['access_headers']),
+                           config=get('/info', APP.config['access_headers']))
 
 ALLOWED_EXTENSIONS = set(['cfg'])
 def allowed_file(filename):
@@ -177,7 +181,7 @@ def upload_file():
             file.save(path)
 
             with open(path) as json_file:
-                patch_str(json_file)
+                patch_str('/cfg', APP.config['access_headers'], json_file)
 
             return redirect('/settings')
     return redirect('/')
@@ -213,7 +217,7 @@ def user():
 
     return render_template('user.html',
                            userbase=User.query.all(),
-                           config=get('/info'),
+                           config=get('/info', APP.config['access_headers']),
                            form=form)
 
 @APP.errorhandler(500)
@@ -250,11 +254,21 @@ def prepare_app():
     APP.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
     flask_sijax.Sijax(APP)
 
+    APP.config['JWT_ALGORITHM'] = 'RS256'
+    # TODO
+    with open('config/jwtRS256.key', 'rb') as file:
+        APP.config['JWT_PRIVATE_KEY'] = file.read()
+    JWT = JWTManager(APP)
+
     with APP.app_context():
         DB.init_app(APP)
         user_datastore = SQLAlchemyUserDatastore(DB, User, Role)
         _security = Security(APP, user_datastore)
         setup(user_datastore)
+        rs256_token = create_access_token('username')
+
+    APP.config['access_headers'] = {'Authorization': 'Bearer {}'
+                                    .format(rs256_token)}
 
     return APP
 

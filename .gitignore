@@ -1,6 +1,7 @@
 config/database.sqlite3
 config/layout.json
 config/current_conf.cfg
+config/jwtRS256.key*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

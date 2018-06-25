@@ -49,18 +49,22 @@
     <div class="card">
       <div class="card-content">
         <span class="card-title"> filter
+          <span id='filter-sign'>
             {% if filter.status_ok %}
               <i class="material-icons right" title="filter does not need to be cleaned">check</i>
             {% else %}
               <i class="material-icons right blinking" title="CLEAN FILTER!">warning</i>
             {% endif %}
           </span>
+        </span>
 
-        {% if not filter.status_ok %}
-        <p class="font-bold">
-          FILTER REQUIRES CLEANING!
-        </p>
-        {% endif %}
+        <div id='filter-msg'>
+          {% if not filter.status_ok %}
+          <p class="font-bold">
+            FILTER REQUIRES CLEANING!
+          </p>
+          {% endif %}
+        </div>
         <p> pressure difference: <span class="right"> &nbsp; <span id='card-pressure_diff'>{{filter.pressure_diff}}</span> mBar </span></p>
         <p> pressure threshold: <span class="right"> {{filter.threshold}} mBar </span></p>
       </div>

@@ -53,6 +53,19 @@ class SijaxHandler(object):
                           "<span id='card-rpm'>" +
                           str(cfg['rpm']) + "</span>")
 
+        if cfg['pressure_diff'] >= cfg['threshold']:
+            obj_response.html('#filter-sign',
+                              "<i class='material-icons right blinking' \
+                              title='CLEAN FILTER!'>warning</i>")
+            obj_response.html('#filter-msg',
+                              "<p class='font-bold'>FILTER REQUIRES CLEANING!\
+                              </p>")
+        else:
+            obj_response.html('#filter-sign',
+                              "<i class='material-icons right' \
+                              title='filter does not need to be cleaned'>\
+                              check</i>")
+            obj_response.html('#filter-msg',"")
 
 # Views
 @APP.route('/', methods=['GET', 'POST'])

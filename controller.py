@@ -255,7 +255,6 @@ def prepare_app():
     flask_sijax.Sijax(APP)
 
     APP.config['JWT_ALGORITHM'] = 'RS256'
-    # TODO
     with open(cfg_rdr.get_attr('private_key_file_location'), 'rb') as file:
         APP.config['JWT_PRIVATE_KEY'] = file.read()
     JWT = JWTManager(APP)
@@ -265,7 +264,7 @@ def prepare_app():
         user_datastore = SQLAlchemyUserDatastore(DB, User, Role)
         _security = Security(APP, user_datastore)
         setup(user_datastore)
-        rs256_token = create_access_token('username')
+        rs256_token = create_access_token(str(current_user))
 
     APP.config['access_headers'] = {'Authorization': 'Bearer {}'
                                     .format(rs256_token)}

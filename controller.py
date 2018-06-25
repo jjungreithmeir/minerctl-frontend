@@ -256,7 +256,7 @@ def prepare_app():
 
     APP.config['JWT_ALGORITHM'] = 'RS256'
     # TODO
-    with open('config/jwtRS256.key', 'rb') as file:
+    with open(cfg_rdr.get_attr('private_key_file_location'), 'rb') as file:
         APP.config['JWT_PRIVATE_KEY'] = file.read()
     JWT = JWTManager(APP)
 
@@ -269,7 +269,6 @@ def prepare_app():
 
     APP.config['access_headers'] = {'Authorization': 'Bearer {}'
                                     .format(rs256_token)}
-
     return APP
 
 def create_app():

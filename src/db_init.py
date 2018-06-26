@@ -7,7 +7,6 @@ from src.config_reader import ConfigReader
 
 DB = SQLAlchemy()
 
-# Define models
 ROLES_USERS = \
 DB.Table('roles_users',
          DB.Column('user_id', DB.Integer(), DB.ForeignKey('user.id')),
@@ -97,6 +96,9 @@ def add_or_update_user(username, password, is_admin=False, active=True):
     DB.session.commit()
 
 def delete_user(username):
+    """
+    Seriously? What did you expect?
+    """
     user_datastore = SQLAlchemyUserDatastore(DB, User, Role)
     user = user_datastore.find_user(email=username)
     user_datastore.delete_user(user)

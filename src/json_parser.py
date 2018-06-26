@@ -1,6 +1,6 @@
 """
 This module is responsible for pushing and pulling JSON data from/to the
-backend and from files.
+backend and from/to files.
 """
 import json
 import requests
@@ -8,8 +8,21 @@ from werkzeug.datastructures import ImmutableMultiDict
 from src.config_reader import ConfigReader
 
 class JSONService:
+    """
+    This class encapsulates all requests made by the frontend to the backend.
+    Most of the requests need to be done with `requests`, but some also act on
+    local files.
+    To use this class a jwt_token is required, otherwise the backend is not
+    going to accept any requests.
+    """
 
     def __init__(self, jwt_headers=None):
+        """
+        Initializing all necessary attributes.
+
+        :param jwt_headers: jwt_token to be passed in the header of future\
+        requests
+        """
         self.jwt_headers = jwt_headers
         self.cfg_rdr = ConfigReader()
         self.connection = self.cfg_rdr.get_attr('backend_address')
@@ -18,6 +31,9 @@ class JSONService:
         self.session.mount('http://', self.adapter)
 
     def init(self, jwt_headers):
+        """
+        Useful for injecting the jwt_headers at a later time.
+        """
         self.jwt_headers = jwt_headers
 
     def get(self, resource):

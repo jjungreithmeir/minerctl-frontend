@@ -168,7 +168,7 @@
       </div>
       <div class="modal-footer">
           <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10 modal-close">No, take me out of here.</a>
-          <a href="/" class="d-none waves-effect waves-light btn-small bg-color-red m-r-5 m-t-10 edit-mode" onclick="saveLayout(reset=true)">Yes, I am sure.</a>
+          <a class="d-none waves-effect waves-light btn-small bg-color-red m-r-5 m-t-10 edit-mode" onclick="return saveLayout(reset=true)" href="/">Yes, I am sure.</a>
       </div>
     </div>
   </div>
@@ -270,9 +270,9 @@
     let data = {'number_of_racks': number_of_racks};
     if (reset) {
       for (let i = 0; i < number_of_racks; i++) {
-        temp = generate_array(0 + 10 * i, 0 + 10 * i + 10)
-        temp = 'rack=' + temp.join('&rack=')
-        data['rack' + i] = temp
+        temp = generate_array(0 + 10 * i, 0 + 10 * i + 10);
+        temp = 'rack=' + temp.join('&rack=');
+        data['rack' + i] = temp;
       }
     } else {
       $(".rack").each(function() {
@@ -285,6 +285,10 @@
       dataType: 'json',
       data: data
     });
+    if (reset) {
+      toggleEditMode();
+      return true;
+    }
   }
   $(function() {
     $(".rack").sortable({

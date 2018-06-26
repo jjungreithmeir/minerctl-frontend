@@ -26,6 +26,11 @@ APP = Flask(__name__)
 
 @APP.context_processor
 def register_context():
+    """
+    Adds a couple of useful variables to the application context.
+
+    :returns: current_user, url_for_security, register_user_form, is_admin
+    """
     return {
         'url_for_security': url_for_security,
         'register_user_form': RegisterForm(),
@@ -42,6 +47,10 @@ class SijaxHandler(object):
 
     @staticmethod
     def get_config(obj_response):
+        """
+        Rewrites a couple of html elements. This is quite ugly as far as ajax
+        updating goes but this is the only way which I've found.
+        """
         cfg = get('/cfg', APP.config['access_headers'])
         for key, value in cfg['measurements'].items():
             obj_response.html('#card-measurement-' + key,
@@ -68,10 +77,13 @@ class SijaxHandler(object):
                               check</i>")
             obj_response.html('#filter-msg',"")
 
-# Views
-@APP.route('/', methods=['GET', 'POST'])
-@login_required
-def index():
+def _load_or_create_layout():
+    """
+    Checks whether a local layout.json file is present and then either parses
+    or mocks the content of the json file.
+
+    :returns: a nested list filled with the miner_ids
+    """
     # first the layout.json has to be converted into an iterable dictionary
     layout = read_json()
     local_config = {'max_number_of_racks': 12}
@@ -97,16 +109,27 @@ def index():
             racks.append(ids)
         local_config['racks'] = racks
 
+    return local_config
+
+@APP.route('/', methods=['GET', 'POST'])
+@login_required
+def index():
+    """
+    Renders the index page for all logged in users.
+    Some of the content of the index page is updated constantly through ajax
+    requests which are handled by sijax.
+
+    :returns: index view
+    """
     if g.sijax.is_sijax_request:
         g.sijax.register_object(SijaxHandler)
         return g.sijax.process_request()
 
     miners=get('/cfg', APP.config['access_headers'])
-    print(miners)
 
     return render_template('index.html',
                            miners=get('/cfg', APP.config['access_headers']),
-                           local_config=local_config,
+                           local_config=_load_or_create_layout(),
                            config=get('/info', APP.config['access_headers']),
                            temp=get('/temp', APP.config['access_headers']),
                            filter=get('/filter', APP.config['access_headers']),
@@ -117,20 +140,36 @@ def index():
 @APP.route('/config', methods=['PUT'])
 @roles_required('admin')
 def config():
+    """
+    Writes the config to a local file.
+
+    :returns: nothing, HTTP code 204
+    """
     if request.method == 'PUT':
         write_json(request.form)
     return '', 204
 
 @APP.route('/action', methods=['PATCH'])
 def action():
+    """
+    PATCHes the action for the specific miner to the backend.
+
+    :returns: nothing, HTTP code 204
+    """
     if request.method == 'PATCH':
-        patch('/miners', APP.config['access_headers'], request.args)
+        patch('/miner', APP.config['access_headers'], request.args)
 
     return '', 204
 
 @APP.route('/settings', methods=['GET', 'POST'])
 @roles_required('admin')
 def settings():
+    """
+    Provides and receives the settings. If the frontend requests it, the current
+    configuration is streamed as a file response to the browser.
+
+    :returns: settings view
+    """
     if request.method == 'POST':
         if request.form['action'] == 'save':
             error = patch('/cfg', APP.config['access_headers'],
@@ -164,6 +203,11 @@ def allowed_file(filename):
 @APP.route('/upload', methods=['POST'])
 @roles_required('admin')
 def upload_file():
+    """
+    Saves file and sends the content to the backend to be parsed.
+
+    :returns: redirects to the settings view
+    """
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -187,6 +231,9 @@ def upload_file():
     return redirect('/')
 
 class RegistrationForm(Form):
+    """
+    WTForms class which is necessary for the registration functionality.
+    """
     email = StringField('username/email', [validators.DataRequired(),
                                            validators.Length(min=4, max=35)])
     password = PasswordField('password', [
@@ -201,10 +248,16 @@ class RegistrationForm(Form):
 @APP.route('/user', methods=['GET', 'POST'])
 @roles_required('admin')
 def user():
+    """
+    Renders the user administration page which is responsible for viewing,
+    deleting and adding new users.
+
+    :returns: user view
+    """
     form = RegistrationForm(request.form)
     if request.method == 'POST':
         data = resp_to_dict(request.form)
-        if form.validate() or form.is_update.data: # equal to request.form['action'] == 'add':
+        if form.validate() or form.is_update.data:
             add_or_update_user(
                 username=form.email.data,
                 password=form.password.data,
@@ -222,10 +275,20 @@ def user():
 
 @APP.errorhandler(500)
 def page_not_found(_error):
-    # note that we set the 404 status explicitly
+    """
+    Creating a specific HTML code 500 view as this may occur if the backend is
+    unreachable which seems to be the most common error for a project like this.
+
+    :returns: simple error page
+    """
     return render_template('500.html'), 500
 
-def prepare_app():
+def _prepare_app():
+    """
+    Setup the initial APP values and initialize various flask plugins.
+
+    :returns: flask app instance
+    """
     # init JSGLUE. this is needed to query URLs in javascript
     _js_glue = JSGlue(APP)
 
@@ -237,8 +300,8 @@ def prepare_app():
     APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # the salt is a workaround for a bug, as flask-security salts  passwords
-    # automatically but somehow it requires and uses this config value which breaks
-    # the login if the salt is individually unique (as a salt should be)
+    # automatically but somehow it requires and uses this config value which
+    # breaks the login if the salt is individually unique (as a salt should be)
     APP.config['SECURITY_PASSWORD_SALT'] = 'fake_salt'
     APP.config['SECURITY_TRACKABLE'] = True
     APP.config['SECURITY_REGISTERABLE'] = True
@@ -264,14 +327,18 @@ def prepare_app():
         user_datastore = SQLAlchemyUserDatastore(DB, User, Role)
         _security = Security(APP, user_datastore)
         setup(user_datastore)
-        rs256_token = create_access_token(str(current_user))
+        rs256_token = create_access_token(str(current_user),
+                                          expires_delta=False)
 
     APP.config['access_headers'] = {'Authorization': 'Bearer {}'
                                     .format(rs256_token)}
     return APP
 
 def create_app():
-    app = prepare_app()
+    """
+    Creates the app and starts it.
+    """
+    app = _prepare_app()
     app.run(host='0.0.0.0', port=80)
 
 if __name__ == '__main__':

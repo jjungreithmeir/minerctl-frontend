@@ -1,3 +1,5 @@
+"""Small module that acts as a database wrapper. Serves mainly as a setup script
+for the db and provides functions for the registration."""
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import UserMixin, RoleMixin, SQLAlchemyUserDatastore
 from flask_security.utils import encrypt_password
@@ -12,6 +14,9 @@ DB.Table('roles_users',
          DB.Column('role_id', DB.Integer(), DB.ForeignKey('role.id')))
 
 class Role(DB.Model, RoleMixin):
+    """
+    Currently there is only the 'admin' role in the frontend logic.
+    """
     id = DB.Column(DB.Integer(), primary_key=True)
     name = DB.Column(DB.String(80), unique=True)
     description = DB.Column(DB.String(255))
@@ -25,6 +30,9 @@ class Role(DB.Model, RoleMixin):
         return hash(self.name)
 
 class User(DB.Model, UserMixin):
+    """
+    Represents the user and adds additional fields for logging purposes
+    """
     id = DB.Column(DB.Integer, primary_key=True)
     email = DB.Column(DB.String(255), unique=True)
     password = DB.Column(DB.String(255))
@@ -39,13 +47,16 @@ class User(DB.Model, UserMixin):
     def __str__(self):
         return self.email
 
-def check_db_populated():
+def _check_db_populated():
     try:
         return len(User.query.all())
     except:
         return False
 
-def populate_db(user_datastore):
+def _populate_db(user_datastore):
+    """
+    Reads the initial credentials from the configuration file.
+    """
     DB.create_all()
     cfg_rdr = ConfigReader()
 
@@ -60,6 +71,14 @@ def populate_db(user_datastore):
     DB.session.commit()
 
 def add_or_update_user(username, password, is_admin=False, active=True):
+    """
+    :param username: username or email --> unique identification
+    :param password: the password may be passed in cleartext (yeah I just \
+    wrote that) as it is encrypted internally.
+    :param is_admin: determines whether the account receives the 'admin' role
+    :param active: determines whether users will be able to login in with the\
+    account
+    """
     user_datastore = SQLAlchemyUserDatastore(DB, User, Role)
     existing_user = user_datastore.find_user(email=username)
     if existing_user:
@@ -84,5 +103,8 @@ def delete_user(username):
     DB.session.commit()
 
 def setup(user_datastore):
-    if not check_db_populated():
-        populate_db(user_datastore)
+    """
+    Populates the database if it is empty.
+    """
+    if not _check_db_populated():
+        _populate_db(user_datastore)

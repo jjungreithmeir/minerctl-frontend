@@ -16,13 +16,13 @@ from wtforms import Form, BooleanField, StringField, PasswordField, \
 from flask_jsglue import JSGlue
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 import flask_sijax
-from src.json_parser import get, resp_to_dict, patch_str, \
-    patch, write_json, read_json
+from src.json_parser import JSONService
 from src.db_init import DB, User, Role, setup, add_or_update_user, \
     delete_user
 from src.config_reader import ConfigReader
 
 APP = Flask(__name__)
+JSONService = JSONService()
 
 @APP.context_processor
 def register_context():
@@ -51,7 +51,7 @@ class SijaxHandler(object):
         Rewrites a couple of html elements. This is quite ugly as far as ajax
         updating goes but this is the only way which I've found.
         """
-        cfg = get('/cfg', APP.config['access_headers'])
+        cfg = JSONService.get('/cfg')
         for key, value in cfg['measurements'].items():
             obj_response.html('#card-measurement-' + key,
                               "<span id='card-measurement-'" + key + ">" +
@@ -85,7 +85,7 @@ def _load_or_create_layout():
     :returns: a nested list filled with the miner_ids
     """
     # first the layout.json has to be converted into an iterable dictionary
-    layout = read_json()
+    layout = JSONService.read_json('config/layout.json')
     local_config = {'max_number_of_racks': 12}
     if layout is None:
         local_config['number_of_racks'] = 12
@@ -125,17 +125,17 @@ def index():
         g.sijax.register_object(SijaxHandler)
         return g.sijax.process_request()
 
-    miners=get('/cfg', APP.config['access_headers'])
+    miners = JSONService.get('/cfg')
 
     return render_template('index.html',
-                           miners=get('/cfg', APP.config['access_headers']),
+                           miners=JSONService.get('/cfg'),
                            local_config=_load_or_create_layout(),
-                           config=get('/info', APP.config['access_headers']),
-                           temp=get('/temp', APP.config['access_headers']),
-                           filter=get('/filter', APP.config['access_headers']),
-                           pid=get('/pid', APP.config['access_headers']),
-                           fans=get('/fans', APP.config['access_headers']),
-                           operation=get('/mode', APP.config['access_headers']))
+                           config=JSONService.get('/info'),
+                           temp=JSONService.get('/temp'),
+                           filter=JSONService.get('/filter'),
+                           pid=JSONService.get('/pid'),
+                           fans=JSONService.get('/fans'),
+                           operation=JSONService.get('/mode'))
 
 @APP.route('/config', methods=['PUT'])
 @roles_required('admin')
@@ -146,7 +146,7 @@ def config():
     :returns: nothing, HTTP code 204
     """
     if request.method == 'PUT':
-        write_json(request.form)
+        JSONService.write_json(request.form)
     return '', 204
 
 @APP.route('/action', methods=['PATCH'])
@@ -157,7 +157,7 @@ def action():
     :returns: nothing, HTTP code 204
     """
     if request.method == 'PATCH':
-        patch('/miner', APP.config['access_headers'], request.args)
+        JSONService.patch('/miner', request.args)
 
     return '', 204
 
@@ -172,8 +172,8 @@ def settings():
     """
     if request.method == 'POST':
         if request.form['action'] == 'save':
-            error = patch('/cfg', APP.config['access_headers'],
-                          data=request.form, exclude=['action', 'file'])
+            error = JSONService.patch('/cfg', data=request.form,
+                                      exclude=['action', 'file'])
             if error is None:
                 flash('success')
             else:
@@ -192,8 +192,8 @@ def settings():
         # POST/Redirect/GET
         return redirect(url_for('settings'))
     return render_template('settings.html',
-                           data=get('/cfg', APP.config['access_headers']),
-                           config=get('/info', APP.config['access_headers']))
+                           data=JSONService.get('/cfg'),
+                           config=JSONService.get('/info'))
 
 ALLOWED_EXTENSIONS = set(['cfg'])
 def allowed_file(filename):
@@ -225,7 +225,7 @@ def upload_file():
             file.save(path)
 
             with open(path) as json_file:
-                patch_str('/cfg', APP.config['access_headers'], json_file)
+                JSONService.patch_str('/cfg', json_file)
 
             return redirect('/settings')
     return redirect('/')
@@ -256,7 +256,7 @@ def user():
     """
     form = RegistrationForm(request.form)
     if request.method == 'POST':
-        data = resp_to_dict(request.form)
+        data = JSONService.resp_to_dict(request.form)
         if form.validate() or form.is_update.data:
             add_or_update_user(
                 username=form.email.data,
@@ -270,7 +270,7 @@ def user():
 
     return render_template('user.html',
                            userbase=User.query.all(),
-                           config=get('/info', APP.config['access_headers']),
+                           config=JSONService.get('/info'),
                            form=form)
 
 @APP.errorhandler(500)
@@ -332,6 +332,8 @@ def _prepare_app():
 
     APP.config['access_headers'] = {'Authorization': 'Bearer {}'
                                     .format(rs256_token)}
+    JSONService.init(APP.config['access_headers'])
+
     return APP
 
 def create_app():

@@ -356,5 +356,8 @@ def create_app():
     app = _prepare_app()
     app.run(host='0.0.0.0', port=80)
 
+# This is sadly needed for the uwsgi entry point
+_prepare_app()
+
 if __name__ == '__main__':
     create_app()

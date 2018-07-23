@@ -3,6 +3,9 @@
 <link href="{{ url_for('static',filename='css/nouislider.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
 {% endblock %}
 {% block title_addition %} - firmware v{{ config.firmware_version }} {% endblock %}
+{% block head %}
+{{ JSGlue.include() }}
+{% endblock %}
 {% block content %}
 <form action="{{url_for('settings')}}" method="POST" id="configuration">
 
@@ -11,6 +14,11 @@
     <h3> Settings </h3>
     <div class="divider"></div>
     <div class="section">
+
+      <p class="right color-grey w-500px">
+         In order to let the changes take effect you have to press the <span class="font-bold">POST CHANGES</span> button.
+         If you want to persist the configuration you have to <span class="font-bold">COMMIT</span> the configuration.
+      </p>
 
       <h6>General</h6>
       <div class="w-50 m-10 padder-30">
@@ -73,10 +81,13 @@
       <div class="w-50 m-10 padder-30">
         <label for="input-filter">filter threshold (mBar): </label><input class="input-number" id="input-filter" type="number" value="{{data.threshold}}" name="threshold" />
         <label class="m-l-10" for="input-exttemp">external temperature (°C): </label><input class="input-number" id="input-exttemp" type="number" value="{{data.external}}" name="external" />
-
+        <br/>
+        <label class="m-l-10" for="input-frequency">auto commit every x hours: </label><input class="input-number" id="input-frequency" type="number" value="{{commit.frequency}}" name="frequency" />
       </div>
 
-      <button class="m-10 btn waves-effect waves-light right bg-color-main" name="action" value="save">Post changes
+      <a class="m-10 btn waves-effect waves-light right bg-color-main" onclick="commit()" id="commit" title="persist all changes on microcontroller (takes a few seconds)">commit</a>
+
+      <button class="m-10 btn waves-effect waves-light right bg-color-main" name="action" value="save" title="upload changes to microcontroller">Post changes
           <i class="material-icons right">save</i>
         </button>
 
@@ -167,5 +178,14 @@
     M.toast({html: 'Configuration could not be saved.',classes: 'rounded'});
    {% endif %}
   {% endfor %}
+  function commit() {
+    let data = {'commit': true};
+    $.ajax({
+      url: Flask.url_for("commit"),
+      type: 'PUT',
+      dataType: 'json',
+      data: data
+    });
+  }
 </script>
 {% endblock %}

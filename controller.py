@@ -149,6 +149,18 @@ def config():
         JSONService.write_json(request.form)
     return '', 204
 
+@APP.route('/commit', methods=['PUT'])
+@roles_required('admin')
+def commit():
+    """
+    PUTs the commit action to persist the microcontroller EEPROMs.
+
+    :returns: nothing, HTTP code 204
+    """
+    if request.method == 'PUT':
+        JSONService.put('/commit', data=request.form)
+    return '', 204
+
 @APP.route('/action', methods=['PATCH'])
 def action():
     """
@@ -193,7 +205,8 @@ def settings():
         return redirect(url_for('settings'))
     return render_template('settings.html',
                            data=JSONService.get('/cfg'),
-                           config=JSONService.get('/info'))
+                           config=JSONService.get('/info'),
+                           commit=JSONService.get('/commit'))
 
 ALLOWED_EXTENSIONS = set(['cfg'])
 def allowed_file(filename):

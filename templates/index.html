@@ -17,6 +17,7 @@
     <div class="right">
       <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10" onclick="toggleEditMode()" id="edit-layout">edit layout</a>
       <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10 d-none" onclick="toggleEditMode();saveLayout()" id="save-layout">save layout</a>
+      <a class="waves-effect waves-light btn-small bg-color-main m-r-10 m-t-10" onclick="commit()" id="commit" title="persist all changes on microcontroller"><i class="material-icons right m-l-5">save</i>commit</a>
     </div>
     <div class="left">
       <a href="#modal-reset-confirmation" class="d-none waves-effect waves-light btn-small bg-color-red m-r-10 m-t-10 edit-mode modal-trigger">reset layout</a>
@@ -182,9 +183,18 @@
   (function(){
     setInterval(function() {
         updateCards();
-    }, 3000);  })();
+    }, 5000);  })();
   function updateCards() {
     Sijax.request('get_config');
+  }
+  function commit() {
+    let data = {'commit': true};
+    $.ajax({
+      url: Flask.url_for("commit"),
+      type: 'PUT',
+      dataType: 'json',
+      data: data
+    });
   }
   function toggleMinerCSS(selector) {
     $('#' + selector).toggleClass('disabled-miner', $('#' + selector + '-checkbox').val());

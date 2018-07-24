@@ -1,8 +1,8 @@
 # minerctl frontend
 
-In order to run this app you need `sqlite` and `virtualenv`.
+In order to run this app you need `sqlite`, `virtualenv`, `make`, `python3-pip` and `python3` (this was tested on Python 3.6.6). It is also recommended to run this application inside a virtual environment (with a virtualenv folder called `env`).
 
-For the initial setup execute `make install`. Then you need to edit the `config/initial.config` file according to the instructions in the file. If you do not have an appropriate key-pair (both in PEM format! ssh-keygen generates a different format by default) then just execute `./scripts/keygen.sh`.
+For the initial setup execute `make install`. Then you need to edit the `config/minerctl.ini` file according to the instructions in the file. If you do not have an appropriate key-pair (both in PEM format! ssh-keygen generates a different format by default) then just execute `./scripts/keygen.sh`.
 
 Run the flask app with `make` 
 By default the webinterface is reachable via your IP address on port 8080. If you want to use the file upload you need to configure uwsgi appropriately.

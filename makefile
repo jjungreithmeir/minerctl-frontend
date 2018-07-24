@@ -1,4 +1,4 @@
-all: clean run
+all: run
 
 install: source
 	source env/bin/activate; pip install -r requirements.txt

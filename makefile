@@ -1,7 +1,7 @@
 all: run
 
 install: source
-	source env/bin/activate; pip install -r requirements.txt
+	source env/bin/activate; pip install --editable .
 
 clean:
 	rm -rf __pycache__/ src/__pycache__/

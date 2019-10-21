@@ -46,7 +46,7 @@ setup(
         'SQLAlchemy==1.2.8',
         'urllib3==1.23',
         'uWSGI==2.0.17.1',
-        'Werkzeug==0.14.1',
+        'Werkzeug==0.15.3',
         'wrapt==1.10.11',
         'WTForms==2.2.1'
     ],

@@ -14,7 +14,7 @@ setup(
         'cffi==1.11.5',
         'chardet==3.0.4',
         'click==6.7',
-        'cryptography==2.2.2',
+        'cryptography==3.2',
         'Flask==1.0.2',
         'Flask-BabelEx==0.9.3',
         'Flask-JSGlue==0.3.1',

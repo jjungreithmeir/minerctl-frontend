@@ -44,7 +44,7 @@ setup(
         'six==1.11.0',
         'speaklater==1.3',
         'SQLAlchemy==1.2.8',
-        'urllib3==1.23',
+        'urllib3==1.26.5',
         'uWSGI==2.0.17.1',
         'Werkzeug==0.14.1',
         'wrapt==1.10.11',

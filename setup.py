@@ -7,7 +7,7 @@ setup(
     install_requires=[
         'asn1crypto==0.24.0',
         'astroid==1.6.5',
-        'Babel==2.6.0',
+        'Babel==2.9.1',
         'bcrypt==3.1.4',
         'blinker==1.4',
         'certifi==2018.4.16',

@@ -36,7 +36,7 @@ setup(
         'mccabe==0.6.1',
         'passlib==1.7.1',
         'pycparser==2.18',
-        'PyJWT==1.6.4',
+        'PyJWT==2.4.0',
         'pylint==1.9.2',
         'pytz==2018.4',
         'requests==2.19.0',
